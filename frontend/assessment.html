@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FounderFit — Assessment</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: system-ui, sans-serif; background: #0a0a0f; color: #e2e8f0; min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+    .container { width: 100%; max-width: 600px; padding: 2rem; }
+    h1 { font-size: 2rem; font-weight: 800; background: linear-gradient(135deg, #6366f1, #a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 0.5rem; }
+    p { color: #94a3b8; margin-bottom: 2rem; }
+    .card { background: #13131a; border: 1px solid #1e1e2e; border-radius: 1rem; padding: 2rem; margin-bottom: 1.5rem; }
+    .question { margin-bottom: 2rem; }
+    .question h3 { font-size: 1rem; font-weight: 600; margin-bottom: 1rem; color: #e2e8f0; }
+    .options { display: flex; flex-direction: column; gap: 0.5rem; }
+    .option { display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1rem; border: 1px solid #1e1e2e; border-radius: 0.5rem; cursor: pointer; transition: all 0.2s; }
+    .option:hover { border-color: #6366f1; background: rgba(99,102,241,0.05); }
+    .option input { width: auto; margin: 0; accent-color: #6366f1; }
+    button { width: 100%; padding: 0.875rem; background: #6366f1; color: white; border: none; border-radius: 0.5rem; font-size: 1rem; font-weight: 600; cursor: pointer; transition: background 0.2s; }
+    button:hover { background: #4f46e5; }
+    .back { display: inline-block; color: #94a3b8; text-decoration: none; font-size: 0.875rem; margin-bottom: 1.5rem; }
+    .back:hover { color: #e2e8f0; }
+    #result { display: none; }
+    .archetype-badge { display: inline-block; padding: 0.5rem 1rem; background: rgba(99,102,241,0.15); border: 1px solid rgba(99,102,241,0.3); border-radius: 9999px; color: #818cf8; font-weight: 600; margin-bottom: 1rem; }
+    .dim { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem; }
+    .dim-label { font-size: 0.875rem; color: #94a3b8; width: 160px; }
+    .bar { flex: 1; height: 8px; background: #1e1e2e; border-radius: 9999px; overflow: hidden; }
+    .bar-fill { height: 100%; background: linear-gradient(90deg, #6366f1, #a855f7); border-radius: 9999px; transition: width 0.6s ease; }
+    .dim-score { font-size: 0.875rem; color: #e2e8f0; width: 36px; text-align: right; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a href="/onboarding.html" class="back">← Back</a>
+    <h1>Behavioral Assessment</h1>
+    <p>Answer honestly — there are no right or wrong answers.</p>
+
+    <form id="assessmentForm" class="card">
+      <div class="question">
+        <h3>1. When facing a hard product decision with limited data, you typically:</h3>
+        <div class="options">
+          <label class="option"><input type="radio" name="q1" value="fast" required /> Ship a quick experiment and measure</label>
+          <label class="option"><input type="radio" name="q1" value="moderate" /> Gather a bit more signal before deciding</label>
+          <label class="option"><input type="radio" name="q1" value="deliberate" /> Take time to think it through properly</label>
+        </div>
+      </div>
+      <div class="question">
+        <h3>2. Your preferred way to communicate with a co-founder is:</h3>
+        <div class="options">
+          <label class="option"><input type="radio" name="q2" value="sync" required /> Daily calls or in-person standups</label>
+          <label class="option"><input type="radio" name="q2" value="balanced" /> Mix of async and sync depending on urgency</label>
+          <label class="option"><input type="radio" name="q2" value="async" /> Written updates and async threads</label>
+        </div>
+      </div>
+      <div class="question">
+        <h3>3. When a co-founder disagrees with your approach, you:</h3>
+        <div class="options">
+          <label class="option"><input type="radio" name="q3" value="competing" required /> Push your case — you back ideas with conviction</label>
+          <label class="option"><input type="radio" name="q3" value="collaborative" /> Debate it openly and find the best answer together</label>
+          <label class="option"><input type="radio" name="q3" value="compromising" /> Find a middle ground quickly to keep moving</label>
+        </div>
+      </div>
+      <div class="question">
+        <h3>4. How do you prefer to work?</h3>
+        <div class="options">
+          <label class="option"><input type="radio" name="q4" value="sprint" required /> Intense sprints with recovery periods</label>
+          <label class="option"><input type="radio" name="q4" value="steady" /> Steady consistent pace, no burnout cycles</label>
+          <label class="option"><input type="radio" name="q4" value="flexible" /> Fluid — whatever the moment demands</label>
+        </div>
+      </div>
+      <button type="submit">Get My Results →</button>
+    </form>
+
+    <div id="result" class="card">
+      <div id="archetype-badge" class="archetype-badge"></div>
+      <h2 id="result-title" style="margin-bottom:0.5rem;"></h2>
+      <p id="result-desc" style="margin-bottom:1.5rem;color:#94a3b8;"></p>
+      <div id="dimensions"></div>
+      <a href="/" style="display:block;text-align:center;margin-top:1.5rem;color:#6366f1;text-decoration:none;font-weight:600;">← Back to Home</a>
+    </div>
+  </div>
+  <script>
+    const archetypes = {
+      rapid_builder: { name: "Rapid Builder", desc: "You ship fast, iterate aggressively, and treat tech debt as fuel. Best for consumer apps and MVPs." },
+      systems_operator: { name: "Systems Operator", desc: "You build for scale from day one. Infrastructure-first, methodical, and reliability-obsessed." },
+      experimental_hacker: { name: "Experimental Hacker", desc: "You explore widely and prototype fast. Low attachment to any single approach." },
+      vision_architect: { name: "Vision Architect", desc: "You design for the future. Documentation-heavy, strategic, and long-horizon focused." },
+      product_strategist: { name: "Product Strategist", desc: "Feature-driven and user-focused with pragmatic trade-offs. Great for B2B SaaS." },
+      growth_hunter: { name: "Growth Hunter", desc: "Metrics-obsessed and conversion-focused. You run experiments and double down on what works." },
+    };
+
+    document.getElementById('assessmentForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const base = JSON.parse(localStorage.getItem('founderProfile') || '{}');
+      const profile = {
+        ...base,
+        name: base.name || 'Founder',
+        decision_speed: document.querySelector('[name=q1]:checked').value,
+        communication_style: document.querySelector('[name=q2]:checked').value,
+        conflict_approach: document.querySelector('[name=q3]:checked').value,
+        execution_style: document.querySelector('[name=q4]:checked').value,
+      };
+
+      try {
+        const res = await fetch('/api/assessment/submit', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(profile) });
+        const data = await res.json();
+        showResult(data);
+      } catch {
+        showResult({ archetype: 'rapid_builder', dimensions: { decision_velocity: 70, risk_tolerance: 65, communication: 60, execution_pace: 75, vision_alignment: 70, conflict_style: 65 } });
+      }
+    });
+
+    function showResult(data) {
+      document.getElementById('assessmentForm').style.display = 'none';
+      const result = document.getElementById('result');
+      result.style.display = 'block';
+      const arch = archetypes[data.archetype] || { name: data.archetype, desc: '' };
+      document.getElementById('archetype-badge').textContent = arch.name;
+      document.getElementById('result-title').textContent = `You're a ${arch.name}`;
+      document.getElementById('result-desc').textContent = arch.desc;
+      const dims = data.dimensions || {};
+      const labels = { decision_velocity: 'Decision Velocity', risk_tolerance: 'Risk Tolerance', communication: 'Communication', execution_pace: 'Execution Pace', vision_alignment: 'Vision Alignment', conflict_style: 'Conflict Style' };
+      document.getElementById('dimensions').innerHTML = Object.entries(dims).map(([k, v]) => `
+        <div class="dim">
+          <span class="dim-label">${labels[k] || k}</span>
+          <div class="bar"><div class="bar-fill" style="width:${v}%"></div></div>
+          <span class="dim-score">${v}</span>
+        </div>`).join('');
+    }
+  </script>
+</body>
+</html>

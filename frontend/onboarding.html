@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FounderFit — Onboarding</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: system-ui, sans-serif; background: #0a0a0f; color: #e2e8f0; min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+    .container { width: 100%; max-width: 560px; padding: 2rem; }
+    h1 { font-size: 2rem; font-weight: 800; background: linear-gradient(135deg, #6366f1, #a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 0.5rem; }
+    p { color: #94a3b8; margin-bottom: 2rem; }
+    .card { background: #13131a; border: 1px solid #1e1e2e; border-radius: 1rem; padding: 2rem; margin-bottom: 1.5rem; }
+    label { display: block; font-size: 0.875rem; color: #94a3b8; margin-bottom: 0.5rem; }
+    input, select { width: 100%; padding: 0.75rem 1rem; background: #0a0a0f; border: 1px solid #1e1e2e; border-radius: 0.5rem; color: #e2e8f0; font-size: 1rem; margin-bottom: 1.25rem; outline: none; }
+    input:focus, select:focus { border-color: #6366f1; }
+    select option { background: #13131a; }
+    button { width: 100%; padding: 0.875rem; background: #6366f1; color: white; border: none; border-radius: 0.5rem; font-size: 1rem; font-weight: 600; cursor: pointer; transition: background 0.2s; }
+    button:hover { background: #4f46e5; }
+    .back { display: inline-block; color: #94a3b8; text-decoration: none; font-size: 0.875rem; margin-bottom: 1.5rem; }
+    .back:hover { color: #e2e8f0; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a href="/" class="back">← Back</a>
+    <h1>Let's get started</h1>
+    <p>Tell us about yourself so we can find your ideal co-founder match.</p>
+    <form class="card" onsubmit="handleSubmit(event)">
+      <label>Full Name</label>
+      <input type="text" id="name" placeholder="e.g. Alex Johnson" required />
+      <label>Email</label>
+      <input type="email" id="email" placeholder="you@example.com" />
+      <label>Your Role</label>
+      <input type="text" id="role" placeholder="e.g. CTO, Product, Growth" />
+      <label>Decision Speed</label>
+      <select id="decision_speed">
+        <option value="fast">Fast — ship first, fix later</option>
+        <option value="moderate" selected>Moderate — balanced</option>
+        <option value="deliberate">Deliberate — think it through</option>
+      </select>
+      <label>Risk Tolerance</label>
+      <select id="risk_tolerance">
+        <option value="high">High — comfortable with ambiguity</option>
+        <option value="moderate" selected>Moderate</option>
+        <option value="low">Low — prefer stability</option>
+      </select>
+      <label>Communication Style</label>
+      <select id="communication_style">
+        <option value="async">Async — Slack, docs, PRs</option>
+        <option value="balanced" selected>Balanced</option>
+        <option value="sync">Sync — calls, standups</option>
+      </select>
+      <button type="submit">Continue to Assessment →</button>
+    </form>
+  </div>
+  <script>
+    function handleSubmit(e) {
+      e.preventDefault();
+      const profile = {
+        name: document.getElementById('name').value,
+        email: document.getElementById('email').value,
+        role: document.getElementById('role').value,
+        decision_speed: document.getElementById('decision_speed').value,
+        risk_tolerance: document.getElementById('risk_tolerance').value,
+        communication_style: document.getElementById('communication_style').value,
+      };
+      localStorage.setItem('founderProfile', JSON.stringify(profile));
+      window.location.href = '/assessment.html';
+    }
+  </script>
+</body>
+</html>

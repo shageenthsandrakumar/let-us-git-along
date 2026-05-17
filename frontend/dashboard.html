@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FounderFit — Dashboard</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: system-ui, sans-serif; background: #0a0a0f; color: #e2e8f0; min-height: 100vh; padding: 2rem; }
+    .header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; }
+    h1 { font-size: 1.75rem; font-weight: 800; background: linear-gradient(135deg, #6366f1, #a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+    .card { background: #13131a; border: 1px solid #1e1e2e; border-radius: 1rem; padding: 1.5rem; }
+    .card h3 { font-size: 0.875rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 1rem; }
+    .agent { display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; border: 1px solid #1e1e2e; border-radius: 0.5rem; margin-bottom: 0.5rem; }
+    .dot { width: 8px; height: 8px; border-radius: 50%; background: #22c55e; flex-shrink: 0; }
+    .dot.idle { background: #94a3b8; }
+    .agent-name { font-weight: 600; font-size: 0.9rem; }
+    .agent-desc { font-size: 0.75rem; color: #94a3b8; }
+    .back { color: #94a3b8; text-decoration: none; font-size: 0.875rem; }
+    .back:hover { color: #e2e8f0; }
+    .badge { display: inline-block; padding: 0.25rem 0.625rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; }
+    .badge.ready { background: rgba(34,197,94,0.15); color: #22c55e; border: 1px solid rgba(34,197,94,0.3); }
+    .badge.idle { background: rgba(148,163,184,0.1); color: #94a3b8; border: 1px solid #1e1e2e; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>FounderFit Dashboard</h1>
+    <a href="/" class="back">← Home</a>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <h3>Agent Status</h3>
+      <div class="agent"><div class="dot"></div><div><div class="agent-name">Compatibility Agent</div><div class="agent-desc">Six-dimension analysis</div></div><span class="badge ready" style="margin-left:auto">Ready</span></div>
+      <div class="agent"><div class="dot"></div><div><div class="agent-name">GTM Strategist</div><div class="agent-desc">Go-to-market planning</div></div><span class="badge ready" style="margin-left:auto">Ready</span></div>
+      <div class="agent"><div class="dot"></div><div><div class="agent-name">RepoTale Agent</div><div class="agent-desc">GitHub signal extraction</div></div><span class="badge ready" style="margin-left:auto">Ready</span></div>
+      <div class="agent"><div class="dot"></div><div><div class="agent-name">Matchmaker Agent</div><div class="agent-desc">Founder pairing</div></div><span class="badge ready" style="margin-left:auto">Ready</span></div>
+      <div class="agent"><div class="dot"></div><div><div class="agent-name">Executor Agent</div><div class="agent-desc">Sprint health monitoring</div></div><span class="badge ready" style="margin-left:auto">Ready</span></div>
+    </div>
+
+    <div class="card">
+      <h3>Quick Analysis</h3>
+      <p style="color:#94a3b8;font-size:0.875rem;margin-bottom:1rem;">Run a compatibility check between two founders.</p>
+      <textarea id="founderA" placeholder="Founder A name..." style="width:100%;background:#0a0a0f;border:1px solid #1e1e2e;border-radius:0.5rem;padding:0.75rem;color:#e2e8f0;resize:none;margin-bottom:0.75rem;height:60px;font-family:inherit;"></textarea>
+      <textarea id="founderB" placeholder="Founder B name..." style="width:100%;background:#0a0a0f;border:1px solid #1e1e2e;border-radius:0.5rem;padding:0.75rem;color:#e2e8f0;resize:none;margin-bottom:1rem;height:60px;font-family:inherit;"></textarea>
+      <button onclick="window.location.href='/assessment.html'" style="width:100%;padding:0.75rem;background:#6366f1;color:white;border:none;border-radius:0.5rem;font-weight:600;cursor:pointer;">Start Assessment →</button>
+    </div>
+
+    <div class="card">
+      <h3>API Endpoints</h3>
+      <div style="font-size:0.8rem;font-family:monospace;color:#94a3b8;line-height:2;">
+        <div><span style="color:#22c55e">GET</span> &nbsp;/api/health</div>
+        <div><span style="color:#6366f1">POST</span> /api/analyze/compatibility</div>
+        <div><span style="color:#6366f1">POST</span> /api/analyze/single</div>
+        <div><span style="color:#6366f1">POST</span> /api/assessment/submit</div>
+        <div><span style="color:#22c55e">GET</span> &nbsp;/api/archetypes</div>
+        <div><span style="color:#22c55e">GET</span> &nbsp;<a href="/docs" style="color:#818cf8">/docs</a> (Swagger UI)</div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

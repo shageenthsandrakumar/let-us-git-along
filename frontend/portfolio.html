@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FounderFit — Agent Portfolio</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: system-ui, sans-serif; background: #0a0a0f; color: #e2e8f0; min-height: 100vh; padding: 2rem; }
+    .header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; }
+    h1 { font-size: 1.75rem; font-weight: 800; background: linear-gradient(135deg, #6366f1, #a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
+    .card { background: #13131a; border: 1px solid #1e1e2e; border-radius: 1rem; padding: 1.75rem; }
+    .icon { font-size: 2rem; margin-bottom: 1rem; }
+    .card h2 { font-size: 1.125rem; font-weight: 700; margin-bottom: 0.5rem; }
+    .card p { color: #94a3b8; font-size: 0.875rem; line-height: 1.6; margin-bottom: 1rem; }
+    .tag { display: inline-block; padding: 0.25rem 0.625rem; background: rgba(99,102,241,0.1); border: 1px solid rgba(99,102,241,0.2); border-radius: 9999px; font-size: 0.75rem; color: #818cf8; margin: 0.25rem 0.25rem 0 0; }
+    .back { color: #94a3b8; text-decoration: none; font-size: 0.875rem; }
+    .back:hover { color: #e2e8f0; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>Agent Portfolio</h1>
+    <a href="/" class="back">← Home</a>
+  </div>
+  <div class="grid">
+    <div class="card">
+      <div class="icon">🧠</div>
+      <h2>Compatibility Agent</h2>
+      <p>Scores founder pairs across six operational dimensions — decision velocity, risk tolerance, communication style, execution pace, vision alignment, and conflict resolution.</p>
+      <span class="tag">Six-dimension scoring</span><span class="tag">Friction prediction</span><span class="tag">JSON output</span>
+    </div>
+    <div class="card">
+      <div class="icon">🚀</div>
+      <h2>GTM Strategist</h2>
+      <p>Maps founder archetypes to optimal go-to-market strategies. Recommends tool stacks, weekly cadences, and first-30-day experiments tailored to how the pair operates.</p>
+      <span class="tag">Archetype mapping</span><span class="tag">Tool stack</span><span class="tag">Sprint planning</span>
+    </div>
+    <div class="card">
+      <div class="icon">📊</div>
+      <h2>RepoTale Agent</h2>
+      <p>Analyzes GitHub repositories to extract behavioral signals about a founder's working style — commit velocity, architecture quality, collaboration patterns, and technical breadth.</p>
+      <span class="tag">GitHub analysis</span><span class="tag">Velocity scoring</span><span class="tag">Builder archetype</span>
+    </div>
+    <div class="card">
+      <div class="icon">🤝</div>
+      <h2>Matchmaker Agent</h2>
+      <p>Evaluates potential founder pairings based on complementary strengths. Produces match scores, introduction briefs, and recommended first conversation topics.</p>
+      <span class="tag">Match scoring</span><span class="tag">Gap analysis</span><span class="tag">Intro brief</span>
+    </div>
+    <div class="card">
+      <div class="icon">⚡</div>
+      <h2>Executor Agent</h2>
+      <p>Monitors team execution patterns and detects operational bottlenecks. Routes tasks based on founder strengths and forecasts seven-day team velocity trends.</p>
+      <span class="tag">Task routing</span><span class="tag">Bottleneck detection</span><span class="tag">Sprint health</span>
+    </div>
+    <div class="card">
+      <div class="icon">🎯</div>
+      <h2>Coordinator</h2>
+      <p>Orchestrates the full multi-agent pipeline. Delegates to specialized agents in the right order and synthesizes their outputs into a unified founder compatibility report.</p>
+      <span class="tag">Orchestration</span><span class="tag">ag2 AutoPattern</span><span class="tag">Group chat</span>
+    </div>
+  </div>
+</body>
+</html>
