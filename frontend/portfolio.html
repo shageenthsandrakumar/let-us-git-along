@@ -1,66 +1,204 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FounderFit — Agent Portfolio</title>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: system-ui, sans-serif; background: #0a0a0f; color: #e2e8f0; min-height: 100vh; padding: 2rem; }
-    .header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; }
-    h1 { font-size: 1.75rem; font-weight: 800; background: linear-gradient(135deg, #6366f1, #a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
-    .card { background: #13131a; border: 1px solid #1e1e2e; border-radius: 1rem; padding: 1.75rem; }
-    .icon { font-size: 2rem; margin-bottom: 1rem; }
-    .card h2 { font-size: 1.125rem; font-weight: 700; margin-bottom: 0.5rem; }
-    .card p { color: #94a3b8; font-size: 0.875rem; line-height: 1.6; margin-bottom: 1rem; }
-    .tag { display: inline-block; padding: 0.25rem 0.625rem; background: rgba(99,102,241,0.1); border: 1px solid rgba(99,102,241,0.2); border-radius: 9999px; font-size: 0.75rem; color: #818cf8; margin: 0.25rem 0.25rem 0 0; }
-    .back { color: #94a3b8; text-decoration: none; font-size: 0.875rem; }
-    .back:hover { color: #e2e8f0; }
-  </style>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>FounderFit — Agent Portfolio</title>
+<style>
+  :root{--bg:#08080f;--surface:#0f0f1a;--card:#13131f;--border:#1e1e30;--primary:#6366f1;--purple:#a855f7;--text:#e2e8f0;--muted:#64748b;--success:#22c55e}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+  a{text-decoration:none;color:inherit}
+  nav{padding:1.25rem 2rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);position:sticky;top:0;background:rgba(8,8,15,.9);backdrop-filter:blur(12px);z-index:10}
+  .logo{font-weight:800;font-size:1.2rem;background:linear-gradient(135deg,var(--primary),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+  .nav-links{display:flex;gap:1.5rem;align-items:center}
+  .nav-links a{color:var(--muted);font-size:.875rem;transition:color .2s}
+  .nav-links a:hover{color:var(--text)}
+  .nav-cta{padding:.5rem 1.25rem;background:var(--primary);color:#fff!important;border-radius:.5rem;font-weight:600;font-size:.875rem;transition:background .2s}
+  .nav-cta:hover{background:#4f46e5!important}
+  /* HERO */
+  .hero{padding:5rem 2rem 3rem;text-align:center;max-width:700px;margin:0 auto;position:relative}
+  .hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(99,102,241,.15),transparent);pointer-events:none}
+  .hero-badge{display:inline-flex;align-items:center;gap:.5rem;padding:.375rem 1rem;background:rgba(99,102,241,.1);border:1px solid rgba(99,102,241,.3);border-radius:9999px;font-size:.78rem;color:#a5b4fc;margin-bottom:1.5rem}
+  .hero h1{font-size:clamp(2rem,5vw,3rem);font-weight:900;letter-spacing:-.03em;line-height:1.15;margin-bottom:1rem}
+  .hero h1 span{background:linear-gradient(135deg,var(--primary),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+  .hero p{color:var(--muted);font-size:1.05rem;line-height:1.7;margin-bottom:2rem}
+  /* PIPELINE VIZ */
+  .pipeline-viz{max-width:900px;margin:0 auto 4rem;padding:0 2rem}
+  .pipeline-track{display:flex;align-items:center;background:var(--card);border:1px solid var(--border);border-radius:1rem;padding:1.25rem 1.5rem;gap:.5rem;overflow-x:auto}
+  .p-node{display:flex;flex-direction:column;align-items:center;gap:.375rem;flex-shrink:0}
+  .p-icon{width:44px;height:44px;border-radius:.625rem;display:flex;align-items:center;justify-content:center;font-size:1.25rem;background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.2)}
+  .p-name{font-size:.68rem;color:var(--muted);font-weight:600;text-align:center;max-width:60px}
+  .p-arrow{color:var(--border);font-size:1rem;flex-shrink:0;padding:0 .25rem}
+  .pipeline-label{text-align:center;color:var(--muted);font-size:.8rem;margin-top:.875rem}
+  /* MAIN GRID */
+  .main{max-width:1100px;margin:0 auto;padding:0 2rem 5rem}
+  .section-label{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--primary);margin-bottom:.75rem}
+  .section-title{font-size:1.5rem;font-weight:800;margin-bottom:.5rem}
+  .section-sub{color:var(--muted);font-size:.9rem;line-height:1.6;margin-bottom:2rem}
+  /* AGENT CARDS */
+  .agents-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:1.5rem;margin-bottom:4rem}
+  .agent-card{background:var(--card);border:1px solid var(--border);border-radius:1.25rem;padding:2rem;transition:all .3s;position:relative;overflow:hidden}
+  .agent-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--primary),var(--purple));opacity:0;transition:opacity .3s}
+  .agent-card:hover{border-color:rgba(99,102,241,.4);transform:translateY(-3px);box-shadow:0 16px 40px rgba(0,0,0,.4)}
+  .agent-card:hover::before{opacity:1}
+  .agent-header{display:flex;align-items:flex-start;gap:1rem;margin-bottom:1.25rem}
+  .agent-icon{width:52px;height:52px;border-radius:.875rem;display:flex;align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0}
+  .icon-coordinator{background:rgba(99,102,241,.15);border:1px solid rgba(99,102,241,.25)}
+  .icon-compatibility{background:rgba(168,85,247,.15);border:1px solid rgba(168,85,247,.25)}
+  .icon-gtm{background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.2)}
+  .icon-repotale{background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.2)}
+  .icon-matchmaker{background:rgba(236,72,153,.12);border:1px solid rgba(236,72,153,.2)}
+  .icon-executor{background:rgba(14,165,233,.12);border:1px solid rgba(14,165,233,.2)}
+  .agent-meta h2{font-size:1.05rem;font-weight:800;margin-bottom:.25rem}
+  .agent-meta .agent-role{font-size:.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;font-weight:600}
+  .agent-desc{color:var(--muted);font-size:.875rem;line-height:1.7;margin-bottom:1.25rem}
+  .capabilities{margin-bottom:1.25rem}
+  .capabilities h4{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:.625rem}
+  .cap-list{display:flex;flex-wrap:wrap;gap:.375rem}
+  .cap{padding:.25rem .625rem;background:rgba(99,102,241,.08);border:1px solid rgba(99,102,241,.15);border-radius:9999px;font-size:.72rem;color:#a5b4fc}
+  .output-preview{background:var(--surface);border:1px solid var(--border);border-radius:.625rem;padding:1rem;font-family:'SF Mono',monospace;font-size:.72rem;color:#94a3b8;line-height:1.7}
+  .output-preview .key{color:#818cf8}
+  .output-preview .val-str{color:#a5b4fc}
+  .output-preview .val-num{color:#34d399}
+  /* ARCHITECTURE */
+  .arch-section{background:var(--surface);border:1px solid var(--border);border-radius:1.25rem;padding:2.5rem;margin-bottom:4rem}
+  .arch-section h3{font-size:1.1rem;font-weight:800;margin-bottom:.5rem}
+  .arch-section p{color:var(--muted);font-size:.875rem;line-height:1.7;margin-bottom:1.5rem}
+  .arch-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem}
+  .arch-item{background:var(--card);border:1px solid var(--border);border-radius:.75rem;padding:1.25rem}
+  .arch-item h4{font-size:.875rem;font-weight:700;margin-bottom:.375rem}
+  .arch-item p{font-size:.78rem;color:var(--muted);line-height:1.5}
+  .arch-item .tech{display:inline-block;margin-top:.625rem;padding:.2rem .5rem;background:rgba(99,102,241,.1);border-radius:.25rem;font-size:.68rem;color:#818cf8;font-family:monospace}
+  /* CTA */
+  .cta-row{text-align:center;padding:2rem 0}
+  .btn-primary{display:inline-block;padding:.875rem 2.5rem;background:linear-gradient(135deg,var(--primary),var(--purple));color:#fff;border-radius:.75rem;font-weight:700;font-size:1rem;transition:all .2s;box-shadow:0 0 30px rgba(99,102,241,.3)}
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 0 50px rgba(99,102,241,.5)}
+  .btn-secondary{display:inline-block;padding:.875rem 2rem;border:1px solid var(--border);color:var(--muted);border-radius:.75rem;font-weight:600;font-size:1rem;transition:all .2s;margin-left:1rem}
+  .btn-secondary:hover{border-color:var(--primary);color:var(--text)}
+</style>
 </head>
 <body>
-  <div class="header">
-    <h1>Agent Portfolio</h1>
-    <a href="/" class="back">← Home</a>
+<nav>
+  <div class="logo">FounderFit</div>
+  <div class="nav-links">
+    <a href="/">Home</a>
+    <a href="/assessment.html">Assessment</a>
+    <a href="/dashboard.html">Dashboard</a>
+    <a href="/onboarding.html" class="nav-cta">Get Started</a>
   </div>
-  <div class="grid">
-    <div class="card">
-      <div class="icon">🧠</div>
-      <h2>Compatibility Agent</h2>
-      <p>Scores founder pairs across six operational dimensions — decision velocity, risk tolerance, communication style, execution pace, vision alignment, and conflict resolution.</p>
-      <span class="tag">Six-dimension scoring</span><span class="tag">Friction prediction</span><span class="tag">JSON output</span>
+</nav>
+
+<div class="hero">
+  <div class="hero-badge">ag2 Multi-Agent System</div>
+  <h1>Five agents.<br/><span>One compatibility verdict.</span></h1>
+  <p>FounderFit runs a coordinated pipeline of specialized AI agents — each one an expert in a different facet of founder compatibility.</p>
+</div>
+
+<div class="pipeline-viz">
+  <div class="pipeline-track">
+    <div class="p-node"><div class="p-icon">🎯</div><div class="p-name">Coordinator</div></div>
+    <div class="p-arrow">→</div>
+    <div class="p-node"><div class="p-icon">📊</div><div class="p-name">RepoTale</div></div>
+    <div class="p-arrow">→</div>
+    <div class="p-node"><div class="p-icon">🧠</div><div class="p-name">Compatibility</div></div>
+    <div class="p-arrow">→</div>
+    <div class="p-node"><div class="p-icon">🤝</div><div class="p-name">Matchmaker</div></div>
+    <div class="p-arrow">→</div>
+    <div class="p-node"><div class="p-icon">🚀</div><div class="p-name">GTM Strategist</div></div>
+    <div class="p-arrow">→</div>
+    <div class="p-node"><div class="p-icon">⚡</div><div class="p-name">Executor</div></div>
+    <div class="p-arrow">→</div>
+    <div class="p-node"><div class="p-icon" style="background:rgba(34,197,94,.1);border-color:rgba(34,197,94,.2)">📋</div><div class="p-name">Final Report</div></div>
+  </div>
+  <div class="pipeline-label">Each agent runs in sequence, passing enriched context to the next — coordinated by the ag2 AutoPattern group chat</div>
+</div>
+
+<div class="main">
+  <div class="section-label">The agents</div>
+  <div class="section-title">Meet your analysis team</div>
+  <p class="section-sub">Each agent is a specialized ConversableAgent with a tailored system prompt, structured JSON output, and a discrete area of expertise.</p>
+
+  <div class="agents-grid">
+
+    <div class="agent-card">
+      <div class="agent-header">
+        <div class="agent-icon icon-coordinator">🎯</div>
+        <div class="agent-meta"><h2>Coordinator</h2><div class="agent-role">Orchestrator</div></div>
+      </div>
+      <p class="agent-desc">The entry point and synthesizer. The Coordinator receives both founder profiles, delegates to each specialist agent in sequence, and assembles the final unified compatibility report. It runs the ag2 AutoPattern group chat.</p>
+      <div class="capabilities"><h4>Responsibilities</h4><div class="cap-list"><span class="cap">Pipeline orchestration</span><span class="cap">Context passing</span><span class="cap">Report synthesis</span><span class="cap">AutoPattern group chat</span></div></div>
+      <div class="output-preview"><span class="key">"status"</span>: <span class="val-str">"complete"</span>,<br/><span class="key">"agents_invoked"</span>: <span class="val-num">5</span>,<br/><span class="key">"summary"</span>: <span class="val-str">"High compatibility…"</span></div>
     </div>
-    <div class="card">
-      <div class="icon">🚀</div>
-      <h2>GTM Strategist</h2>
-      <p>Maps founder archetypes to optimal go-to-market strategies. Recommends tool stacks, weekly cadences, and first-30-day experiments tailored to how the pair operates.</p>
-      <span class="tag">Archetype mapping</span><span class="tag">Tool stack</span><span class="tag">Sprint planning</span>
+
+    <div class="agent-card">
+      <div class="agent-header">
+        <div class="agent-icon icon-repotale">📊</div>
+        <div class="agent-meta"><h2>RepoTale Agent</h2><div class="agent-role">GitHub Signal Extractor</div></div>
+      </div>
+      <p class="agent-desc">Pulls GitHub repository data and transforms it into behavioral signals. Commit velocity, architecture quality, collaboration patterns, and technical breadth all tell a story about how someone actually works — not how they say they work.</p>
+      <div class="capabilities"><h4>Extracts</h4><div class="cap-list"><span class="cap">Velocity percentile</span><span class="cap">Architecture score</span><span class="cap">Test coverage</span><span class="cap">Collaboration style</span><span class="cap">Builder narrative</span></div></div>
+      <div class="output-preview"><span class="key">"velocity_percentile"</span>: <span class="val-num">87</span>,<br/><span class="key">"archetype"</span>: <span class="val-str">"Rapid Builder"</span>,<br/><span class="key">"consistency_pattern"</span>: <span class="val-str">"burst"</span></div>
     </div>
-    <div class="card">
-      <div class="icon">📊</div>
-      <h2>RepoTale Agent</h2>
-      <p>Analyzes GitHub repositories to extract behavioral signals about a founder's working style — commit velocity, architecture quality, collaboration patterns, and technical breadth.</p>
-      <span class="tag">GitHub analysis</span><span class="tag">Velocity scoring</span><span class="tag">Builder archetype</span>
+
+    <div class="agent-card">
+      <div class="agent-header">
+        <div class="agent-icon icon-compatibility">🧠</div>
+        <div class="agent-meta"><h2>Compatibility Agent</h2><div class="agent-role">Six-Dimension Analyst</div></div>
+      </div>
+      <p class="agent-desc">The core analytical engine. Scores the founder pair across six operational dimensions, identifies the top friction predictions with timeline estimates, and classifies the pair into a GTM archetype. Every score is backed by behavioral reasoning.</p>
+      <div class="capabilities"><h4>Scores</h4><div class="cap-list"><span class="cap">Decision velocity</span><span class="cap">Risk tolerance</span><span class="cap">Communication</span><span class="cap">Execution pace</span><span class="cap">Vision alignment</span><span class="cap">Conflict style</span></div></div>
+      <div class="output-preview"><span class="key">"overall_score"</span>: <span class="val-num">84</span>,<br/><span class="key">"archetype"</span>: <span class="val-str">"Velocity Pair"</span>,<br/><span class="key">"friction_predictions"</span>: [<span class="val-str">…</span>]</div>
     </div>
-    <div class="card">
-      <div class="icon">🤝</div>
-      <h2>Matchmaker Agent</h2>
-      <p>Evaluates potential founder pairings based on complementary strengths. Produces match scores, introduction briefs, and recommended first conversation topics.</p>
-      <span class="tag">Match scoring</span><span class="tag">Gap analysis</span><span class="tag">Intro brief</span>
+
+    <div class="agent-card">
+      <div class="agent-header">
+        <div class="agent-icon icon-matchmaker">🤝</div>
+        <div class="agent-meta"><h2>Matchmaker Agent</h2><div class="agent-role">Pairing Evaluator</div></div>
+      </div>
+      <p class="agent-desc">Evaluates the pairing holistically — not just compatibility but complementarity. Generates an introduction brief, identifies combined strength coverage, flags gaps that remain, and recommends a first sprint type to stress-test the partnership.</p>
+      <div class="capabilities"><h4>Produces</h4><div class="cap-list"><span class="cap">Match score</span><span class="cap">Introduction brief</span><span class="cap">Coverage analysis</span><span class="cap">Sprint recommendation</span><span class="cap">Risk flags</span></div></div>
+      <div class="output-preview"><span class="key">"match_score"</span>: <span class="val-num">79</span>,<br/><span class="key">"match_quality"</span>: <span class="val-str">"Strong"</span>,<br/><span class="key">"recommended_sprint_type"</span>: <span class="val-str">"Validation"</span></div>
     </div>
-    <div class="card">
-      <div class="icon">⚡</div>
-      <h2>Executor Agent</h2>
-      <p>Monitors team execution patterns and detects operational bottlenecks. Routes tasks based on founder strengths and forecasts seven-day team velocity trends.</p>
-      <span class="tag">Task routing</span><span class="tag">Bottleneck detection</span><span class="tag">Sprint health</span>
+
+    <div class="agent-card">
+      <div class="agent-header">
+        <div class="agent-icon icon-gtm">🚀</div>
+        <div class="agent-meta"><h2>GTM Strategist</h2><div class="agent-role">Go-to-Market Planner</div></div>
+      </div>
+      <p class="agent-desc">Maps the founder archetype to the optimal go-to-market motion. Recommends a tool stack, weekly operating cadence, workflow rituals, and a first-30-day experiment roadmap tailored to how this specific pair operates best together.</p>
+      <div class="capabilities"><h4>Recommends</h4><div class="cap-list"><span class="cap">GTM archetype</span><span class="cap">Tool stack</span><span class="cap">Weekly cadence</span><span class="cap">30-day roadmap</span><span class="cap">Workflow rituals</span></div></div>
+      <div class="output-preview"><span class="key">"archetype"</span>: <span class="val-str">"Velocity Pair"</span>,<br/><span class="key">"tool_stack"</span>: [<span class="val-str">…</span>],<br/><span class="key">"first_30_days"</span>: [<span class="val-str">…</span>]</div>
     </div>
-    <div class="card">
-      <div class="icon">🎯</div>
-      <h2>Coordinator</h2>
-      <p>Orchestrates the full multi-agent pipeline. Delegates to specialized agents in the right order and synthesizes their outputs into a unified founder compatibility report.</p>
-      <span class="tag">Orchestration</span><span class="tag">ag2 AutoPattern</span><span class="tag">Group chat</span>
+
+    <div class="agent-card">
+      <div class="agent-header">
+        <div class="agent-icon icon-executor">⚡</div>
+        <div class="agent-meta"><h2>Executor Agent</h2><div class="agent-role">Operational Monitor</div></div>
+      </div>
+      <p class="agent-desc">Detects operational bottlenecks before they become co-founder conflicts. Routes tasks to the right founder based on their strengths, monitors sprint health, and produces a seven-day team velocity forecast with intervention recommendations.</p>
+      <div class="capabilities"><h4>Monitors</h4><div class="cap-list"><span class="cap">Bottleneck detection</span><span class="cap">Task routing</span><span class="cap">Sprint health</span><span class="cap">7-day forecast</span><span class="cap">Interventions</span></div></div>
+      <div class="output-preview"><span class="key">"health_score"</span>: <span class="val-num">72</span>,<br/><span class="key">"status"</span>: <span class="val-str">"At risk"</span>,<br/><span class="key">"bottlenecks"</span>: [<span class="val-str">…</span>]</div>
+    </div>
+
+  </div>
+
+  <!-- ARCHITECTURE -->
+  <div class="arch-section">
+    <h3>How it's built</h3>
+    <p>FounderFit uses ag2's group chat infrastructure to run a coordinated multi-agent pipeline. Each agent is a ConversableAgent with a structured system prompt that enforces JSON output. The AutoPattern routes messages between agents automatically based on context.</p>
+    <div class="arch-grid">
+      <div class="arch-item"><h4>Agent Framework</h4><p>ag2 (formerly AutoGen) ConversableAgent with AutoPattern group chat coordination.</p><span class="tech">ag2[openai]</span></div>
+      <div class="arch-item"><h4>LLM Routing</h4><p>OpenRouter provides access to GPT-4o with automatic fallback and rate limit handling.</p><span class="tech">openrouter.ai</span></div>
+      <div class="arch-item"><h4>API Layer</h4><p>FastAPI with async endpoints, Pydantic validation, and auto-generated Swagger docs.</p><span class="tech">FastAPI</span></div>
+      <div class="arch-item"><h4>GitHub Signals</h4><p>Async GitHub API client extracts commit patterns, language distribution, and collaboration signals.</p><span class="tech">httpx + GitHub API</span></div>
     </div>
   </div>
+
+  <div class="cta-row">
+    <a href="/dashboard.html" class="btn-primary">Run a Compatibility Analysis →</a>
+    <a href="/docs" class="btn-secondary">View API Docs</a>
+  </div>
+</div>
+
 </body>
 </html>

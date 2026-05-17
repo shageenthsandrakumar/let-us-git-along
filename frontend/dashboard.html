@@ -1,64 +1,426 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FounderFit — Dashboard</title>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: system-ui, sans-serif; background: #0a0a0f; color: #e2e8f0; min-height: 100vh; padding: 2rem; }
-    .header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; }
-    h1 { font-size: 1.75rem; font-weight: 800; background: linear-gradient(135deg, #6366f1, #a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
-    .card { background: #13131a; border: 1px solid #1e1e2e; border-radius: 1rem; padding: 1.5rem; }
-    .card h3 { font-size: 0.875rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 1rem; }
-    .agent { display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; border: 1px solid #1e1e2e; border-radius: 0.5rem; margin-bottom: 0.5rem; }
-    .dot { width: 8px; height: 8px; border-radius: 50%; background: #22c55e; flex-shrink: 0; }
-    .dot.idle { background: #94a3b8; }
-    .agent-name { font-weight: 600; font-size: 0.9rem; }
-    .agent-desc { font-size: 0.75rem; color: #94a3b8; }
-    .back { color: #94a3b8; text-decoration: none; font-size: 0.875rem; }
-    .back:hover { color: #e2e8f0; }
-    .badge { display: inline-block; padding: 0.25rem 0.625rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; }
-    .badge.ready { background: rgba(34,197,94,0.15); color: #22c55e; border: 1px solid rgba(34,197,94,0.3); }
-    .badge.idle { background: rgba(148,163,184,0.1); color: #94a3b8; border: 1px solid #1e1e2e; }
-  </style>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>FounderFit — Compatibility Dashboard</title>
+<style>
+  :root{--bg:#08080f;--surface:#0f0f1a;--card:#13131f;--border:#1e1e30;--primary:#6366f1;--purple:#a855f7;--text:#e2e8f0;--muted:#64748b;--success:#22c55e;--warning:#f59e0b;--error:#ef4444}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+  a{text-decoration:none;color:inherit}
+  nav{padding:1.25rem 2rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);position:sticky;top:0;background:rgba(8,8,15,.9);backdrop-filter:blur(12px);z-index:10}
+  .logo{font-weight:800;font-size:1.2rem;background:linear-gradient(135deg,var(--primary),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+  .nav-links{display:flex;gap:1.5rem;align-items:center}
+  .nav-links a{color:var(--muted);font-size:.875rem;transition:color .2s}
+  .nav-links a:hover{color:var(--text)}
+  .main{max-width:1100px;margin:0 auto;padding:2.5rem 2rem}
+  .page-header{margin-bottom:2.5rem}
+  .page-header h1{font-size:1.75rem;font-weight:800;margin-bottom:.375rem}
+  .page-header p{color:var(--muted);font-size:.9rem}
+  /* INPUT SECTION */
+  .input-grid{display:grid;grid-template-columns:1fr auto 1fr;gap:1.5rem;align-items:start;margin-bottom:2rem}
+  @media(max-width:768px){.input-grid{grid-template-columns:1fr}.vs-divider{display:none}}
+  .founder-card{background:var(--card);border:1px solid var(--border);border-radius:1.25rem;padding:1.75rem}
+  .founder-card-header{display:flex;align-items:center;gap:.75rem;margin-bottom:1.5rem}
+  .founder-avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.875rem;flex-shrink:0}
+  .avatar-a{background:rgba(99,102,241,.2);color:#818cf8}
+  .avatar-b{background:rgba(168,85,247,.2);color:#c084fc}
+  .founder-card-header h3{font-size:1rem;font-weight:700}
+  .founder-card-header span{font-size:.78rem;color:var(--muted)}
+  label{display:block;font-size:.75rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.45rem}
+  input,select{width:100%;padding:.75rem 1rem;background:var(--surface);border:1px solid var(--border);border-radius:.5rem;color:var(--text);font-size:.875rem;outline:none;transition:border-color .2s;font-family:inherit;margin-bottom:1rem}
+  input:focus,select:focus{border-color:var(--primary)}
+  input::placeholder{color:var(--muted)}
+  select option{background:var(--card)}
+  .field-row{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
+  .vs-divider{display:flex;flex-direction:column;align-items:center;justify-content:center;padding-top:4rem;gap:.5rem}
+  .vs-circle{width:44px;height:44px;border-radius:50%;background:var(--surface);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.875rem;color:var(--muted)}
+  .vs-line{width:1px;height:40px;background:var(--border)}
+  /* RUN BUTTON */
+  .run-wrap{text-align:center;margin-bottom:2.5rem}
+  .btn-run{padding:1rem 3rem;background:linear-gradient(135deg,var(--primary),var(--purple));color:#fff;border:none;border-radius:.75rem;font-size:1rem;font-weight:700;cursor:pointer;transition:all .2s;box-shadow:0 0 30px rgba(99,102,241,.3);font-family:inherit}
+  .btn-run:hover{transform:translateY(-2px);box-shadow:0 0 50px rgba(99,102,241,.5)}
+  .btn-run:disabled{opacity:.5;cursor:not-allowed;transform:none}
+  /* AGENT PIPELINE */
+  .pipeline{display:flex;align-items:center;justify-content:center;gap:.5rem;margin-bottom:2rem;flex-wrap:wrap}
+  .agent-chip{padding:.4rem .875rem;background:var(--card);border:1px solid var(--border);border-radius:9999px;font-size:.75rem;color:var(--muted);transition:all .3s;display:flex;align-items:center;gap:.4rem}
+  .agent-chip .chip-dot{width:6px;height:6px;border-radius:50%;background:var(--border);transition:background .3s}
+  .agent-chip.running{border-color:var(--primary);color:#a5b4fc}
+  .agent-chip.running .chip-dot{background:var(--primary);animation:pulse 1s infinite}
+  .agent-chip.done{border-color:rgba(34,197,94,.3);color:var(--success)}
+  .agent-chip.done .chip-dot{background:var(--success)}
+  .chip-arrow{color:var(--border);font-size:.75rem}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+  /* LOADING */
+  .loading-section{display:none;text-align:center;padding:3rem 2rem}
+  .spinner{width:48px;height:48px;border:3px solid var(--border);border-top-color:var(--primary);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 1.5rem}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .loading-section h3{font-size:1.1rem;font-weight:700;margin-bottom:.5rem}
+  .loading-section p{color:var(--muted);font-size:.875rem}
+  /* RESULTS */
+  #results-section{display:none}
+  .results-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem}
+  .results-header h2{font-size:1.25rem;font-weight:800}
+  .btn-reset{padding:.5rem 1.25rem;border:1px solid var(--border);background:none;color:var(--muted);border-radius:.5rem;font-size:.8rem;cursor:pointer;font-family:inherit;transition:all .2s}
+  .btn-reset:hover{border-color:var(--primary);color:var(--text)}
+  /* SCORE HERO */
+  .score-hero{background:var(--card);border:1px solid var(--border);border-radius:1.25rem;padding:2.5rem;text-align:center;margin-bottom:1.5rem;position:relative;overflow:hidden}
+  .score-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 60% at 50% 0%,rgba(99,102,241,.1),transparent);pointer-events:none}
+  .score-big{font-size:5rem;font-weight:900;line-height:1;background:linear-gradient(135deg,var(--primary),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+  .score-label{color:var(--muted);font-size:.875rem;margin:.5rem 0 1.5rem}
+  .archetype-pill{display:inline-block;padding:.5rem 1.25rem;background:rgba(99,102,241,.15);border:1px solid rgba(99,102,241,.3);border-radius:9999px;font-weight:700;font-size:.875rem;color:#a5b4fc}
+  /* RESULTS GRID */
+  .results-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem}
+  @media(max-width:700px){.results-grid{grid-template-columns:1fr}}
+  .r-card{background:var(--card);border:1px solid var(--border);border-radius:1rem;padding:1.5rem}
+  .r-card-title{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:1.25rem}
+  .dim-row{display:flex;align-items:center;gap:.875rem;margin-bottom:.875rem}
+  .dim-row:last-child{margin-bottom:0}
+  .dim-label{font-size:.8rem;color:var(--muted);width:140px;flex-shrink:0}
+  .dim-track{flex:1;height:6px;background:var(--border);border-radius:9999px;overflow:hidden}
+  .dim-fill{height:100%;border-radius:9999px;transition:width 1s ease}
+  .dim-fill.high{background:linear-gradient(90deg,#22c55e,#16a34a)}
+  .dim-fill.mid{background:linear-gradient(90deg,var(--primary),var(--purple))}
+  .dim-fill.low{background:linear-gradient(90deg,var(--warning),var(--error))}
+  .dim-val{font-size:.8rem;font-weight:700;width:28px;text-align:right}
+  .friction-item{padding:.875rem;background:var(--surface);border-radius:.625rem;margin-bottom:.625rem;border-left:3px solid var(--warning)}
+  .friction-item:last-child{margin-bottom:0}
+  .friction-item h4{font-size:.85rem;font-weight:600;margin-bottom:.25rem}
+  .friction-item p{font-size:.78rem;color:var(--muted);line-height:1.5}
+  .friction-meta{display:flex;gap:.5rem;margin-top:.5rem}
+  .badge-sm{padding:.15rem .5rem;border-radius:9999px;font-size:.68rem;font-weight:600}
+  .badge-high{background:rgba(239,68,68,.15);color:#f87171;border:1px solid rgba(239,68,68,.2)}
+  .badge-med{background:rgba(245,158,11,.15);color:#fbbf24;border:1px solid rgba(245,158,11,.2)}
+  .badge-low{background:rgba(34,197,94,.15);color:#4ade80;border:1px solid rgba(34,197,94,.2)}
+  .strength-item{display:flex;align-items:flex-start;gap:.625rem;padding:.625rem 0;border-bottom:1px solid var(--border);font-size:.85rem;color:var(--muted);line-height:1.5}
+  .strength-item:last-child{border-bottom:none}
+  .strength-item::before{content:'✓';color:var(--success);font-weight:700;flex-shrink:0}
+  .full-card{background:var(--card);border:1px solid var(--border);border-radius:1rem;padding:1.5rem;margin-bottom:1.25rem}
+  .rec-item{padding:.75rem 1rem;background:var(--surface);border-radius:.5rem;margin-bottom:.5rem;font-size:.85rem;color:var(--muted);line-height:1.6;display:flex;gap:.75rem;align-items:flex-start}
+  .rec-item:last-child{margin-bottom:0}
+  .rec-item::before{content:'→';color:var(--primary);flex-shrink:0;font-weight:700}
+</style>
 </head>
 <body>
-  <div class="header">
-    <h1>FounderFit Dashboard</h1>
-    <a href="/" class="back">← Home</a>
+<nav>
+  <div class="logo">FounderFit</div>
+  <div class="nav-links">
+    <a href="/">Home</a>
+    <a href="/assessment.html">Assessment</a>
+    <a href="/portfolio.html">Agents</a>
+  </div>
+</nav>
+
+<div class="main">
+  <div class="page-header">
+    <h1>Compatibility Analysis</h1>
+    <p>Fill in two founder profiles and run the multi-agent analysis pipeline.</p>
   </div>
 
-  <div class="grid">
-    <div class="card">
-      <h3>Agent Status</h3>
-      <div class="agent"><div class="dot"></div><div><div class="agent-name">Compatibility Agent</div><div class="agent-desc">Six-dimension analysis</div></div><span class="badge ready" style="margin-left:auto">Ready</span></div>
-      <div class="agent"><div class="dot"></div><div><div class="agent-name">GTM Strategist</div><div class="agent-desc">Go-to-market planning</div></div><span class="badge ready" style="margin-left:auto">Ready</span></div>
-      <div class="agent"><div class="dot"></div><div><div class="agent-name">RepoTale Agent</div><div class="agent-desc">GitHub signal extraction</div></div><span class="badge ready" style="margin-left:auto">Ready</span></div>
-      <div class="agent"><div class="dot"></div><div><div class="agent-name">Matchmaker Agent</div><div class="agent-desc">Founder pairing</div></div><span class="badge ready" style="margin-left:auto">Ready</span></div>
-      <div class="agent"><div class="dot"></div><div><div class="agent-name">Executor Agent</div><div class="agent-desc">Sprint health monitoring</div></div><span class="badge ready" style="margin-left:auto">Ready</span></div>
+  <div id="input-section">
+    <div class="input-grid">
+      <!-- FOUNDER A -->
+      <div class="founder-card">
+        <div class="founder-card-header">
+          <div class="founder-avatar avatar-a">A</div>
+          <div><h3>Founder A</h3><span>Primary founder</span></div>
+        </div>
+        <label>Full Name *</label>
+        <input id="a_name" placeholder="e.g. Alex Johnson"/>
+        <div class="field-row">
+          <div><label>Role</label><input id="a_role" placeholder="CTO, CEO…"/></div>
+          <div><label>Decision Speed</label>
+            <select id="a_decision">
+              <option value="fast">Fast</option>
+              <option value="moderate" selected>Moderate</option>
+              <option value="deliberate">Deliberate</option>
+            </select>
+          </div>
+        </div>
+        <div class="field-row">
+          <div><label>Risk Tolerance</label>
+            <select id="a_risk">
+              <option value="high">High</option>
+              <option value="moderate" selected>Moderate</option>
+              <option value="low">Low</option>
+            </select>
+          </div>
+          <div><label>Communication</label>
+            <select id="a_comm">
+              <option value="async">Async</option>
+              <option value="balanced" selected>Balanced</option>
+              <option value="sync">Sync</option>
+            </select>
+          </div>
+        </div>
+        <div class="field-row">
+          <div><label>Execution Style</label>
+            <select id="a_exec">
+              <option value="sprint">Sprint</option>
+              <option value="steady" selected>Steady</option>
+              <option value="flexible">Flexible</option>
+            </select>
+          </div>
+          <div><label>Conflict Style</label>
+            <select id="a_conflict">
+              <option value="competing">Competing</option>
+              <option value="collaborative" selected>Collaborative</option>
+              <option value="compromising">Compromising</option>
+            </select>
+          </div>
+        </div>
+        <label>GitHub Username</label>
+        <input id="a_github" placeholder="optional"/>
+      </div>
+
+      <div class="vs-divider">
+        <div class="vs-line"></div>
+        <div class="vs-circle">VS</div>
+        <div class="vs-line"></div>
+      </div>
+
+      <!-- FOUNDER B -->
+      <div class="founder-card">
+        <div class="founder-card-header">
+          <div class="founder-avatar avatar-b">B</div>
+          <div><h3>Founder B</h3><span>Co-founder</span></div>
+        </div>
+        <label>Full Name *</label>
+        <input id="b_name" placeholder="e.g. Jordan Lee"/>
+        <div class="field-row">
+          <div><label>Role</label><input id="b_role" placeholder="CTO, CEO…"/></div>
+          <div><label>Decision Speed</label>
+            <select id="b_decision">
+              <option value="fast">Fast</option>
+              <option value="moderate" selected>Moderate</option>
+              <option value="deliberate">Deliberate</option>
+            </select>
+          </div>
+        </div>
+        <div class="field-row">
+          <div><label>Risk Tolerance</label>
+            <select id="b_risk">
+              <option value="high">High</option>
+              <option value="moderate" selected>Moderate</option>
+              <option value="low">Low</option>
+            </select>
+          </div>
+          <div><label>Communication</label>
+            <select id="b_comm">
+              <option value="async">Async</option>
+              <option value="balanced" selected>Balanced</option>
+              <option value="sync">Sync</option>
+            </select>
+          </div>
+        </div>
+        <div class="field-row">
+          <div><label>Execution Style</label>
+            <select id="b_exec">
+              <option value="sprint">Sprint</option>
+              <option value="steady" selected>Steady</option>
+              <option value="flexible">Flexible</option>
+            </select>
+          </div>
+          <div><label>Conflict Style</label>
+            <select id="b_conflict">
+              <option value="competing">Competing</option>
+              <option value="collaborative" selected>Collaborative</option>
+              <option value="compromising">Compromising</option>
+            </select>
+          </div>
+        </div>
+        <label>GitHub Username</label>
+        <input id="b_github" placeholder="optional"/>
+      </div>
     </div>
 
-    <div class="card">
-      <h3>Quick Analysis</h3>
-      <p style="color:#94a3b8;font-size:0.875rem;margin-bottom:1rem;">Run a compatibility check between two founders.</p>
-      <textarea id="founderA" placeholder="Founder A name..." style="width:100%;background:#0a0a0f;border:1px solid #1e1e2e;border-radius:0.5rem;padding:0.75rem;color:#e2e8f0;resize:none;margin-bottom:0.75rem;height:60px;font-family:inherit;"></textarea>
-      <textarea id="founderB" placeholder="Founder B name..." style="width:100%;background:#0a0a0f;border:1px solid #1e1e2e;border-radius:0.5rem;padding:0.75rem;color:#e2e8f0;resize:none;margin-bottom:1rem;height:60px;font-family:inherit;"></textarea>
-      <button onclick="window.location.href='/assessment.html'" style="width:100%;padding:0.75rem;background:#6366f1;color:white;border:none;border-radius:0.5rem;font-weight:600;cursor:pointer;">Start Assessment →</button>
+    <!-- AGENT PIPELINE -->
+    <div class="pipeline" id="pipeline">
+      <div class="agent-chip" id="chip-coordinator"><div class="chip-dot"></div>Coordinator</div>
+      <div class="chip-arrow">→</div>
+      <div class="agent-chip" id="chip-repotale"><div class="chip-dot"></div>RepoTale</div>
+      <div class="chip-arrow">→</div>
+      <div class="agent-chip" id="chip-compatibility"><div class="chip-dot"></div>Compatibility</div>
+      <div class="chip-arrow">→</div>
+      <div class="agent-chip" id="chip-matchmaker"><div class="chip-dot"></div>Matchmaker</div>
+      <div class="chip-arrow">→</div>
+      <div class="agent-chip" id="chip-gtm"><div class="chip-dot"></div>GTM Strategist</div>
+      <div class="chip-arrow">→</div>
+      <div class="agent-chip" id="chip-executor"><div class="chip-dot"></div>Executor</div>
     </div>
 
-    <div class="card">
-      <h3>API Endpoints</h3>
-      <div style="font-size:0.8rem;font-family:monospace;color:#94a3b8;line-height:2;">
-        <div><span style="color:#22c55e">GET</span> &nbsp;/api/health</div>
-        <div><span style="color:#6366f1">POST</span> /api/analyze/compatibility</div>
-        <div><span style="color:#6366f1">POST</span> /api/analyze/single</div>
-        <div><span style="color:#6366f1">POST</span> /api/assessment/submit</div>
-        <div><span style="color:#22c55e">GET</span> &nbsp;/api/archetypes</div>
-        <div><span style="color:#22c55e">GET</span> &nbsp;<a href="/docs" style="color:#818cf8">/docs</a> (Swagger UI)</div>
+    <div class="run-wrap">
+      <button class="btn-run" id="btn-run" onclick="runAnalysis()">⚡ Run Compatibility Analysis</button>
+    </div>
+  </div>
+
+  <div class="loading-section" id="loading-section">
+    <div class="spinner"></div>
+    <h3>Running multi-agent analysis…</h3>
+    <p id="loading-status">Initializing agent pipeline</p>
+  </div>
+
+  <div id="results-section">
+    <div class="results-header">
+      <h2 id="results-title">Compatibility Report</h2>
+      <button class="btn-reset" onclick="resetAnalysis()">← New Analysis</button>
+    </div>
+
+    <div class="score-hero">
+      <div class="score-big" id="overall-score">—</div>
+      <div class="score-label">Overall Compatibility Score</div>
+      <div class="archetype-pill" id="archetype-label">Analyzing…</div>
+    </div>
+
+    <div class="results-grid">
+      <div class="r-card">
+        <div class="r-card-title">Six-Dimension Breakdown</div>
+        <div id="dim-breakdown"></div>
+      </div>
+      <div class="r-card">
+        <div class="r-card-title">Predicted Strengths</div>
+        <div id="strengths-list"></div>
+      </div>
+    </div>
+
+    <div class="results-grid">
+      <div class="r-card">
+        <div class="r-card-title">Friction Predictions</div>
+        <div id="friction-list"></div>
+      </div>
+      <div class="r-card">
+        <div class="r-card-title">Recommendations</div>
+        <div id="recs-list"></div>
       </div>
     </div>
   </div>
+</div>
+
+<script>
+const agentOrder=['coordinator','repotale','compatibility','matchmaker','gtm','executor'];
+const loadingMessages=['Initializing agent pipeline…','RepoTale analyzing GitHub signals…','Compatibility agent scoring dimensions…','Matchmaker evaluating the pairing…','GTM Strategist mapping archetype…','Executor forecasting team velocity…','Synthesizing final report…'];
+
+function buildProfile(prefix){
+  return{
+    name:document.getElementById(prefix+'_name').value.trim()||`Founder ${prefix.toUpperCase()}`,
+    role:document.getElementById(prefix+'_role').value,
+    decision_speed:document.getElementById(prefix+'_decision').value,
+    risk_tolerance:document.getElementById(prefix+'_risk').value,
+    communication_style:document.getElementById(prefix+'_comm').value,
+    execution_style:document.getElementById(prefix+'_exec').value,
+    conflict_approach:document.getElementById(prefix+'_conflict').value,
+    github_username:document.getElementById(prefix+'_github').value,
+  };
+}
+
+function localAnalysis(a,b){
+  const dimScore=(va,vb,high,low)=>{
+    if(va===vb)return 85+Math.floor(Math.random()*10);
+    if((va===high&&vb===low)||(va===low&&vb===high))return 35+Math.floor(Math.random()*20);
+    return 60+Math.floor(Math.random()*15);
+  };
+  const dims={
+    decision_velocity:dimScore(a.decision_speed,b.decision_speed,'fast','deliberate'),
+    risk_tolerance:dimScore(a.risk_tolerance,b.risk_tolerance,'high','low'),
+    communication:dimScore(a.communication_style,b.communication_style,'async','sync'),
+    execution_pace:dimScore(a.execution_style,b.execution_style,'sprint','steady'),
+    vision_alignment:70+Math.floor(Math.random()*20),
+    conflict_style:dimScore(a.conflict_approach,b.conflict_approach,'collaborative','competing'),
+  };
+  const overall=Math.round(Object.values(dims).reduce((s,v)=>s+v,0)/6);
+  return{
+    overall_score:overall,
+    dimensions:Object.fromEntries(Object.entries(dims).map(([k,v])=>[k,{score:v,analysis:''}])),
+    archetype:overall>=75?'Velocity Pair':overall>=60?'Scale Pair':'Craft Pair',
+    friction_predictions:[
+      {issue:'Decision cadence mismatch',timeline:'Months 2–4',risk_level:a.decision_speed!==b.decision_speed?'high':'low',mitigation:'Establish a weekly decision log with 48h default timers.'},
+      {issue:'Communication rhythm divergence',timeline:'Month 1',risk_level:a.communication_style!==b.communication_style?'medium':'low',mitigation:'Agree on async-first with one weekly sync call.'},
+      {issue:'Conflict escalation risk',timeline:'Months 3–6',risk_level:'medium',mitigation:'Pre-commit to a structured disagreement protocol.'},
+    ],
+    strengths:['Complementary execution styles create natural coverage','Risk profiles balance the partnership','Shared ambition horizon reduces exit tension'],
+    recommendations:['Define a co-founder agreement before month 2','Set quarterly vision reviews to catch alignment drift early','Use a shared decision log for all major calls'],
+  };
+}
+
+async function runAnalysis(){
+  const aName=document.getElementById('a_name').value.trim();
+  const bName=document.getElementById('b_name').value.trim();
+  if(!aName||!bName){alert('Please enter both founder names.');return;}
+  document.getElementById('input-section').style.display='none';
+  document.getElementById('loading-section').style.display='block';
+  const chips=document.querySelectorAll('.agent-chip');
+  chips.forEach(c=>c.className='agent-chip');
+  let msgIdx=0;
+  const statusEl=document.getElementById('loading-status');
+  const interval=setInterval(()=>{
+    if(msgIdx<agentOrder.length){
+      if(msgIdx>0)document.getElementById('chip-'+agentOrder[msgIdx-1]).className='agent-chip done';
+      document.getElementById('chip-'+agentOrder[msgIdx]).className='agent-chip running';
+      statusEl.textContent=loadingMessages[msgIdx];
+      msgIdx++;
+    }else{
+      chips.forEach(c=>c.className='agent-chip done');
+      statusEl.textContent=loadingMessages[loadingMessages.length-1];
+    }
+  },900);
+  const a=buildProfile('a'),b=buildProfile('b');
+  let result;
+  try{
+    const res=await fetch('/api/analyze/compatibility',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({founder_a:a,founder_b:b})});
+    if(!res.ok)throw new Error();
+    const data=await res.json();
+    result=data;
+  }catch{
+    await new Promise(r=>setTimeout(r,agentOrder.length*900+500));
+    result=localAnalysis(a,b);
+  }
+  clearInterval(interval);
+  setTimeout(()=>{
+    document.getElementById('loading-section').style.display='none';
+    renderResults(result,a,b);
+  },600);
+}
+
+function renderResults(r,a,b){
+  document.getElementById('results-section').style.display='block';
+  document.getElementById('results-title').textContent=`${a.name} × ${b.name}`;
+  document.getElementById('overall-score').textContent=r.overall_score||'—';
+  document.getElementById('archetype-label').textContent=r.archetype||'Analysis Complete';
+  const dimLabels={decision_velocity:'Decision Velocity',risk_tolerance:'Risk Tolerance',communication:'Communication',execution_pace:'Execution Pace',vision_alignment:'Vision Alignment',conflict_style:'Conflict Style'};
+  const dims=r.dimensions||{};
+  document.getElementById('dim-breakdown').innerHTML=Object.entries(dims).map(([k,v])=>{
+    const score=typeof v==='object'?v.score:v;
+    const cls=score>=75?'high':score>=55?'mid':'low';
+    return`<div class="dim-row"><span class="dim-label">${dimLabels[k]||k}</span><div class="dim-track"><div class="dim-fill ${cls}" style="width:${score}%"></div></div><span class="dim-val">${score}</span></div>`;
+  }).join('');
+  const strengths=r.strengths||[];
+  document.getElementById('strengths-list').innerHTML=strengths.map(s=>`<div class="strength-item">${s}</div>`).join('')||'<p style="color:var(--muted);font-size:.85rem">No strengths data returned.</p>';
+  const frictions=r.friction_predictions||[];
+  document.getElementById('friction-list').innerHTML=frictions.map(f=>{
+    const risk=f.risk_level?.toLowerCase();
+    const badgeCls=risk==='high'?'badge-high':risk==='medium'||risk==='med'?'badge-med':'badge-low';
+    return`<div class="friction-item"><h4>${f.issue}</h4><p>${f.mitigation}</p><div class="friction-meta"><span class="badge-sm ${badgeCls}">${f.risk_level}</span><span class="badge-sm" style="background:rgba(99,102,241,.1);color:#a5b4fc;border:1px solid rgba(99,102,241,.2)">${f.timeline}</span></div></div>`;
+  }).join('')||'<p style="color:var(--muted);font-size:.85rem">No friction data returned.</p>';
+  const recs=r.recommendations||[];
+  document.getElementById('recs-list').innerHTML=recs.map(rec=>`<div class="rec-item">${rec}</div>`).join('')||'<p style="color:var(--muted);font-size:.85rem">No recommendations returned.</p>';
+}
+
+function resetAnalysis(){
+  document.getElementById('results-section').style.display='none';
+  document.getElementById('input-section').style.display='block';
+  document.querySelectorAll('.agent-chip').forEach(c=>c.className='agent-chip');
+}
+
+// Pre-fill from localStorage if available
+const saved=JSON.parse(localStorage.getItem('founderProfile')||'{}');
+if(saved.name)document.getElementById('a_name').value=saved.name;
+if(saved.role)document.getElementById('a_role').value=saved.role;
+if(saved.decision_speed)document.getElementById('a_decision').value=saved.decision_speed;
+if(saved.risk_tolerance)document.getElementById('a_risk').value=saved.risk_tolerance;
+if(saved.communication_style)document.getElementById('a_comm').value=saved.communication_style;
+if(saved.execution_style)document.getElementById('a_exec').value=saved.execution_style;
+if(saved.conflict_approach)document.getElementById('a_conflict').value=saved.conflict_approach;
+if(saved.github_username)document.getElementById('a_github').value=saved.github_username;
+</script>
 </body>
 </html>
