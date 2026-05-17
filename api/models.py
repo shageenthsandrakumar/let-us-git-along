@@ -5,6 +5,7 @@ class FounderProfile(BaseModel):
     name: str
     email: str | None = None
     role: str | None = None
+    # Core 6 dimensions
     decision_speed: str = "moderate"
     risk_tolerance: str = "moderate"
     communication_style: str = "balanced"
@@ -13,7 +14,13 @@ class FounderProfile(BaseModel):
     leadership_style: str | None = None
     ambition_level: str = "high"
     time_commitment: str = "full_time"
-    domain_expertise: list[str] = []
+    # 4 new dimensions (PRD spec)
+    tooling_affinity: str = "pragmatic"        # heavy | pragmatic | minimal
+    domain_expertise: str = "generalist"       # generalist | specialist | collaborative
+    ownership_philosophy: str = "flexible"     # equal | merit | flexible
+    gtm_orientation: str = "product_led"       # product_led | sales_led | community_led
+    # Optional enrichment
+    domain_expertise_list: list[str] = []
     tool_preferences: list[str] = []
     github_username: str | None = None
     linkedin_url: str | None = None

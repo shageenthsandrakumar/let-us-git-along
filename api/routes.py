@@ -78,14 +78,34 @@ def _classify_archetype(profile: FounderProfile) -> str:
         scores["vision_architect"] += 1; scores["systems_operator"] += 1
     elif profile.communication_style == "sync":
         scores["rapid_builder"] += 1; scores["growth_hunter"] += 1
+    if profile.gtm_orientation == "product_led":
+        scores["product_strategist"] += 2; scores["growth_hunter"] += 1
+    elif profile.gtm_orientation == "sales_led":
+        scores["growth_hunter"] += 2
+    if profile.tooling_affinity == "heavy":
+        scores["systems_operator"] += 2
+    elif profile.tooling_affinity == "minimal":
+        scores["experimental_hacker"] += 1; scores["rapid_builder"] += 1
+    if profile.domain_expertise == "specialist":
+        scores["systems_operator"] += 1; scores["vision_architect"] += 1
+    elif profile.domain_expertise == "generalist":
+        scores["experimental_hacker"] += 1; scores["rapid_builder"] += 1
+    if profile.execution_style == "sprint":
+        scores["rapid_builder"] += 1; scores["growth_hunter"] += 1
+    elif profile.execution_style == "steady":
+        scores["systems_operator"] += 2
     return max(scores, key=scores.get)
 
 def _score_dimensions(profile: FounderProfile) -> dict:
     return {
-        "decision_velocity": 75 if profile.decision_speed == "fast" else 45,
-        "risk_tolerance": 80 if profile.risk_tolerance == "high" else 40,
-        "communication": 70,
-        "execution_pace": 85 if profile.execution_style == "sprint" else 55,
-        "vision_alignment": 70,
-        "conflict_style": 65,
+        "Execution Style": 85 if profile.execution_style == "fast" else 55 if profile.execution_style == "steady" else 68,
+        "Communication Cadence": 80 if profile.communication_style == "async" else 65 if profile.communication_style == "sync" else 72,
+        "Decision-Making": 80 if profile.decision_speed == "fast" else 45 if profile.decision_speed == "deliberate" else 62,
+        "Risk Posture": 85 if profile.risk_tolerance == "high" else 40 if profile.risk_tolerance == "low" else 62,
+        "Conflict Resolution": 82 if profile.conflict_approach == "collaborative" else 65 if profile.conflict_approach == "compromising" else 52,
+        "Tooling Affinity": 75 if profile.tooling_affinity == "pragmatic" else 60 if profile.tooling_affinity == "heavy" else 70,
+        "Domain Coverage": 82 if profile.domain_expertise == "specialist" else 70 if profile.domain_expertise == "collaborative" else 65,
+        "Time & Energy": 78 if profile.time_commitment == "full_time" else 55 if profile.time_commitment == "part_time" else 65,
+        "Ownership Philosophy": 80 if profile.ownership_philosophy == "flexible" else 70,
+        "GTM Orientation": 78 if profile.gtm_orientation == "product_led" else 72 if profile.gtm_orientation == "sales_led" else 70,
     }

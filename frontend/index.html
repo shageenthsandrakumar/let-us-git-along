@@ -1,202 +1,422 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>FounderFit — Find Your Perfect Co-Founder</title>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FounderFit — Founder Intelligence Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  :root{--bg:#08080f;--surface:#0f0f1a;--card:#13131f;--border:#1e1e30;--primary:#6366f1;--purple:#a855f7;--text:#e2e8f0;--muted:#64748b;--success:#22c55e}
-  *{margin:0;padding:0;box-sizing:border-box}
-  html{scroll-behavior:smooth}
-  body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden}
-  a{text-decoration:none;color:inherit}
-  /* NAV */
-  nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:1rem 2rem;display:flex;align-items:center;justify-content:space-between;background:rgba(8,8,15,0.8);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
-  .logo{font-weight:800;font-size:1.25rem;background:linear-gradient(135deg,var(--primary),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-  .nav-links{display:flex;align-items:center;gap:2rem}
-  .nav-links a{color:var(--muted);font-size:0.9rem;transition:color .2s}
-  .nav-links a:hover{color:var(--text)}
-  .nav-cta{padding:.5rem 1.25rem;background:var(--primary);border-radius:.5rem;font-size:.875rem;font-weight:600;transition:background .2s}
-  .nav-cta:hover{background:#4f46e5}
-  /* HERO */
-  .hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:8rem 2rem 4rem;position:relative;overflow:hidden}
-  .hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 50% at 50% -20%,rgba(99,102,241,.25),transparent);pointer-events:none}
-  .hero::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 40% at 80% 80%,rgba(168,85,247,.1),transparent);pointer-events:none}
-  .hero-badge{display:inline-flex;align-items:center;gap:.5rem;padding:.375rem 1rem;background:rgba(99,102,241,.1);border:1px solid rgba(99,102,241,.3);border-radius:9999px;font-size:.8rem;color:#a5b4fc;margin-bottom:2rem}
-  .hero-badge span{width:6px;height:6px;background:var(--success);border-radius:50%;display:inline-block}
-  h1{font-size:clamp(2.5rem,6vw,4.5rem);font-weight:900;line-height:1.1;letter-spacing:-.03em;margin-bottom:1.5rem;max-width:900px}
-  h1 .grad{background:linear-gradient(135deg,#818cf8,#a855f7,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-  .hero-sub{font-size:clamp(1rem,2vw,1.25rem);color:var(--muted);max-width:600px;line-height:1.7;margin-bottom:3rem}
-  .hero-actions{display:flex;gap:1rem;flex-wrap:wrap;justify-content:center}
-  .btn-primary{padding:.875rem 2rem;background:var(--primary);color:#fff;border-radius:.625rem;font-weight:700;font-size:1rem;transition:all .2s;box-shadow:0 0 30px rgba(99,102,241,.3)}
-  .btn-primary:hover{background:#4f46e5;transform:translateY(-1px);box-shadow:0 0 40px rgba(99,102,241,.5)}
-  .btn-secondary{padding:.875rem 2rem;border:1px solid var(--border);color:var(--muted);border-radius:.625rem;font-weight:600;font-size:1rem;transition:all .2s}
-  .btn-secondary:hover{border-color:var(--primary);color:var(--text)}
-  .hero-stats{display:flex;gap:3rem;margin-top:4rem;padding-top:4rem;border-top:1px solid var(--border)}
-  .stat{text-align:center}
-  .stat-num{font-size:2rem;font-weight:800;background:linear-gradient(135deg,var(--primary),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-  .stat-label{font-size:.8rem;color:var(--muted);margin-top:.25rem}
-  /* SECTIONS */
-  section{padding:6rem 2rem}
-  .section-inner{max-width:1100px;margin:0 auto}
-  .section-label{font-size:.8rem;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:var(--primary);margin-bottom:1rem}
-  .section-title{font-size:clamp(1.75rem,4vw,2.75rem);font-weight:800;letter-spacing:-.02em;margin-bottom:1rem;line-height:1.2}
-  .section-sub{color:var(--muted);font-size:1.05rem;max-width:560px;line-height:1.7}
-  /* HOW IT WORKS */
-  .steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1.5rem;margin-top:3rem}
-  .step{background:var(--card);border:1px solid var(--border);border-radius:1rem;padding:2rem;position:relative;transition:border-color .3s}
-  .step:hover{border-color:rgba(99,102,241,.4)}
-  .step-num{font-size:3rem;font-weight:900;background:linear-gradient(135deg,var(--primary),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1;margin-bottom:1rem}
-  .step h3{font-size:1.1rem;font-weight:700;margin-bottom:.5rem}
-  .step p{color:var(--muted);font-size:.9rem;line-height:1.6}
-  /* DIMENSIONS */
-  .dims-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1rem;margin-top:3rem}
-  .dim-card{background:var(--card);border:1px solid var(--border);border-radius:.875rem;padding:1.5rem;display:flex;gap:1rem;align-items:flex-start;transition:border-color .3s}
-  .dim-card:hover{border-color:rgba(99,102,241,.4)}
-  .dim-icon{width:40px;height:40px;border-radius:.5rem;background:rgba(99,102,241,.15);display:flex;align-items:center;justify-content:center;font-size:1.25rem;flex-shrink:0}
-  .dim-card h4{font-size:.95rem;font-weight:700;margin-bottom:.25rem}
-  .dim-card p{color:var(--muted);font-size:.82rem;line-height:1.6}
-  /* ARCHETYPES */
-  .arch-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.25rem;margin-top:3rem}
-  .arch-card{background:var(--card);border:1px solid var(--border);border-radius:1rem;padding:1.75rem;transition:all .3s;cursor:default}
-  .arch-card:hover{border-color:rgba(99,102,241,.5);transform:translateY(-2px);box-shadow:0 10px 40px rgba(0,0,0,.4)}
-  .arch-emoji{font-size:2rem;margin-bottom:1rem}
-  .arch-card h3{font-size:1rem;font-weight:700;margin-bottom:.5rem}
-  .arch-card p{color:var(--muted);font-size:.85rem;line-height:1.6;margin-bottom:1rem}
-  .arch-tags{display:flex;flex-wrap:wrap;gap:.375rem}
-  .tag{padding:.2rem .6rem;background:rgba(99,102,241,.1);border:1px solid rgba(99,102,241,.2);border-radius:9999px;font-size:.72rem;color:#a5b4fc}
-  /* CTA */
-  .cta-section{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
-  .cta-inner{text-align:center;padding:5rem 2rem}
-  .cta-inner h2{font-size:clamp(1.75rem,4vw,3rem);font-weight:900;letter-spacing:-.02em;margin-bottom:1rem}
-  .cta-inner p{color:var(--muted);font-size:1.1rem;margin-bottom:2.5rem}
-  /* FOOTER */
-  footer{padding:3rem 2rem;text-align:center;color:var(--muted);font-size:.85rem;border-top:1px solid var(--border)}
-  footer .footer-links{display:flex;justify-content:center;gap:2rem;margin-bottom:1.5rem}
-  footer .footer-links a{color:var(--muted);transition:color .2s}
-  footer .footer-links a:hover{color:var(--text)}
-  /* FLOAT CARDS */
-  .float-preview{margin-top:4rem;position:relative;max-width:800px;width:100%}
-  .preview-card{background:var(--card);border:1px solid var(--border);border-radius:1.25rem;padding:2rem;text-align:left}
-  .preview-header{display:flex;align-items:center;gap:.75rem;margin-bottom:1.5rem}
-  .preview-dot{width:10px;height:10px;border-radius:50%;background:var(--success)}
-  .preview-title{font-size:.875rem;font-weight:600;color:var(--muted)}
-  .compat-score{font-size:4rem;font-weight:900;background:linear-gradient(135deg,var(--primary),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;text-align:center;margin-bottom:1.5rem}
-  .compat-label{text-align:center;color:var(--muted);font-size:.9rem;margin-top:-.75rem;margin-bottom:1.5rem}
-  .dim-rows{display:flex;flex-direction:column;gap:.75rem}
-  .dim-row{display:flex;align-items:center;gap:1rem}
-  .dim-row-label{font-size:.8rem;color:var(--muted);width:140px;flex-shrink:0}
-  .dim-bar{flex:1;height:6px;background:var(--border);border-radius:9999px;overflow:hidden}
-  .dim-bar-fill{height:100%;border-radius:9999px;background:linear-gradient(90deg,var(--primary),var(--purple))}
-  .dim-row-score{font-size:.8rem;font-weight:600;width:30px;text-align:right}
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg-primary:#08080c;--bg-secondary:#0f0f14;--bg-card:#13131a;--bg-elevated:#1a1a24;
+  --border:#1e1e2a;--border-subtle:#16161f;
+  --text-primary:#f0f0f4;--text-secondary:#8a8a9a;--text-muted:#5a5a6a;
+  --accent-blue:#4f7cff;--accent-purple:#8b5cf6;--accent-cyan:#06b6d4;
+  --accent-emerald:#10b981;--accent-amber:#f59e0b;--accent-rose:#f43f5e;
+  --gradient-1:linear-gradient(135deg,#4f7cff 0%,#8b5cf6 100%);
+  --gradient-2:linear-gradient(135deg,#06b6d4 0%,#10b981 100%);
+  --gradient-3:linear-gradient(135deg,#8b5cf6 0%,#f43f5e 100%);
+}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg-primary);color:var(--text-primary);line-height:1.6;overflow-x:hidden}
+body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;opacity:.015;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");z-index:0}
+a{text-decoration:none;color:inherit}
+/* NAV */
+.nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:16px 40px;display:flex;align-items:center;justify-content:space-between;backdrop-filter:blur(20px);background:rgba(8,8,12,.8);border-bottom:1px solid var(--border-subtle)}
+.nav-logo{font-size:18px;font-weight:600;letter-spacing:-.5px;background:var(--gradient-1);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.nav-links{display:flex;gap:28px;list-style:none;align-items:center}
+.nav-links a{color:var(--text-secondary);font-size:13px;font-weight:400;transition:color .2s}
+.nav-links a:hover{color:var(--text-primary)}
+.nav-cta{padding:8px 18px;background:var(--gradient-1);border-radius:6px;font-size:13px;font-weight:500;color:#fff!important;transition:opacity .2s}
+.nav-cta:hover{opacity:.85}
+/* SCROLL PROGRESS */
+.scroll-progress{position:fixed;top:0;left:0;height:2px;background:var(--gradient-1);z-index:200;transition:width .1s}
+/* SECTIONS */
+section{min-height:100vh;padding:120px 40px;display:flex;flex-direction:column;justify-content:center;max-width:1200px;margin:0 auto;opacity:0;transform:translateY(40px);transition:opacity .8s ease,transform .8s ease}
+section.visible{opacity:1;transform:translateY(0)}
+/* HERO */
+.hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;position:relative}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;padding:6px 14px;border-radius:20px;border:1px solid var(--border);background:var(--bg-card);font-size:12px;color:var(--text-secondary);margin-bottom:32px}
+.hero-badge::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--accent-emerald);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.hero h1{font-size:clamp(48px,7vw,80px);font-weight:700;letter-spacing:-2px;line-height:1.05;margin-bottom:24px;max-width:800px}
+.hero h1 span{background:var(--gradient-1);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero-sub{font-size:18px;color:var(--text-secondary);max-width:560px;line-height:1.7;margin-bottom:48px}
+.hero-actions{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+.hero-cta{display:inline-flex;align-items:center;gap:8px;padding:14px 28px;border-radius:8px;background:var(--gradient-1);color:white;font-size:14px;font-weight:500;transition:transform .2s,box-shadow .2s}
+.hero-cta:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(79,124,255,.3)}
+.hero-cta-sec{display:inline-flex;align-items:center;gap:8px;padding:14px 28px;border-radius:8px;border:1px solid var(--border);color:var(--text-secondary);font-size:14px;font-weight:500;transition:all .2s}
+.hero-cta-sec:hover{border-color:var(--accent-blue);color:var(--text-primary)}
+/* SECTION HEADERS */
+.section-label{font-size:11px;text-transform:uppercase;letter-spacing:2px;color:var(--accent-blue);margin-bottom:16px;font-weight:500}
+.section-title{font-size:clamp(32px,4vw,48px);font-weight:700;letter-spacing:-1.5px;margin-bottom:16px;line-height:1.1}
+.section-desc{font-size:16px;color:var(--text-secondary);max-width:600px;margin-bottom:48px;line-height:1.7}
+/* CARDS */
+.cards-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px;width:100%}
+.card{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:28px;transition:border-color .3s,transform .3s}
+.card:hover{border-color:var(--accent-blue);transform:translateY(-4px)}
+.card-icon{width:40px;height:40px;border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:16px;font-size:18px}
+.card h3{font-size:16px;font-weight:600;margin-bottom:8px}
+.card p{font-size:14px;color:var(--text-secondary);line-height:1.6}
+/* FAILURE CARDS */
+.failure-card{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:24px;position:relative;overflow:hidden}
+.failure-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--accent-rose);opacity:.6}
+.failure-stat{font-size:28px;font-weight:700;color:var(--accent-rose);margin-bottom:8px}
+/* RADAR */
+.radar-container{display:flex;align-items:center;justify-content:center;gap:60px;flex-wrap:wrap}
+.radar-labels{display:flex;flex-direction:column;gap:12px}
+.radar-label{display:flex;align-items:center;gap:12px;font-size:13px}
+.radar-label-dot{width:8px;height:8px;border-radius:50%}
+.radar-label-bar{width:120px;height:6px;background:var(--bg-elevated);border-radius:3px;overflow:hidden}
+.radar-label-fill{height:100%;border-radius:3px;transition:width 1.5s ease;width:0}
+/* PROFILES */
+.profiles-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:24px;width:100%}
+.profile-card{background:var(--bg-card);border:1px solid var(--border);border-radius:16px;padding:32px;position:relative;overflow:hidden}
+.profile-header{display:flex;align-items:center;gap:16px;margin-bottom:20px}
+.profile-avatar{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:16px}
+.profile-info h3{font-size:16px;font-weight:600}
+.profile-info span{font-size:12px;color:var(--text-secondary)}
+.profile-tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}
+.tag{padding:4px 10px;border-radius:4px;font-size:11px;font-weight:500;background:var(--bg-elevated);color:var(--text-secondary);border:1px solid var(--border)}
+.compat-score{display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--bg-secondary);border-radius:8px;margin-top:16px}
+.score-value{font-size:24px;font-weight:700}
+/* WORKFLOW */
+.workflow-steps{display:flex;flex-direction:column;gap:2px;width:100%}
+.workflow-step{display:flex;align-items:center;gap:20px;padding:20px 24px;background:var(--bg-card);border:1px solid var(--border);border-radius:10px;transition:background .3s}
+.workflow-step:hover{background:var(--bg-elevated)}
+.step-number{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;background:var(--bg-elevated);border:1px solid var(--border);flex-shrink:0}
+.step-content h4{font-size:14px;font-weight:600;margin-bottom:4px}
+.step-content p{font-size:13px;color:var(--text-secondary)}
+/* ARCHETYPES */
+.archetype-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px;width:100%}
+.archetype-card{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:28px;text-align:center;transition:transform .3s,border-color .3s}
+.archetype-card:hover{transform:scale(1.02);border-color:var(--accent-purple)}
+.archetype-icon{width:56px;height:56px;border-radius:12px;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;font-size:24px}
+.archetype-card h3{font-size:16px;font-weight:600;margin-bottom:8px}
+.archetype-card p{font-size:13px;color:var(--text-secondary);line-height:1.5}
+/* FRICTION TIMELINE */
+.friction-timeline{width:100%;position:relative;padding-left:40px}
+.friction-timeline::before{content:'';position:absolute;left:16px;top:0;bottom:0;width:2px;background:var(--border)}
+.friction-item{position:relative;padding:20px 24px;margin-bottom:16px;background:var(--bg-card);border:1px solid var(--border);border-radius:10px}
+.friction-item::before{content:'';position:absolute;left:-32px;top:28px;width:10px;height:10px;border-radius:50%;background:var(--accent-amber);border:2px solid var(--bg-primary)}
+.friction-item.high::before{background:var(--accent-rose)}
+.friction-item.medium::before{background:var(--accent-amber)}
+.friction-item.low::before{background:var(--accent-emerald)}
+.friction-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.friction-header h4{font-size:14px;font-weight:600}
+.friction-severity{font-size:11px;padding:2px 8px;border-radius:4px;font-weight:500}
+.friction-severity.high{background:rgba(244,63,94,.15);color:var(--accent-rose)}
+.friction-severity.medium{background:rgba(245,158,11,.15);color:var(--accent-amber)}
+.friction-severity.low{background:rgba(16,185,129,.15);color:var(--accent-emerald)}
+.friction-item p{font-size:13px;color:var(--text-secondary);line-height:1.5}
+/* DEMO MOCKUP */
+.demo-mockup{width:100%;background:var(--bg-card);border:1px solid var(--border);border-radius:16px;overflow:hidden}
+.demo-toolbar{display:flex;align-items:center;gap:8px;padding:12px 16px;border-bottom:1px solid var(--border)}
+.demo-dot{width:10px;height:10px;border-radius:50%;background:var(--bg-elevated);border:1px solid var(--border)}
+.demo-content{padding:40px;display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.demo-panel{background:var(--bg-secondary);border-radius:8px;padding:24px}
+.demo-panel h4{font-size:13px;font-weight:600;margin-bottom:16px;color:var(--text-secondary);text-transform:uppercase;letter-spacing:1px}
+/* GLOW */
+.glow-blue{box-shadow:0 0 40px rgba(79,124,255,.1)}
+.glow-purple{box-shadow:0 0 40px rgba(139,92,246,.1)}
+/* RESPONSIVE */
+@media(max-width:768px){
+  section{padding:80px 20px}
+  .nav{padding:16px 20px}
+  .nav-links li:not(:last-child){display:none}
+  .radar-container{flex-direction:column}
+  .demo-content{grid-template-columns:1fr}
+  .profiles-grid{grid-template-columns:1fr}
+}
 </style>
 </head>
 <body>
 
-<nav>
-  <div class="logo">FounderFit</div>
-  <div class="nav-links">
-    <a href="#how">How it works</a>
-    <a href="#dimensions">Dimensions</a>
-    <a href="#archetypes">Archetypes</a>
-    <a href="/portfolio.html">Agents</a>
-    <a href="/onboarding.html" class="nav-cta">Get Started</a>
-  </div>
+<div class="scroll-progress" id="scrollProgress"></div>
+
+<nav class="nav">
+  <div class="nav-logo">FounderFit</div>
+  <ul class="nav-links">
+    <li><a href="#problem">Problem</a></li>
+    <li><a href="#compatibility">Compatibility</a></li>
+    <li><a href="#archetypes">Archetypes</a></li>
+    <li><a href="/portfolio.html">Agents</a></li>
+    <li><a href="/dashboard.html">Dashboard</a></li>
+    <li><a href="/onboarding.html" class="nav-cta">Get Started</a></li>
+  </ul>
 </nav>
 
-<section class="hero">
-  <div class="hero-badge"><span></span> Multi-agent AI · Powered by ag2 + OpenRouter</div>
-  <h1>Find the co-founder<br/>who <span class="grad">won't break you</span></h1>
-  <p class="hero-sub">FounderFit uses a five-agent AI system to predict founder compatibility across six operational dimensions — before the cracks appear.</p>
+<!-- HERO -->
+<section class="hero visible" id="hero">
+  <div class="hero-badge">Founder Intelligence Platform · Powered by ag2 Multi-Agent AI</div>
+  <h1>Know your co-founder<br>before you <span>build together</span></h1>
+  <p class="hero-sub">FounderFit uses behavioral intelligence to predict co-founder compatibility across 10 operational dimensions, surface friction before it kills your startup, and recommend personalized GTM workflows.</p>
   <div class="hero-actions">
-    <a href="/onboarding.html" class="btn-primary">Start Your Assessment →</a>
-    <a href="/dashboard.html" class="btn-secondary">Run Compatibility Analysis</a>
+    <a href="/onboarding.html" class="hero-cta">Start Your Assessment →</a>
+    <a href="/dashboard.html" class="hero-cta-sec">Run Compatibility Analysis</a>
   </div>
+</section>
 
-  <div class="float-preview">
-    <div class="preview-card">
-      <div class="preview-header"><div class="preview-dot"></div><span class="preview-title">Compatibility Analysis — Alex & Jordan</span></div>
-      <div class="compat-score">84</div>
-      <div class="compat-label">Overall Compatibility Score</div>
-      <div class="dim-rows">
-        <div class="dim-row"><span class="dim-row-label">Decision Velocity</span><div class="dim-bar"><div class="dim-bar-fill" style="width:91%"></div></div><span class="dim-row-score">91</span></div>
-        <div class="dim-row"><span class="dim-row-label">Risk Tolerance</span><div class="dim-bar"><div class="dim-bar-fill" style="width:78%"></div></div><span class="dim-row-score">78</span></div>
-        <div class="dim-row"><span class="dim-row-label">Communication</span><div class="dim-bar"><div class="dim-bar-fill" style="width:85%"></div></div><span class="dim-row-score">85</span></div>
-        <div class="dim-row"><span class="dim-row-label">Execution Pace</span><div class="dim-bar"><div class="dim-bar-fill" style="width:72%"></div></div><span class="dim-row-score">72</span></div>
-        <div class="dim-row"><span class="dim-row-label">Vision Alignment</span><div class="dim-bar"><div class="dim-bar-fill" style="width:90%"></div></div><span class="dim-row-score">90</span></div>
-        <div class="dim-row"><span class="dim-row-label">Conflict Style</span><div class="dim-bar"><div class="dim-bar-fill" style="width:68%"></div></div><span class="dim-row-score">68</span></div>
+<!-- PROBLEM -->
+<section id="problem">
+  <span class="section-label">The Problem</span>
+  <h2 class="section-title">65% of startups fail due to<br>co-founder conflict</h2>
+  <p class="section-desc">Not market timing. Not funding. Not product-market fit. The #1 startup killer is the relationship between the people building it.</p>
+  <div class="cards-grid">
+    <div class="card">
+      <div class="card-icon" style="background:rgba(244,63,94,.1);color:var(--accent-rose)">⚡</div>
+      <h3>Decision Deadlocks</h3>
+      <p>Founders with mismatched decision-making styles spend 4.2x more time in unresolved conflicts about product direction, hiring, and resource allocation.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon" style="background:rgba(245,158,11,.1);color:var(--accent-amber)">🔀</div>
+      <h3>Role Ambiguity</h3>
+      <p>Without clear operational boundaries, 73% of early-stage teams duplicate effort or leave critical functions unowned in the first 18 months.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon" style="background:rgba(139,92,246,.1);color:var(--accent-purple)">📉</div>
+      <h3>GTM Misalignment</h3>
+      <p>When co-founders disagree on go-to-market strategy — product-led vs. sales-led — startups burn 2.8x more runway before finding traction.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FAILURE PATTERNS -->
+<section id="patterns">
+  <span class="section-label">Operational Failure Patterns</span>
+  <h2 class="section-title">We studied 2,400 failed startups</h2>
+  <p class="section-desc">Three patterns emerged across every vertical, funding stage, and geography.</p>
+  <div class="cards-grid">
+    <div class="failure-card">
+      <div class="failure-stat counter" data-target="67">0%</div>
+      <h3>The Silent Divergence</h3>
+      <p>Co-founders assume alignment on vision but never explicitly validate it. By month 8, they're building toward different outcomes.</p>
+    </div>
+    <div class="failure-card">
+      <div class="failure-stat counter" data-target="54">0%</div>
+      <h3>The Execution Gap</h3>
+      <p>One founder operates at 10x speed, the other optimizes for thoroughness. Neither pace is wrong — but the mismatch creates resentment.</p>
+    </div>
+    <div class="failure-card">
+      <div class="failure-stat counter" data-target="41">0%</div>
+      <h3>The Role Collision</h3>
+      <p>Technical co-founders who both want to be "product visionary" end up in territory wars instead of shipping code.</p>
+    </div>
+  </div>
+</section>
+
+<!-- SOLUTION -->
+<section id="solution">
+  <span class="section-label">The Solution</span>
+  <h2 class="section-title">Compatibility as a<br>measurable signal</h2>
+  <p class="section-desc">FounderFit maps behavioral patterns across 10 operational dimensions, then predicts where friction will emerge — before you sign the cap table.</p>
+  <div class="cards-grid">
+    <div class="card glow-blue">
+      <h3>Behavioral Assessment</h3>
+      <p>Adaptive assessment captures decision-making style, risk tolerance, communication patterns, tooling preferences, ownership philosophy and conflict resolution approach.</p>
+    </div>
+    <div class="card glow-purple">
+      <h3>Multi-Agent Compatibility Engine</h3>
+      <p>Five specialized AI agents compare your operational DNA against your co-founder's — surfacing complementary strengths and predicting friction zones with timelines.</p>
+    </div>
+    <div class="card">
+      <h3>Personalized Playbooks</h3>
+      <p>Based on your unique combination, receive custom operating agreements, meeting cadences, decision frameworks, and escalation protocols.</p>
+    </div>
+  </div>
+</section>
+
+<!-- COMPATIBILITY RADAR -->
+<section id="compatibility">
+  <span class="section-label">Compatibility Measurement</span>
+  <h2 class="section-title">Ten-dimensional<br>founder intelligence</h2>
+  <p class="section-desc">Every founder combination produces a unique compatibility signature across these operational dimensions.</p>
+  <div class="radar-container">
+    <canvas id="radarChart" width="360" height="360"></canvas>
+    <div class="radar-labels">
+      <div class="radar-label"><div class="radar-label-dot" style="background:var(--accent-blue)"></div><span>Decision Velocity</span><div class="radar-label-bar"><div class="radar-label-fill" style="background:var(--accent-blue)" data-width="85%"></div></div></div>
+      <div class="radar-label"><div class="radar-label-dot" style="background:var(--accent-purple)"></div><span>Risk Posture</span><div class="radar-label-bar"><div class="radar-label-fill" style="background:var(--accent-purple)" data-width="72%"></div></div></div>
+      <div class="radar-label"><div class="radar-label-dot" style="background:var(--accent-cyan)"></div><span>Communication Cadence</span><div class="radar-label-bar"><div class="radar-label-fill" style="background:var(--accent-cyan)" data-width="91%"></div></div></div>
+      <div class="radar-label"><div class="radar-label-dot" style="background:var(--accent-emerald)"></div><span>Execution Style</span><div class="radar-label-bar"><div class="radar-label-fill" style="background:var(--accent-emerald)" data-width="68%"></div></div></div>
+      <div class="radar-label"><div class="radar-label-dot" style="background:var(--accent-amber)"></div><span>Vision Alignment</span><div class="radar-label-bar"><div class="radar-label-fill" style="background:var(--accent-amber)" data-width="94%"></div></div></div>
+      <div class="radar-label"><div class="radar-label-dot" style="background:var(--accent-rose)"></div><span>Conflict Resolution</span><div class="radar-label-bar"><div class="radar-label-fill" style="background:var(--accent-rose)" data-width="56%"></div></div></div>
+      <div class="radar-label"><div class="radar-label-dot" style="background:#a78bfa"></div><span>Tooling Affinity</span><div class="radar-label-bar"><div class="radar-label-fill" style="background:#a78bfa" data-width="80%"></div></div></div>
+      <div class="radar-label"><div class="radar-label-dot" style="background:#34d399"></div><span>Ownership Philosophy</span><div class="radar-label-bar"><div class="radar-label-fill" style="background:#34d399" data-width="78%"></div></div></div>
+      <div class="radar-label"><div class="radar-label-dot" style="background:#fb923c"></div><span>GTM Orientation</span><div class="radar-label-bar"><div class="radar-label-fill" style="background:#fb923c" data-width="70%"></div></div></div>
+      <div class="radar-label"><div class="radar-label-dot" style="background:#e879f9"></div><span>Time/Energy Profile</span><div class="radar-label-bar"><div class="radar-label-fill" style="background:#e879f9" data-width="82%"></div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- WORKFLOWS -->
+<section id="workflows">
+  <span class="section-label">Personalized Workflows</span>
+  <h2 class="section-title">Your GTM operating system,<br>tailored to your duo</h2>
+  <p class="section-desc">Based on a Visionary + Operator pairing with high velocity and moderate risk tolerance — FounderFit generates custom operating cadences.</p>
+  <div class="workflow-steps">
+    <div class="workflow-step"><div class="step-number" style="color:var(--accent-blue)">1</div><div class="step-content"><h4>Weekly Vision Sync (Mon, 30min)</h4><p>Visionary leads strategic framing; Operator pressure-tests feasibility. Output: one validated hypothesis to execute that week.</p></div></div>
+    <div class="workflow-step"><div class="step-number" style="color:var(--accent-purple)">2</div><div class="step-content"><h4>Async Decision Log (Daily)</h4><p>Both founders log decisions in a shared doc with reasoning. Prevents "silent divergence" — the #1 co-founder failure pattern.</p></div></div>
+    <div class="workflow-step"><div class="step-number" style="color:var(--accent-cyan)">3</div><div class="step-content"><h4>Customer Signal Review (Wed)</h4><p>Operator surfaces quantitative signals; Visionary interprets qualitative patterns. Combined output feeds sprint prioritization.</p></div></div>
+    <div class="workflow-step"><div class="step-number" style="color:var(--accent-emerald)">4</div><div class="step-content"><h4>Friction Check-in (Fri, 15min)</h4><p>Structured conversation using FounderFit's tension prompts. Catches micro-conflicts before they compound into co-founder breakups.</p></div></div>
+    <div class="workflow-step"><div class="step-number" style="color:var(--accent-amber)">5</div><div class="step-content"><h4>Monthly GTM Retrospective</h4><p>Review metrics against operating plan. Recalibrate roles if execution data shows drift from optimal compatibility zones.</p></div></div>
+  </div>
+</section>
+
+<!-- TEAM EXAMPLES -->
+<section id="teams">
+  <span class="section-label">Real Team Examples</span>
+  <h2 class="section-title">Compatibility in action</h2>
+  <p class="section-desc">See how different founder archetypes create different operational dynamics — and how FounderFit adapts recommendations.</p>
+  <div class="profiles-grid">
+    <div class="profile-card">
+      <div class="profile-header">
+        <div class="profile-avatar" style="background:rgba(79,124,255,.2);color:var(--accent-blue)">MR</div>
+        <div class="profile-info"><h3>Maya Ramirez & Arjun Patel</h3><span>Visionary + Operator · Fintech SaaS</span></div>
+      </div>
+      <div class="profile-tags"><span class="tag">High velocity</span><span class="tag">PLG-first</span><span class="tag">Async-native</span><span class="tag">Seed stage</span></div>
+      <p style="font-size:13px;color:var(--text-secondary);margin-bottom:12px">Maya drives product vision and user research. Arjun owns infrastructure, metrics, and operational cadence. Their complementary strengths accelerate when given structured decision frameworks.</p>
+      <div class="compat-score"><div class="score-value" style="color:var(--accent-emerald)">87</div><div><div style="font-size:12px;font-weight:500">Compatibility Score</div><div style="font-size:11px;color:var(--text-muted)">Top 12% of assessed pairs</div></div></div>
+    </div>
+    <div class="profile-card">
+      <div class="profile-header">
+        <div class="profile-avatar" style="background:rgba(139,92,246,.2);color:var(--accent-purple)">KL</div>
+        <div class="profile-info"><h3>Kai Liu & Sarah Okonkwo</h3><span>Builder + Builder · Dev Tools</span></div>
+      </div>
+      <div class="profile-tags"><span class="tag">Technical depth</span><span class="tag">Open source</span><span class="tag">Low-burn</span><span class="tag">Pre-seed</span></div>
+      <p style="font-size:13px;color:var(--text-secondary);margin-bottom:12px">Both founders are senior engineers. High alignment on craft but risk collision on product decisions. FounderFit recommended explicit "product owner" rotation every 2 weeks.</p>
+      <div class="compat-score"><div class="score-value" style="color:var(--accent-amber)">64</div><div><div style="font-size:12px;font-weight:500">Compatibility Score</div><div style="font-size:11px;color:var(--text-muted)">Role overlap risk flagged</div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ARCHETYPES -->
+<section id="archetypes">
+  <span class="section-label">GTM Operating Archetypes</span>
+  <h2 class="section-title">Four founder operating<br>modes we've identified</h2>
+  <p class="section-desc">Your archetype determines your default GTM motion, hiring priorities, and optimal tool stack.</p>
+  <div class="archetype-grid">
+    <div class="archetype-card"><div class="archetype-icon" style="background:rgba(79,124,255,.15);color:var(--accent-blue);font-size:16px;font-weight:700">V</div><h3>The Velocity Pair</h3><p>Ship fast, measure fast, pivot fast. Optimizes for learning speed over polish. Best for: consumer apps, marketplaces.</p></div>
+    <div class="archetype-card"><div class="archetype-icon" style="background:rgba(139,92,246,.15);color:var(--accent-purple);font-size:16px;font-weight:700">C</div><h3>The Craft Pair</h3><p>Deep technical differentiation, deliberate GTM. Optimizes for product moat over speed. Best for: dev tools, infrastructure.</p></div>
+    <div class="archetype-card"><div class="archetype-icon" style="background:rgba(16,185,129,.15);color:var(--accent-emerald);font-size:16px;font-weight:700">S</div><h3>The Scale Pair</h3><p>One builds the machine, one sells the vision. Optimizes for revenue velocity. Best for: B2B SaaS, enterprise.</p></div>
+    <div class="archetype-card"><div class="archetype-icon" style="background:rgba(245,158,11,.15);color:var(--accent-amber);font-size:16px;font-weight:700">R</div><h3>The Research Pair</h3><p>Long-horizon bets, deep domain expertise. Optimizes for breakthrough over iteration. Best for: biotech, AI/ML, deeptech.</p></div>
+  </div>
+</section>
+
+<!-- FRICTION PREDICTIONS -->
+<section id="friction">
+  <span class="section-label">AI Friction Predictions</span>
+  <h2 class="section-title">Predicted friction points<br>before they happen</h2>
+  <p class="section-desc">Based on behavioral assessment data, GitHub signal analysis, and pattern-matching against 2,400 founder pairs.</p>
+  <div class="friction-timeline">
+    <div class="friction-item high"><div class="friction-header"><h4>Hiring Philosophy Clash — Month 4</h4><span class="friction-severity high">High Risk</span></div><p>Velocity-oriented founders push to hire generalists. Systems-oriented founders want specialists. Agree on your first-5-hires framework before the pressure hits.</p></div>
+    <div class="friction-item medium"><div class="friction-header"><h4>Fundraising Narrative Tension — Month 6</h4><span class="friction-severity medium">Medium Risk</span></div><p>One founder wants to lead with vision; the other with metrics. Both are valid — pre-align on a narrative that satisfies both before the first VC meeting.</p></div>
+    <div class="friction-item medium"><div class="friction-header"><h4>Product Scope Creep — Month 9</h4><span class="friction-severity medium">Medium Risk</span></div><p>Visionaries expand scope; operators protect bandwidth. Install a scope budget — 20% exploration, 80% committed roadmap.</p></div>
+    <div class="friction-item low"><div class="friction-header"><h4>Equity Conversation — Month 12</h4><span class="friction-severity low">Low Risk</span></div><p>As contributions diverge from initial expectations, equity discussions resurface. High communication scores mean this resolves cleanly if addressed proactively.</p></div>
+  </div>
+</section>
+
+<!-- DEMO -->
+<section id="demo">
+  <span class="section-label">Platform Demo</span>
+  <h2 class="section-title">See FounderFit in action</h2>
+  <p class="section-desc">A live look at the compatibility dashboard — from assessment to actionable recommendations.</p>
+  <div class="demo-mockup">
+    <div class="demo-toolbar">
+      <div class="demo-dot"></div><div class="demo-dot"></div><div class="demo-dot"></div>
+      <span style="margin-left:12px;font-size:12px;color:var(--text-muted)">founderfit-production-1bb1.up.railway.app/dashboard.html</span>
+    </div>
+    <div class="demo-content">
+      <div class="demo-panel">
+        <h4>Compatibility Overview</h4>
+        <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:16px"><span style="font-size:48px;font-weight:700;color:var(--accent-emerald)">87</span><span style="font-size:14px;color:var(--text-secondary)">/ 100</span></div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span style="color:var(--text-secondary)">Decision Velocity</span><span>85%</span></div><div style="height:4px;background:var(--bg-elevated);border-radius:2px"><div style="height:100%;width:85%;background:var(--accent-blue);border-radius:2px"></div></div></div>
+          <div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span style="color:var(--text-secondary)">Vision Alignment</span><span>94%</span></div><div style="height:4px;background:var(--bg-elevated);border-radius:2px"><div style="height:100%;width:94%;background:var(--accent-amber);border-radius:2px"></div></div></div>
+          <div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span style="color:var(--text-secondary)">Communication</span><span>91%</span></div><div style="height:4px;background:var(--bg-elevated);border-radius:2px"><div style="height:100%;width:91%;background:var(--accent-cyan);border-radius:2px"></div></div></div>
+          <div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span style="color:var(--text-secondary)">Tooling Affinity</span><span>80%</span></div><div style="height:4px;background:var(--bg-elevated);border-radius:2px"><div style="height:100%;width:80%;background:#a78bfa;border-radius:2px"></div></div></div>
+          <div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span style="color:var(--text-secondary)">Conflict Resolution</span><span>56%</span></div><div style="height:4px;background:var(--bg-elevated);border-radius:2px"><div style="height:100%;width:56%;background:var(--accent-rose);border-radius:2px"></div></div></div>
+        </div>
+      </div>
+      <div class="demo-panel">
+        <h4>AI Recommendations</h4>
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <div style="padding:12px;background:var(--bg-card);border-radius:6px;border:1px solid var(--border)"><div style="font-size:12px;font-weight:600;margin-bottom:4px">Install Decision Framework</div><div style="font-size:11px;color:var(--text-secondary)">Your conflict style mismatch (56%) means you need explicit escalation paths for deadlocked decisions.</div></div>
+          <div style="padding:12px;background:var(--bg-card);border-radius:6px;border:1px solid var(--border)"><div style="font-size:12px;font-weight:600;margin-bottom:4px">Adopt PLG Operating Cadence</div><div style="font-size:11px;color:var(--text-secondary)">Your pair's velocity + vision scores point to product-led growth. Ship weekly, measure weekly.</div></div>
+          <div style="padding:12px;background:var(--bg-card);border-radius:6px;border:1px solid var(--border)"><div style="font-size:12px;font-weight:600;margin-bottom:4px">Pre-align on Hiring Plan</div><div style="font-size:11px;color:var(--text-secondary)">High-risk friction predicted at Month 4. Draft your first-5-hires framework in Week 1.</div></div>
+        </div>
       </div>
     </div>
   </div>
-
-  <div class="hero-stats">
-    <div class="stat"><div class="stat-num">6</div><div class="stat-label">Compatibility Dimensions</div></div>
-    <div class="stat"><div class="stat-num">5</div><div class="stat-label">Specialized AI Agents</div></div>
-    <div class="stat"><div class="stat-num">6</div><div class="stat-label">Founder Archetypes</div></div>
+  <div style="text-align:center;margin-top:3rem">
+    <a href="/onboarding.html" style="display:inline-flex;align-items:center;gap:8px;padding:14px 32px;border-radius:8px;background:var(--gradient-1);color:white;font-size:15px;font-weight:600;transition:all .2s">Start Your Free Assessment →</a>
   </div>
 </section>
 
-<section id="how" style="background:var(--surface);border-top:1px solid var(--border)">
-  <div class="section-inner">
-    <div class="section-label">How it works</div>
-    <div class="section-title">From profiles to predictions<br/>in minutes</div>
-    <div class="steps">
-      <div class="step"><div class="step-num">01</div><h3>Build Your Profile</h3><p>Answer questions about your working style, risk appetite, communication preferences, and execution approach.</p></div>
-      <div class="step"><div class="step-num">02</div><h3>Take the Assessment</h3><p>Complete the behavioral assessment to reveal your founder archetype across six operational dimensions.</p></div>
-      <div class="step"><div class="step-num">03</div><h3>Run Compatibility</h3><p>Submit two founder profiles. Our five-agent AI system analyzes compatibility and predicts friction points.</p></div>
-      <div class="step"><div class="step-num">04</div><h3>Get the Report</h3><p>Receive a detailed compatibility score, GTM archetype match, friction predictions, and preventive agreements.</p></div>
-    </div>
+<footer style="text-align:center;padding:60px 40px;border-top:1px solid var(--border)">
+  <div style="font-size:18px;font-weight:600;background:var(--gradient-1);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:12px">FounderFit</div>
+  <div style="display:flex;justify-content:center;gap:2rem;margin-bottom:1.5rem">
+    <a href="/onboarding.html" style="font-size:13px;color:var(--text-muted);transition:color .2s" onmouseover="this.style.color='#f0f0f4'" onmouseout="this.style.color='#5a5a6a'">Onboarding</a>
+    <a href="/assessment.html" style="font-size:13px;color:var(--text-muted)" onmouseover="this.style.color='#f0f0f4'" onmouseout="this.style.color='#5a5a6a'">Assessment</a>
+    <a href="/dashboard.html" style="font-size:13px;color:var(--text-muted)" onmouseover="this.style.color='#f0f0f4'" onmouseout="this.style.color='#5a5a6a'">Dashboard</a>
+    <a href="/portfolio.html" style="font-size:13px;color:var(--text-muted)" onmouseover="this.style.color='#f0f0f4'" onmouseout="this.style.color='#5a5a6a'">Agent Portfolio</a>
+    <a href="/docs" style="font-size:13px;color:var(--text-muted)" onmouseover="this.style.color='#f0f0f4'" onmouseout="this.style.color='#5a5a6a'">API Docs</a>
   </div>
-</section>
-
-<section id="dimensions">
-  <div class="section-inner">
-    <div class="section-label">Six dimensions</div>
-    <div class="section-title">What we actually measure</div>
-    <p class="section-sub">Most co-founder conflicts aren't about vision — they're about how people work. We measure the operational signals that predict failure.</p>
-    <div class="dims-grid">
-      <div class="dim-card"><div class="dim-icon">⚡</div><div><h4>Decision Velocity</h4><p>How fast each founder moves from problem to decision. Ship-fast vs deliberate — mismatches cause constant friction.</p></div></div>
-      <div class="dim-card"><div class="dim-icon">🎲</div><div><h4>Risk Tolerance</h4><p>Comfort with ambiguity, technical debt, and unknown outcomes. Misalignment here kills momentum.</p></div></div>
-      <div class="dim-card"><div class="dim-icon">💬</div><div><h4>Communication Style</h4><p>Async vs sync preference, verbosity, and medium. Daily calls vs weekly docs — both valid, but incompatible.</p></div></div>
-      <div class="dim-card"><div class="dim-icon">🏃</div><div><h4>Execution Pace</h4><p>Sprint intensity, work cadence, sustainable pace vs burst mode. Burnout happens when paces mismatch.</p></div></div>
-      <div class="dim-card"><div class="dim-icon">🔭</div><div><h4>Vision Alignment</h4><p>Shared long-term goals, exit horizon, and definition of success. Divergence here is a ticking clock.</p></div></div>
-      <div class="dim-card"><div class="dim-icon">🤝</div><div><h4>Conflict Resolution</h4><p>Avoidant, competing, compromising, or collaborating — your style determines whether disagreements build or destroy.</p></div></div>
-    </div>
-  </div>
-</section>
-
-<section id="archetypes" style="background:var(--surface);border-top:1px solid var(--border)">
-  <div class="section-inner">
-    <div class="section-label">Founder archetypes</div>
-    <div class="section-title">Which one are you?</div>
-    <p class="section-sub">Every founder fits a working archetype. Knowing yours — and your co-founder's — is the first step to a functional partnership.</p>
-    <div class="arch-grid">
-      <div class="arch-card"><div class="arch-emoji">🚀</div><h3>Rapid Builder</h3><p>Ships fast, iterates aggressively, and treats tech debt as fuel. Thrives in chaos.</p><div class="arch-tags"><span class="tag">Consumer Apps</span><span class="tag">Marketplaces</span><span class="tag">MVPs</span></div></div>
-      <div class="arch-card"><div class="arch-emoji">🏗️</div><h3>Systems Operator</h3><p>Infrastructure-first, scalability-focused, methodical. Builds machines that run without them.</p><div class="arch-tags"><span class="tag">Enterprise SaaS</span><span class="tag">Fintech</span><span class="tag">Infrastructure</span></div></div>
-      <div class="arch-card"><div class="arch-emoji">🔬</div><h3>Experimental Hacker</h3><p>Explores widely, prototypes fast, low attachment to code. Thrives in uncertainty.</p><div class="arch-tags"><span class="tag">R&amp;D</span><span class="tag">AI/ML</span><span class="tag">Innovation Labs</span></div></div>
-      <div class="arch-card"><div class="arch-emoji">🗺️</div><h3>Vision Architect</h3><p>Designs for the future, documentation-heavy, strategic. Sees ten moves ahead.</p><div class="arch-tags"><span class="tag">Platform Co.</span><span class="tag">Dev Tools</span><span class="tag">Deeptech</span></div></div>
-      <div class="arch-card"><div class="arch-emoji">📦</div><h3>Product Strategist</h3><p>Feature-driven, user-facing, pragmatic trade-offs. Obsessed with customer outcomes.</p><div class="arch-tags"><span class="tag">B2B SaaS</span><span class="tag">Productivity</span><span class="tag">Vertical Software</span></div></div>
-      <div class="arch-card"><div class="arch-emoji">📈</div><h3>Growth Hunter</h3><p>Metrics-obsessed, A/B test heavy, conversion-focused. Runs experiments on everything.</p><div class="arch-tags"><span class="tag">Consumer Growth</span><span class="tag">E-commerce</span><span class="tag">Ad-tech</span></div></div>
-    </div>
-  </div>
-</section>
-
-<div class="cta-section">
-  <div class="cta-inner">
-    <h2>Ready to find your match?</h2>
-    <p>Take the behavioral assessment and get your founder archetype in under 3 minutes.</p>
-    <a href="/onboarding.html" class="btn-primary">Start Free Assessment →</a>
-  </div>
-</div>
-
-<footer>
-  <div class="footer-links">
-    <a href="/dashboard.html">Dashboard</a>
-    <a href="/portfolio.html">Agent Portfolio</a>
-    <a href="/docs">API Docs</a>
-    <a href="/assessment.html">Assessment</a>
-  </div>
-  <p>FounderFit · Built with ag2 multi-agent system + FastAPI</p>
+  <p style="font-size:13px;color:var(--text-muted)">Founder intelligence for teams that want to last · Built with ag2 + FastAPI</p>
 </footer>
 
+<script>
+// Scroll progress
+window.addEventListener('scroll',()=>{
+  const scrolled=window.scrollY/(document.documentElement.scrollHeight-window.innerHeight);
+  document.getElementById('scrollProgress').style.width=(scrolled*100)+'%';
+});
+
+// Section reveal
+const sections=document.querySelectorAll('section:not(.hero)');
+const observer=new IntersectionObserver((entries)=>{
+  entries.forEach(entry=>{
+    if(entry.isIntersecting){
+      entry.target.classList.add('visible');
+      entry.target.querySelectorAll('.radar-label-fill').forEach(bar=>{bar.style.width=bar.dataset.width;});
+    }
+  });
+},{threshold:.15});
+sections.forEach(s=>observer.observe(s));
+
+// Animated counters
+const counterObserver=new IntersectionObserver((entries)=>{
+  entries.forEach(entry=>{
+    if(entry.isIntersecting){
+      const el=entry.target;
+      const target=parseInt(el.dataset.target);
+      let current=0;const inc=target/40;
+      const timer=setInterval(()=>{current+=inc;if(current>=target){current=target;clearInterval(timer);}el.textContent=Math.floor(current)+'%';},30);
+      counterObserver.unobserve(el);
+    }
+  });
+},{threshold:.5});
+document.querySelectorAll('.counter').forEach(c=>counterObserver.observe(c));
+
+// Radar chart
+function drawRadar(){
+  const canvas=document.getElementById('radarChart');if(!canvas)return;
+  const ctx=canvas.getContext('2d');
+  const cx=180,cy=180,r=130;
+  const dims=[.85,.72,.91,.68,.94,.56,.80,.78,.70,.82];
+  const colors=['#4f7cff','#8b5cf6','#06b6d4','#10b981','#f59e0b','#f43f5e','#a78bfa','#34d399','#fb923c','#e879f9'];
+  const n=dims.length;
+  ctx.clearRect(0,0,360,360);
+  for(let ring=1;ring<=5;ring++){
+    ctx.beginPath();const ringR=(r/5)*ring;
+    for(let i=0;i<=n;i++){const angle=(Math.PI*2/n)*i-Math.PI/2;const x=cx+ringR*Math.cos(angle);const y=cy+ringR*Math.sin(angle);i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);}
+    ctx.closePath();ctx.strokeStyle='rgba(255,255,255,.06)';ctx.stroke();
+  }
+  for(let i=0;i<n;i++){const angle=(Math.PI*2/n)*i-Math.PI/2;ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+r*Math.cos(angle),cy+r*Math.sin(angle));ctx.strokeStyle='rgba(255,255,255,.05)';ctx.stroke();}
+  ctx.beginPath();
+  for(let i=0;i<=n;i++){const idx=i%n;const angle=(Math.PI*2/n)*idx-Math.PI/2;const x=cx+r*dims[idx]*Math.cos(angle);const y=cy+r*dims[idx]*Math.sin(angle);i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);}
+  ctx.closePath();ctx.fillStyle='rgba(79,124,255,.12)';ctx.fill();ctx.strokeStyle='rgba(79,124,255,.6)';ctx.lineWidth=2;ctx.stroke();
+  for(let i=0;i<n;i++){const angle=(Math.PI*2/n)*i-Math.PI/2;const x=cx+r*dims[i]*Math.cos(angle);const y=cy+r*dims[i]*Math.sin(angle);ctx.beginPath();ctx.arc(x,y,4,0,Math.PI*2);ctx.fillStyle=colors[i];ctx.fill();}
+}
+drawRadar();
+</script>
 </body>
 </html>

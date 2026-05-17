@@ -3,77 +3,77 @@
 <head>
 <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>FounderFit — Behavioral Assessment</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  :root{--bg:#08080f;--surface:#0f0f1a;--card:#13131f;--border:#1e1e30;--primary:#6366f1;--purple:#a855f7;--text:#e2e8f0;--muted:#64748b;--success:#22c55e}
+  :root{--bg:#08080c;--surface:#0f0f14;--card:#13131a;--elevated:#1a1a24;--border:#1e1e2a;--blue:#4f7cff;--purple:#8b5cf6;--cyan:#06b6d4;--emerald:#10b981;--amber:#f59e0b;--rose:#f43f5e;--text:#f0f0f4;--muted:#8a8a9a;--faint:#5a5a6a}
   *{margin:0;padding:0;box-sizing:border-box}
-  body{font-family:system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+  body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
   a{text-decoration:none;color:inherit}
-  nav{padding:1.25rem 2rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)}
-  .logo{font-weight:800;font-size:1.2rem;background:linear-gradient(135deg,var(--primary),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+  nav{padding:1.25rem 2rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);position:sticky;top:0;background:rgba(8,8,12,.9);backdrop-filter:blur(12px);z-index:10}
+  .logo{font-weight:600;font-size:1.1rem;background:linear-gradient(135deg,var(--blue),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
   .nav-back{color:var(--muted);font-size:.875rem;transition:color .2s}
   .nav-back:hover{color:var(--text)}
-  .main{max-width:700px;margin:0 auto;padding:3rem 2rem}
-  /* PROGRESS BAR */
-  .prog-bar-wrap{margin-bottom:2.5rem}
+  .main{max-width:680px;margin:0 auto;padding:2.5rem 2rem 5rem}
+  /* PROGRESS */
+  .prog-wrap{margin-bottom:2.5rem}
   .prog-info{display:flex;justify-content:space-between;margin-bottom:.625rem;font-size:.8rem;color:var(--muted)}
-  .prog-track{height:4px;background:var(--border);border-radius:9999px;overflow:hidden}
-  .prog-fill{height:100%;background:linear-gradient(90deg,var(--primary),var(--purple));border-radius:9999px;transition:width .4s ease}
-  /* QUESTION */
-  .q-card{background:var(--card);border:1px solid var(--border);border-radius:1.25rem;padding:2.5rem;margin-bottom:1.5rem;transition:opacity .3s}
-  .q-num{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--primary);margin-bottom:.875rem}
-  .q-text{font-size:1.15rem;font-weight:700;line-height:1.5;margin-bottom:1.75rem}
-  .options{display:flex;flex-direction:column;gap:.625rem}
-  .opt{display:flex;align-items:flex-start;gap:1rem;padding:1rem 1.25rem;border:1.5px solid var(--border);border-radius:.75rem;cursor:pointer;transition:all .2s;position:relative}
-  .opt:hover{border-color:rgba(99,102,241,.5);background:rgba(99,102,241,.04)}
-  .opt.selected{border-color:var(--primary);background:rgba(99,102,241,.1)}
-  .opt input{position:absolute;opacity:0;width:0;height:0}
-  .opt-radio{width:20px;height:20px;border-radius:50%;border:2px solid var(--border);flex-shrink:0;margin-top:.1rem;transition:all .2s;display:flex;align-items:center;justify-content:center}
-  .opt.selected .opt-radio{border-color:var(--primary);background:var(--primary)}
-  .opt.selected .opt-radio::after{content:'';width:7px;height:7px;border-radius:50%;background:#fff;display:block}
-  .opt-body h4{font-size:.92rem;font-weight:600;margin-bottom:.2rem}
-  .opt-body p{font-size:.8rem;color:var(--muted);line-height:1.5}
-  /* NAV BUTTONS */
-  .q-actions{display:flex;gap:.75rem;margin-top:1.5rem}
-  .btn-prev{padding:.875rem 1.5rem;border:1px solid var(--border);background:none;color:var(--muted);border-radius:.625rem;font-size:.9rem;cursor:pointer;transition:all .2s;font-family:inherit}
-  .btn-prev:hover{border-color:var(--primary);color:var(--text)}
-  .btn-next-q{flex:1;padding:.875rem;background:var(--primary);color:#fff;border:none;border-radius:.625rem;font-size:.95rem;font-weight:700;cursor:pointer;transition:background .2s;font-family:inherit}
-  .btn-next-q:hover{background:#4f46e5}
-  .btn-next-q:disabled{opacity:.4;cursor:not-allowed}
+  .prog-track{height:3px;background:var(--border);border-radius:9999px;overflow:hidden}
+  .prog-fill{height:100%;background:linear-gradient(90deg,var(--blue),var(--purple));border-radius:9999px;transition:width .4s ease}
+  /* DIMENSION LABEL */
+  .dim-label{display:inline-flex;align-items:center;gap:.4rem;padding:.25rem .75rem;border-radius:9999px;font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.07em;margin-bottom:1rem;border:1px solid}
+  /* QUESTION CARD */
+  .q-card{background:var(--card);border:1px solid var(--border);border-radius:1.25rem;padding:2.25rem;margin-bottom:1.25rem}
+  .q-num{font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:var(--blue);margin-bottom:.75rem}
+  .q-text{font-size:1.1rem;font-weight:600;line-height:1.5;margin-bottom:1.75rem}
+  .opts{display:flex;flex-direction:column;gap:.5rem}
+  .opt{display:flex;align-items:flex-start;gap:.875rem;padding:.875rem 1.125rem;border:1.5px solid var(--border);border-radius:.75rem;cursor:pointer;transition:all .2s}
+  .opt:hover{border-color:rgba(79,124,255,.5);background:rgba(79,124,255,.04)}
+  .opt.selected{border-color:var(--blue);background:rgba(79,124,255,.09)}
+  .opt-radio{width:18px;height:18px;border-radius:50%;border:2px solid var(--border);flex-shrink:0;margin-top:.15rem;transition:all .2s;display:flex;align-items:center;justify-content:center}
+  .opt.selected .opt-radio{border-color:var(--blue);background:var(--blue)}
+  .opt.selected .opt-radio::after{content:'';width:6px;height:6px;border-radius:50%;background:#fff;display:block}
+  .opt-body h4{font-size:.9rem;font-weight:600;margin-bottom:.2rem}
+  .opt-body p{font-size:.78rem;color:var(--muted);line-height:1.5}
+  /* ACTIONS */
+  .q-actions{display:flex;gap:.75rem}
+  .btn-prev{padding:.875rem 1.5rem;border:1px solid var(--border);background:none;color:var(--muted);border-radius:.625rem;font-size:.875rem;cursor:pointer;transition:all .2s;font-family:inherit}
+  .btn-prev:hover{border-color:var(--blue);color:var(--text)}
+  .btn-next{flex:1;padding:.875rem;background:linear-gradient(135deg,var(--blue),var(--purple));color:#fff;border:none;border-radius:.625rem;font-size:.95rem;font-weight:600;cursor:pointer;transition:opacity .2s;font-family:inherit}
+  .btn-next:disabled{opacity:.35;cursor:not-allowed}
+  /* LOADING */
+  .loading{display:none;text-align:center;padding:4rem 2rem}
+  .spinner{width:48px;height:48px;border:3px solid var(--border);border-top-color:var(--blue);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 1.5rem}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .loading h3{font-size:1.1rem;font-weight:600;margin-bottom:.5rem}
+  .loading p{color:var(--muted);font-size:.875rem}
   /* RESULTS */
   #results{display:none}
-  .results-hero{text-align:center;padding:2rem 0 3rem}
+  .results-hero{text-align:center;padding:2rem 0 2.5rem}
   .score-ring{width:140px;height:140px;margin:0 auto 1.5rem;position:relative}
-  .score-ring svg{transform:rotate(-90deg)}
   .score-ring-num{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
-  .score-ring-num span:first-child{font-size:2.25rem;font-weight:900;background:linear-gradient(135deg,var(--primary),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-  .score-ring-num span:last-child{font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
-  .archetype-pill{display:inline-block;padding:.5rem 1.25rem;background:rgba(99,102,241,.15);border:1px solid rgba(99,102,241,.3);border-radius:9999px;font-weight:700;font-size:.9rem;color:#a5b4fc;margin-bottom:1rem}
-  .results-hero h2{font-size:1.75rem;font-weight:800;margin-bottom:.75rem}
-  .results-hero p{color:var(--muted);max-width:480px;margin:0 auto;line-height:1.7}
-  .results-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.5rem}
-  @media(max-width:560px){.results-grid{grid-template-columns:1fr}}
-  .result-card{background:var(--card);border:1px solid var(--border);border-radius:1rem;padding:1.5rem}
-  .result-card h3{font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:1.25rem}
-  .dim-row{display:flex;align-items:center;gap:.875rem;margin-bottom:.875rem}
+  .score-ring-num .score-big{font-size:2.5rem;font-weight:700;background:linear-gradient(135deg,var(--blue),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+  .score-ring-num .score-sub{font-size:.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+  .arch-pill{display:inline-block;padding:.5rem 1.25rem;background:rgba(79,124,255,.12);border:1px solid rgba(79,124,255,.3);border-radius:9999px;font-weight:600;font-size:.875rem;color:#a5b4fc;margin-bottom:1rem}
+  .results-hero h2{font-size:1.6rem;font-weight:700;margin-bottom:.75rem}
+  .results-hero .arch-desc{color:var(--muted);max-width:500px;margin:0 auto;line-height:1.7;font-size:.9rem}
+  .r-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem}
+  @media(max-width:560px){.r-grid{grid-template-columns:1fr}}
+  .r-card{background:var(--card);border:1px solid var(--border);border-radius:1rem;padding:1.5rem}
+  .r-card-title{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:1.25rem}
+  .dim-row{display:flex;align-items:center;gap:.75rem;margin-bottom:.75rem}
   .dim-row:last-child{margin-bottom:0}
-  .dim-row-label{font-size:.8rem;color:var(--muted);width:130px;flex-shrink:0}
-  .dim-track{flex:1;height:6px;background:var(--border);border-radius:9999px;overflow:hidden}
-  .dim-fill{height:100%;border-radius:9999px;background:linear-gradient(90deg,var(--primary),var(--purple));transition:width .8s ease}
-  .dim-score{font-size:.8rem;font-weight:700;width:28px;text-align:right}
-  .strengths-list{list-style:none}
-  .strengths-list li{font-size:.85rem;color:var(--muted);padding:.5rem 0;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;gap:.5rem;line-height:1.5}
-  .strengths-list li:last-child{border-bottom:none}
-  .strengths-list li::before{content:'→';color:var(--primary);flex-shrink:0}
-  .result-actions{display:flex;gap:.75rem;margin-top:1.5rem}
-  .btn-dash{flex:1;padding:.875rem;background:var(--primary);color:#fff;border:none;border-radius:.625rem;font-size:.95rem;font-weight:700;cursor:pointer;font-family:inherit;transition:background .2s}
-  .btn-dash:hover{background:#4f46e5}
-  .btn-retry{padding:.875rem 1.5rem;border:1px solid var(--border);color:var(--muted);background:none;border-radius:.625rem;font-size:.9rem;cursor:pointer;font-family:inherit;transition:all .2s}
-  .btn-retry:hover{border-color:var(--primary);color:var(--text)}
-  .loading{text-align:center;padding:4rem 2rem;display:none}
-  .spinner{width:48px;height:48px;border:3px solid var(--border);border-top-color:var(--primary);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 1.5rem}
-  @keyframes spin{to{transform:rotate(360deg)}}
-  .loading p{color:var(--muted)}
-  .loading h3{margin-bottom:.5rem}
+  .dim-row-label{font-size:.75rem;color:var(--muted);width:120px;flex-shrink:0}
+  .dim-track{flex:1;height:5px;background:var(--border);border-radius:9999px;overflow:hidden}
+  .dim-fill{height:100%;border-radius:9999px;transition:width .9s ease}
+  .dim-val{font-size:.75rem;font-weight:700;width:26px;text-align:right}
+  .signals{list-style:none}
+  .signals li{font-size:.82rem;color:var(--muted);padding:.5rem 0;border-bottom:1px solid var(--border);display:flex;gap:.5rem;line-height:1.5;align-items:flex-start}
+  .signals li:last-child{border-bottom:none}
+  .signals li::before{content:'→';color:var(--blue);flex-shrink:0;font-weight:700}
+  .result-actions{display:flex;gap:.75rem;margin-top:1.25rem}
+  .btn-dash{flex:1;padding:.875rem;background:linear-gradient(135deg,var(--blue),var(--purple));color:#fff;border:none;border-radius:.625rem;font-size:.9rem;font-weight:600;cursor:pointer;font-family:inherit}
+  .btn-retry{padding:.875rem 1.5rem;border:1px solid var(--border);color:var(--muted);background:none;border-radius:.625rem;font-size:.875rem;cursor:pointer;font-family:inherit;transition:all .2s}
+  .btn-retry:hover{border-color:var(--blue);color:var(--text)}
 </style>
 </head>
 <body>
@@ -84,128 +84,155 @@
 
 <div class="main">
   <div id="quiz-section">
-    <div class="prog-bar-wrap">
-      <div class="prog-info"><span id="q-counter">Question 1 of 8</span><span id="q-pct">12%</span></div>
-      <div class="prog-track"><div class="prog-fill" id="prog-fill" style="width:12%"></div></div>
+    <div class="prog-wrap">
+      <div class="prog-info"><span id="q-counter">Question 1 of 10</span><span id="q-pct">10%</span></div>
+      <div class="prog-track"><div class="prog-fill" id="prog-fill" style="width:10%"></div></div>
     </div>
-
     <div class="q-card" id="q-card">
       <div class="q-num" id="q-num">Question 1</div>
+      <div id="q-dim-label"></div>
       <div class="q-text" id="q-text"></div>
-      <div class="options" id="q-options"></div>
+      <div class="opts" id="q-opts"></div>
     </div>
-
     <div class="q-actions">
-      <button class="btn-prev" id="btn-prev" onclick="prevQ()" style="display:none">← Previous</button>
-      <button class="btn-next-q" id="btn-next" onclick="nextQ()" disabled>Next →</button>
+      <button class="btn-prev" id="btn-prev" onclick="prevQ()" style="display:none">← Back</button>
+      <button class="btn-next" id="btn-next" onclick="nextQ()" disabled>Next →</button>
     </div>
   </div>
 
   <div class="loading" id="loading">
     <div class="spinner"></div>
-    <h3>Analyzing your profile...</h3>
-    <p>Our AI is classifying your founder archetype</p>
+    <h3>Analyzing your profile…</h3>
+    <p>Classifying your founder archetype across 10 dimensions</p>
   </div>
 
   <div id="results"></div>
 </div>
 
 <script>
+const DIM_COLORS={
+  'Execution Style':'#4f7cff','Communication Cadence':'#06b6d4','Decision-Making':'#8b5cf6',
+  'Risk Posture':'#f43f5e','Conflict Resolution':'#f59e0b','Tooling Affinity':'#a78bfa',
+  'Domain Coverage':'#10b981','Time & Energy':'#e879f9','Ownership Philosophy':'#34d399','GTM Orientation':'#fb923c'
+};
+
 const questions=[
-  {id:'decision_speed',text:'You have 48 hours to make a major product decision with incomplete data. What do you do?',opts:[
-    {val:'fast',h:'Ship an experiment',p:'Launch something scrappy, measure it, then decide based on real signal.'},
-    {val:'moderate',h:'Gather a bit more context',p:'Talk to a few users, check the data, then move with moderate confidence.'},
-    {val:'deliberate',h:'Take time to think it through',p:'Map out the scenarios, sleep on it, make a considered call.'}
+  {id:'execution_style',dim:'Execution Style',text:'You have a hard deadline in 3 days and the feature isn\'t ready. You:',opts:[
+    {val:'fast',h:'Ship the 80% version now',p:'Get it in front of users. Imperfect and live beats perfect and dead.'},
+    {val:'moderate',h:'Cut scope to hit quality bar',p:'Ship a smaller but solid version. No half-finished things with your name on them.'},
+    {val:'deliberate',h:'Push back on the deadline',p:'Shipping broken erodes trust. Negotiate a timeline that lets you do it right.'}
   ]},
-  {id:'risk_tolerance',text:'Your co-founder wants to take on a high-risk bet that could 10x or kill the company. You:',opts:[
-    {val:'high',h:"Let's go",p:'Asymmetric upside is the whole point. You calculate the bet and commit.'},
-    {val:'moderate',h:'Run a smaller experiment first',p:'Validate the thesis cheaply before going all-in.'},
-    {val:'low',h:'Push back hard',p:"This isn't the right risk profile. You'd rather find a safer path forward."}
+  {id:'communication_style',dim:'Communication Cadence',text:'Your ideal working relationship with a co-founder looks like:',opts:[
+    {val:'async',h:'Async-first',p:'Slack, Notion, PRs. You communicate in writing and protect deep work time.'},
+    {val:'balanced',h:'Situational',p:'Async for updates, sync for hard decisions. You read the moment.'},
+    {val:'sync',h:'High-touch sync',p:'Daily check-ins, shared context in real time. You need to be in the room.'}
   ]},
-  {id:'communication_style',text:'Your preferred working relationship with a co-founder looks like:',opts:[
-    {val:'async',h:'Async-first',p:'Slack, Notion, PRs. You communicate in writing and hate interruptions.'},
-    {val:'balanced',h:'Situational',p:'Async for routine updates, sync for hard decisions and alignment.'},
-    {val:'sync',h:'High-touch sync',p:'Daily check-ins, shared workspace, real-time collaboration.'}
+  {id:'decision_speed',dim:'Decision-Making',text:'A major strategic decision lands on your plate with 60% of the data you\'d want. You:',opts:[
+    {val:'fast',h:'Decide now and adjust',p:'Speed is a competitive advantage. You can course-correct. Waiting has a cost.'},
+    {val:'moderate',h:'Gather a bit more signal',p:'Talk to 2-3 people, check one more dataset, then commit with confidence.'},
+    {val:'deliberate',h:'Map the decision tree first',p:'You need to understand the second-order consequences before you move.'}
   ]},
-  {id:'execution_style',text:'How do you naturally operate across a quarter?',opts:[
-    {val:'sprint',h:'Intense sprint cycles',p:'2-week all-out bursts followed by consolidation. You live in peaks.'},
-    {val:'steady',h:'Consistent daily output',p:'Same pace every day. No heroics, no crashes. Just execution.'},
-    {val:'flexible',h:'Adaptive',p:'Matches the season — furious when needed, measured when not.'}
+  {id:'risk_tolerance',dim:'Risk Posture',text:'Your co-founder wants to bet 60% of your runway on an unproven channel. You:',opts:[
+    {val:'high',h:"Let's run the experiment",p:'Asymmetric upside. You calculate the bet, define the kill criteria, and go.'},
+    {val:'moderate',h:'Validate with 20% first',p:'Prove the unit economics at small scale before you double down.'},
+    {val:'low',h:'Push for a diversified approach',p:'Concentration risk is real. You\'d rather spread bets and protect the core.'}
   ]},
-  {id:'conflict_approach',text:'You and your co-founder have a genuine disagreement on company direction. You:',opts:[
-    {val:'competing',h:'Push your case',p:'Back your conviction with evidence and argue it out until one of you wins.'},
-    {val:'collaborative',h:'Debate until you find the best answer',p:"Treat it as a problem to solve together, not a battle to win."},
-    {val:'compromising',h:'Find the middle ground fast',p:'A good-enough answer now beats a perfect answer in three weeks.'}
+  {id:'conflict_approach',dim:'Conflict Resolution',text:'You and your co-founder have a genuine disagreement on product direction. You:',opts:[
+    {val:'competing',h:'Push your case hard',p:'You back convictions with evidence and argue until one view wins on merit.'},
+    {val:'collaborative',h:'Treat it as a problem to solve together',p:'The best answer matters more than whose answer it is.'},
+    {val:'compromising',h:'Find the middle ground fast',p:'A good-enough decision now beats a perfect one in three weeks.'}
   ]},
-  {id:'leadership_style',text:'When your team hits a roadblock, you naturally:',opts:[
-    {val:'directive',h:'Step in and direct',p:'Clear the path, assign the fix, get things moving again immediately.'},
-    {val:'coaching',h:'Coach toward the solution',p:'Ask the right questions so the team solves it themselves.'},
-    {val:'delegating',h:'Delegate fully',p:'Hand it to whoever owns it and trust them to figure it out.'}
+  {id:'tooling_affinity',dim:'Tooling Affinity',text:'Your default tool instinct when starting something new is:',opts:[
+    {val:'heavy',h:'Set up the full stack immediately',p:'Proper tooling from day one. Technical debt in tooling compounds fast.'},
+    {val:'pragmatic',h:'Use what works, upgrade later',p:'Start with the obvious tool, migrate when you outgrow it. No premature optimization.'},
+    {val:'minimal',h:'Avoid tools until you feel the pain',p:'Every tool is overhead. You add it only when the problem is undeniable.'}
   ]},
-  {id:'ambition_level',text:'Honest answer: what does success look like for you?',opts:[
-    {val:'high',h:'Generational company',p:"$1B+ outcome or bust. You're swinging for something that changes an industry."},
-    {val:'moderate',h:'Meaningful exit',p:'$10-100M outcome that rewards the team and lets you do it again.'},
-    {val:'lifestyle',h:'Profitable and sustainable',p:'A great business that funds the life you want. Optionality over scale.'}
+  {id:'domain_expertise',dim:'Domain Coverage',text:'When entering a new market, your instinct is:',opts:[
+    {val:'generalist',h:'Learn fast from first principles',p:'You can reason your way into any domain. Speed of learning is the skill.'},
+    {val:'specialist',h:'Go deep before going broad',p:'Surface-level knowledge is dangerous. You want to understand the domain better than the incumbents.'},
+    {val:'collaborative',h:'Partner with domain experts',p:'Your edge is execution and distribution. You hire or partner for domain knowledge.'}
   ]},
-  {id:'time_commitment',text:'How are you approaching the next 18 months?',opts:[
-    {val:'full_time',h:'Full-time, all-in',p:"You've quit or are quitting. This is the only thing."},
-    {val:'transitioning',h:'Transitioning in',p:"Still employed but actively winding down. Committed within 90 days."},
-    {val:'part_time',h:'Part-time for now',p:'Building on evenings and weekends until it can support you.'}
+  {id:'time_commitment',dim:'Time & Energy',text:'Your natural work pattern over a quarter looks like:',opts:[
+    {val:'sprint',h:'Intense sprints with recovery',p:'2-3 week all-out bursts, then consolidation. You live in the peaks.'},
+    {val:'steady',h:'Consistent daily output',p:'Same cadence every day. No heroics, no crashes. Compounding over volatility.'},
+    {val:'flexible',h:'Adapts to what the moment needs',p:'Furious when it matters, measured when it doesn\'t. Context-driven.'}
+  ]},
+  {id:'ownership_philosophy',dim:'Ownership Philosophy',text:'On equity and ownership, you believe:',opts:[
+    {val:'equal',h:'Equal split, equal commitment',p:'50/50 signals mutual trust and prevents resentment. Negotiate roles, not percentages.'},
+    {val:'merit',h:'Split should reflect contribution',p:'Different roles, different risk, different value. Equity should reflect reality.'},
+    {val:'flexible',h:'Start equal, adjust over time',p:'Begin with a fair split and build in mechanisms to recalibrate as roles evolve.'}
+  ]},
+  {id:'gtm_orientation',dim:'GTM Orientation',text:'Your instinct on how to grow the business is:',opts:[
+    {val:'product_led',h:'Product-led growth',p:'Build something so good it sells itself. Free tier, viral loops, self-serve.'},
+    {val:'sales_led',h:'Sales-led growth',p:'Relationships and conversations close deals. You get in the room and sell.'},
+    {val:'community_led',h:'Community-led growth',p:'Build the audience first. Trust compounds into distribution and revenue.'}
   ]}
 ];
 
 let current=0;
 const answers={};
+
 const archetypes={
-  rapid_builder:{name:'Rapid Builder',emoji:'🚀',desc:'You ship fast, iterate aggressively, and treat tech debt as fuel. Your superpower is momentum — the ability to get something in users\'s hands before others have finished planning. You thrive in ambiguity and find slow decision-making physically painful.'},
-  systems_operator:{name:'Systems Operator',emoji:'🏗️',desc:'You build infrastructure others stand on. Methodical, scalability-focused, and reliability-obsessed — you\'re the founder who\'s thinking about how this works at 10M users before you have 100. Your superpower is designing machines that outlast you.'},
-  experimental_hacker:{name:'Experimental Hacker',emoji:'🔬',desc:'You explore widely, prototype fast, and hold low attachment to any single approach. Your superpower is the ability to kill ideas quickly and find signal in noise. You thrive in research-heavy, uncertainty-rich environments.'},
-  vision_architect:{name:'Vision Architect',emoji:'🗺️',desc:'You see ten moves ahead and design backward. Documentation-heavy, strategic, and long-horizon — your superpower is building shared understanding across a team. You\'re at your best in platform companies where the architecture *is* the moat.'},
-  product_strategist:{name:'Product Strategist',emoji:'📦',desc:'You\'re obsessed with the customer and make pragmatic trade-offs to deliver value fast. Feature-driven and outcome-focused, your superpower is knowing which 20% of features drive 80% of adoption — and ruthlessly cutting the rest.'},
-  growth_hunter:{name:'Growth Hunter',emoji:'📈',desc:'You run experiments on everything and double down on what moves the number. Metrics-obsessed and conversion-focused, your superpower is building compounding loops — each win makes the next win cheaper.'}
+  rapid_builder:{name:'Rapid Builder',emoji:'🚀',desc:'You ship fast, iterate aggressively, and treat tech debt as fuel. Your superpower is momentum — getting something in users\' hands before others finish planning. You thrive in ambiguity and find slow decision-making physically painful.'},
+  systems_operator:{name:'Systems Operator',emoji:'🏗️',desc:'You build infrastructure others stand on. Methodical, scalability-focused, reliability-obsessed — you think about 10M users before you have 100. Your superpower is designing machines that outlast you.'},
+  experimental_hacker:{name:'Experimental Hacker',emoji:'🔬',desc:'You explore widely, prototype fast, hold low attachment to any single approach. Your superpower is killing ideas quickly and finding signal in noise. You thrive in research-heavy, uncertainty-rich environments.'},
+  vision_architect:{name:'Vision Architect',emoji:'🗺️',desc:'You see ten moves ahead and design backward. Documentation-heavy, strategic, long-horizon — your superpower is building shared understanding across a team. You\'re at your best in platform companies where architecture is the moat.'},
+  product_strategist:{name:'Product Strategist',emoji:'📦',desc:'You\'re obsessed with the customer and make pragmatic trade-offs to deliver value fast. Feature-driven and outcome-focused, your superpower is knowing which 20% of features drive 80% of adoption.'},
+  growth_hunter:{name:'Growth Hunter',emoji:'📈',desc:'You run experiments on everything and double down on what moves the number. Metrics-obsessed and conversion-focused, your superpower is building compounding loops where each win makes the next win cheaper.'}
 };
 
 function classify(ans){
   const s={rapid_builder:0,systems_operator:0,experimental_hacker:0,vision_architect:0,product_strategist:0,growth_hunter:0};
-  if(ans.decision_speed==='fast'){s.rapid_builder+=2;s.growth_hunter+=1;}
-  else if(ans.decision_speed==='deliberate'){s.systems_operator+=2;s.vision_architect+=1;}
+  if(ans.execution_style==='fast'){s.rapid_builder+=2;s.growth_hunter+=1;}
+  else if(ans.execution_style==='deliberate'){s.systems_operator+=2;s.vision_architect+=1;}
   if(ans.risk_tolerance==='high'){s.experimental_hacker+=2;s.rapid_builder+=1;}
   else if(ans.risk_tolerance==='low'){s.systems_operator+=2;}
   if(ans.communication_style==='async'){s.vision_architect+=1;s.systems_operator+=1;}
   else if(ans.communication_style==='sync'){s.rapid_builder+=1;s.growth_hunter+=1;}
-  if(ans.execution_style==='sprint'){s.rapid_builder+=1;s.growth_hunter+=1;}
-  else if(ans.execution_style==='steady'){s.systems_operator+=2;}
-  if(ans.ambition_level==='high'){s.vision_architect+=1;s.rapid_builder+=1;}
-  if(ans.leadership_style==='coaching'){s.vision_architect+=1;s.product_strategist+=1;}
-  else if(ans.leadership_style==='delegating'){s.systems_operator+=1;}
+  if(ans.time_commitment==='sprint'){s.rapid_builder+=1;s.growth_hunter+=1;}
+  else if(ans.time_commitment==='steady'){s.systems_operator+=2;}
+  if(ans.gtm_orientation==='product_led'){s.product_strategist+=2;s.growth_hunter+=1;}
+  else if(ans.gtm_orientation==='sales_led'){s.growth_hunter+=2;}
+  if(ans.domain_expertise==='specialist'){s.systems_operator+=1;s.vision_architect+=1;}
+  else if(ans.domain_expertise==='generalist'){s.experimental_hacker+=1;s.rapid_builder+=1;}
+  if(ans.decision_speed==='fast'){s.rapid_builder+=1;s.growth_hunter+=1;}
+  else if(ans.decision_speed==='deliberate'){s.vision_architect+=1;s.systems_operator+=1;}
+  if(ans.tooling_affinity==='heavy'){s.systems_operator+=2;}
+  else if(ans.tooling_affinity==='minimal'){s.experimental_hacker+=1;s.rapid_builder+=1;}
   return Object.entries(s).sort((a,b)=>b[1]-a[1])[0][0];
 }
 
-function scoreDimensions(ans){
+function scoreDims(ans){
+  const sp=(v,high,low,mid=null)=>v===high?85+Math.floor(Math.random()*10):v===low?35+Math.floor(Math.random()*15):65+Math.floor(Math.random()*15);
   return{
-    'Decision Velocity':ans.decision_speed==='fast'?88:ans.decision_speed==='moderate'?62:40,
-    'Risk Tolerance':ans.risk_tolerance==='high'?85:ans.risk_tolerance==='moderate'?60:38,
-    'Communication':ans.communication_style==='async'?75:ans.communication_style==='balanced'?70:65,
-    'Execution Pace':ans.execution_style==='sprint'?82:ans.execution_style==='steady'?68:72,
-    'Vision Alignment':ans.ambition_level==='high'?88:ans.ambition_level==='moderate'?65:50,
-    'Conflict Style':ans.conflict_approach==='collaborative'?80:ans.conflict_approach==='compromising'?65:55,
+    'Execution Style':sp(ans.execution_style,'fast','deliberate'),
+    'Communication Cadence':sp(ans.communication_style,'async','sync'),
+    'Decision-Making':sp(ans.decision_speed,'fast','deliberate'),
+    'Risk Posture':sp(ans.risk_tolerance,'high','low'),
+    'Conflict Resolution':ans.conflict_approach==='collaborative'?82+Math.floor(Math.random()*10):ans.conflict_approach==='compromising'?65+Math.floor(Math.random()*10):50+Math.floor(Math.random()*15),
+    'Tooling Affinity':ans.tooling_affinity==='pragmatic'?75+Math.floor(Math.random()*15):ans.tooling_affinity==='heavy'?60+Math.floor(Math.random()*15):70+Math.floor(Math.random()*15),
+    'Domain Coverage':ans.domain_expertise==='specialist'?80+Math.floor(Math.random()*15):65+Math.floor(Math.random()*20),
+    'Time & Energy':ans.time_commitment==='steady'?78+Math.floor(Math.random()*12):65+Math.floor(Math.random()*20),
+    'Ownership Philosophy':ans.ownership_philosophy==='flexible'?80+Math.floor(Math.random()*12):70+Math.floor(Math.random()*15),
+    'GTM Orientation':ans.gtm_orientation==='product_led'?78+Math.floor(Math.random()*12):70+Math.floor(Math.random()*15),
   };
 }
 
 function render(){
   const q=questions[current];
-  document.getElementById('q-num').textContent=`Question ${current+1}`;
-  document.getElementById('q-text').textContent=q.text;
   const pct=Math.round(((current+1)/questions.length)*100);
+  document.getElementById('q-num').textContent=`Question ${current+1}`;
   document.getElementById('q-counter').textContent=`Question ${current+1} of ${questions.length}`;
   document.getElementById('q-pct').textContent=pct+'%';
   document.getElementById('prog-fill').style.width=pct+'%';
   document.getElementById('btn-prev').style.display=current>0?'block':'none';
   document.getElementById('btn-next').textContent=current===questions.length-1?'See My Results →':'Next →';
-  const opts=document.getElementById('q-options');
-  opts.innerHTML=q.opts.map(o=>`
+  const color=DIM_COLORS[q.dim]||'#4f7cff';
+  document.getElementById('q-dim-label').innerHTML=`<span class="dim-label" style="color:${color};border-color:${color}30;background:${color}12">${q.dim}</span>`;
+  document.getElementById('q-text').textContent=q.text;
+  document.getElementById('q-opts').innerHTML=q.opts.map(o=>`
     <label class="opt${answers[q.id]===o.val?' selected':''}" onclick="selectOpt(this,'${q.id}','${o.val}')">
-      <div class="opt-radio">${answers[q.id]===o.val?'<span style="width:7px;height:7px;border-radius:50%;background:#fff;display:block"></span>':''}</div>
+      <div class="opt-radio">${answers[q.id]===o.val?'<span style="width:6px;height:6px;border-radius:50%;background:#fff;display:block"></span>':''}</div>
       <div class="opt-body"><h4>${o.h}</h4><p>${o.p}</p></div>
     </label>`).join('');
   document.getElementById('btn-next').disabled=!answers[q.id];
@@ -214,7 +241,7 @@ function render(){
 function selectOpt(el,id,val){
   document.querySelectorAll('.opt').forEach(o=>o.classList.remove('selected'));
   el.classList.add('selected');
-  el.querySelector('.opt-radio').innerHTML='<span style="width:7px;height:7px;border-radius:50%;background:#fff;display:block"></span>';
+  el.querySelector('.opt-radio').innerHTML='<span style="width:6px;height:6px;border-radius:50%;background:#fff;display:block"></span>';
   answers[id]=val;
   document.getElementById('btn-next').disabled=false;
 }
@@ -224,7 +251,6 @@ function nextQ(){
   if(current<questions.length-1){current++;render();}
   else showResults();
 }
-
 function prevQ(){if(current>0){current--;render();}}
 
 function showResults(){
@@ -237,64 +263,51 @@ function showResults(){
     let archetype,dims;
     try{
       const res=await fetch('/api/assessment/submit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:merged.name||'Founder',...merged})});
+      if(!res.ok)throw new Error();
       const data=await res.json();
       archetype=data.archetype;
       dims=data.dimensions;
     }catch{
       archetype=classify(answers);
-      const rawDims=scoreDimensions(answers);
-      dims={};
-      Object.entries(rawDims).forEach(([k,v])=>{dims[k.toLowerCase().replace(/ /g,'_')]=v;});
+      dims=scoreDims(answers);
     }
     document.getElementById('loading').style.display='none';
     renderResults(archetype,dims,merged.name||'Founder');
-  },1800);
+  },2000);
 }
 
 function renderResults(archetype,dims,name){
   const arch=archetypes[archetype]||{name:archetype,emoji:'🧠',desc:''};
-  const dimLabels={'decision_velocity':'Decision Velocity','risk_tolerance':'Risk Tolerance','communication':'Communication','execution_pace':'Execution Pace','vision_alignment':'Vision Alignment','conflict_style':'Conflict Style'};
-  const overallScore=Math.round(Object.values(dims).reduce((a,b)=>a+b,0)/Object.values(dims).length);
-  const circumference=2*Math.PI*54;
-  const offset=circumference-(overallScore/100)*circumference;
-  const strengths=['Strong signal clarity on decision patterns','Clear communication preference identified','Execution archetype determined','Risk posture well-defined'];
-  const el=document.getElementById('results');
-  el.innerHTML=`
+  const dimEntries=typeof dims==='object'&&dims!==null?Object.entries(dims):Object.entries(scoreDims(answers));
+  const overallScore=Math.round(dimEntries.reduce((s,[,v])=>s+(typeof v==='object'?v.score||v:v),0)/dimEntries.length);
+  const circ=2*Math.PI*54;
+  const offset=circ-(overallScore/100)*circ;
+  const signals=['Decision-making pattern clearly identified','Communication preference well-defined','Risk posture signal captured','Tooling philosophy assessed','GTM orientation established','Ownership philosophy documented'];
+  document.getElementById('results').innerHTML=`
     <div class="results-hero">
       <div class="score-ring">
-        <svg width="140" height="140" viewBox="0 0 140 140">
-          <circle cx="70" cy="70" r="54" fill="none" stroke="#1e1e30" stroke-width="8"/>
-          <circle cx="70" cy="70" r="54" fill="none" stroke="url(#grad)" stroke-width="8" stroke-linecap="round" stroke-dasharray="${circumference}" stroke-dashoffset="${offset}"/>
-          <defs><linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#6366f1"/><stop offset="100%" stop-color="#a855f7"/></linearGradient></defs>
-        </svg>
-        <div class="score-ring-num"><span>${overallScore}</span><span>Score</span></div>
+        <svg width="140" height="140" viewBox="0 0 140 140"><circle cx="70" cy="70" r="54" fill="none" stroke="#1e1e2a" stroke-width="8"/><circle cx="70" cy="70" r="54" fill="none" stroke="url(#rg)" stroke-width="8" stroke-linecap="round" stroke-dasharray="${circ}" stroke-dashoffset="${offset}" transform="rotate(-90 70 70)"/><defs><linearGradient id="rg" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#4f7cff"/><stop offset="100%" stop-color="#8b5cf6"/></linearGradient></defs></svg>
+        <div class="score-ring-num"><span class="score-big">${overallScore}</span><span class="score-sub">Score</span></div>
       </div>
-      <div class="archetype-pill">${arch.emoji} ${arch.name}</div>
+      <div class="arch-pill">${arch.emoji} ${arch.name}</div>
       <h2>${name}, you're a ${arch.name}</h2>
-      <p>${arch.desc}</p>
+      <p class="arch-desc">${arch.desc}</p>
     </div>
-    <div class="results-grid">
-      <div class="result-card">
-        <h3>Dimension Scores</h3>
-        ${Object.entries(dims).map(([k,v])=>`
-          <div class="dim-row">
-            <span class="dim-row-label">${dimLabels[k]||k}</span>
-            <div class="dim-track"><div class="dim-fill" style="width:${v}%"></div></div>
-            <span class="dim-score">${v}</span>
-          </div>`).join('')}
+    <div class="r-grid">
+      <div class="r-card">
+        <div class="r-card-title">10-Dimension Profile</div>
+        ${dimEntries.map(([k,v])=>{const score=typeof v==='object'?v.score||v:v;const color=DIM_COLORS[k]||'#4f7cff';return`<div class="dim-row"><span class="dim-row-label">${k}</span><div class="dim-track"><div class="dim-fill" style="width:${score}%;background:${color}"></div></div><span class="dim-val">${score}</span></div>`;}).join('')}
       </div>
-      <div class="result-card">
-        <h3>Profile Signals</h3>
-        <ul class="strengths-list">
-          ${strengths.map(s=>`<li>${s}</li>`).join('')}
-        </ul>
+      <div class="r-card">
+        <div class="r-card-title">Profile Signals</div>
+        <ul class="signals">${signals.map(s=>`<li>${s}</li>`).join('')}</ul>
       </div>
     </div>
     <div class="result-actions">
-      <button class="btn-retry" onclick="location.reload()">Retake Assessment</button>
+      <button class="btn-retry" onclick="location.reload()">Retake</button>
       <button class="btn-dash" onclick="window.location.href='/dashboard.html'">Run Compatibility Analysis →</button>
     </div>`;
-  el.style.display='block';
+  document.getElementById('results').style.display='block';
 }
 
 render();
