@@ -50,3 +50,4 @@ class CompatibilityResponse(BaseModel):
     summary: str
     conversation: list[Any] = []
     narrative: str | None = None
+    stack: list[Any] | None = None

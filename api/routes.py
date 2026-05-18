@@ -71,6 +71,7 @@ async def analyze_compatibility(request: CompatibilityRequest):
             summary=result.get("summary", ""),
             conversation=result.get("conversation", []),
             narrative=result.get("narrative"),
+            stack=result.get("stack"),
         )
     except Exception as e:
         logger.error("Compatibility analysis failed: %s", e)

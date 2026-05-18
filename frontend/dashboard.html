@@ -109,7 +109,31 @@
   .full-card{background:var(--card);border:1px solid var(--border);border-radius:1rem;padding:1.5rem;margin-bottom:1.25rem}
   .rec-item{padding:.75rem 1rem;background:var(--surface);border-radius:.5rem;margin-bottom:.5rem;font-size:.85rem;color:var(--muted);line-height:1.6;display:flex;gap:.75rem;align-items:flex-start}
   .rec-item:last-child{margin-bottom:0}
-  .rec-item::before{content:'â†’';color:var(--primary);flex-shrink:0;font-weight:700}
+  .rec-item::before{content:’&#8594;’;color:var(--primary);flex-shrink:0;font-weight:700}
+  /* STACK SECTION */
+  .stack-section{background:var(--card);border:1px solid var(--border);border-radius:1rem;padding:1.5rem;margin-bottom:1.25rem}
+  .stack-header{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;margin-bottom:1.25rem}
+  .stack-header h3{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+  .stack-filters{display:flex;gap:.375rem;flex-wrap:wrap}
+  .stack-filter{padding:.25rem .75rem;border:1px solid var(--border);background:none;border-radius:9999px;font-size:.72rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all .2s;font-family:inherit}
+  .stack-filter:hover{border-color:var(--primary);color:var(--text)}
+  .stack-filter.active{background:rgba(99,102,241,.15);border-color:rgba(99,102,241,.4);color:#a5b4fc}
+  .stack-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:.875rem}
+  .stack-card{background:var(--surface);border:1px solid var(--border);border-radius:.75rem;padding:1.1rem;transition:all .25s;cursor:default}
+  .stack-card:hover{border-color:rgba(99,102,241,.35);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.3)}
+  .stack-card[data-hidden="true"]{display:none}
+  .stack-card-top{display:flex;align-items:center;gap:.625rem;margin-bottom:.625rem}
+  .stack-icon{font-size:1.25rem;flex-shrink:0}
+  .stack-name{font-size:.9rem;font-weight:700;flex:1}
+  .stack-cat{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;padding:.2rem .5rem;border-radius:9999px}
+  .cat-communication{background:rgba(99,102,241,.12);color:#a5b4fc}
+  .cat-project-management{background:rgba(168,85,247,.12);color:#d8b4fe}
+  .cat-development{background:rgba(245,158,11,.12);color:#fcd34d}
+  .cat-analytics{background:rgba(34,197,94,.12);color:#86efac}
+  .cat-sales{background:rgba(236,72,153,.12);color:#f9a8d4}
+  .cat-documentation{background:rgba(14,165,233,.12);color:#7dd3fc}
+  .stack-purpose{font-size:.78rem;color:var(--muted);line-height:1.5;margin-bottom:.5rem}
+  .stack-why{font-size:.75rem;color:#818cf8;line-height:1.5;font-style:italic}
 </style>
 </head>
 <body>
@@ -323,6 +347,16 @@
         <div id="recs-list"></div>
       </div>
     </div>
+
+    <div class="stack-section" id="stack-section" style="display:none">
+      <div class="stack-header">
+        <h3>Recommended Stack</h3>
+        <div class="stack-filters" id="stack-filters">
+          <button class="stack-filter active" onclick="filterStack('All')">All</button>
+        </div>
+      </div>
+      <div class="stack-grid" id="stack-grid"></div>
+    </div>
   </div>
 </div>
 
@@ -471,12 +505,109 @@ function renderResults(r,a,b){
   }).join('')||'<p style="color:var(--muted);font-size:.85rem">No friction data returned.</p>';
   const recs=r.recommendations||[];
   document.getElementById('recs-list').innerHTML=recs.map(rec=>`<div class="rec-item">${rec}</div>`).join('')||'<p style="color:var(--muted);font-size:.85rem">No recommendations returned.</p>';
+  renderStack(r.stack||null, r.archetype||'Velocity Pair');
 }
 
 function resetAnalysis(){
   document.getElementById('results-section').style.display='none';
   document.getElementById('input-section').style.display='block';
   document.querySelectorAll('.agent-chip').forEach(c=>c.className='agent-chip');
+}
+
+const CATEGORY_ICONS={
+  'Communication':'💬',
+  'Project Management':'📋',
+  'Development':'⚡',
+  'Analytics':'📊',
+  'Sales':'🎯',
+  'Documentation':'📝',
+};
+const CATEGORY_CSS={
+  'Communication':'cat-communication',
+  'Project Management':'cat-project-management',
+  'Development':'cat-development',
+  'Analytics':'cat-analytics',
+  'Sales':'cat-sales',
+  'Documentation':'cat-documentation',
+};
+
+const FALLBACK_STACKS={
+  'Velocity Pair':[
+    {tool:'Linear',category:'Project Management',purpose:'Sprint-based issue tracking with cycle velocity metrics.',why_this_pair:'Your fast decision speed needs a tool that matches your shipping cadence — Linear cycles enforce the rhythm without slowing you down.'},
+    {tool:'Slack',category:'Communication',purpose:'Real-time team messaging with channel organization.',why_this_pair:'Sync-heavy pairs need low-friction communication — Slack keeps decisions in-context and searchable.'},
+    {tool:'Vercel',category:'Development',purpose:'Instant deployment previews and production hosting.',why_this_pair:'One-command deploys match your ship-first mentality — no DevOps overhead between idea and live.'},
+    {tool:'PostHog',category:'Analytics',purpose:'Product analytics, feature flags, and session replay.',why_this_pair:'Velocity Pairs need fast feedback loops — PostHog shows what users do within hours of shipping.'},
+    {tool:'Notion',category:'Documentation',purpose:'Flexible workspace for docs, wikis, and project notes.',why_this_pair:'Lightweight docs that evolve as fast as your product — no ceremony, just enough structure.'},
+    {tool:'HubSpot',category:'Sales',purpose:'CRM with email sequences and pipeline tracking.',why_this_pair:'Your growth-oriented pair needs pipeline visibility from day one without a dedicated sales ops hire.'},
+  ],
+  'Craft Pair':[
+    {tool:'Linear',category:'Project Management',purpose:'Deliberate issue tracking with milestone planning.',why_this_pair:'Craft Pairs benefit from structured cycles that protect deep work time while tracking long-horizon milestones.'},
+    {tool:'Loom',category:'Communication',purpose:'Async video messaging for technical walkthroughs.',why_this_pair:'Your async communication style means decisions get documented by default — no context lost in Slack threads.'},
+    {tool:'GitHub',category:'Development',purpose:'Version control, code review, and CI/CD integrations.',why_this_pair:'Systems-first builders live in GitHub — PRs become your primary async communication channel.'},
+    {tool:'Datadog',category:'Analytics',purpose:'Infrastructure monitoring, logs, and APM.',why_this_pair:'Craft Pairs ship with observability from day one — Datadog gives you the signal quality your standards demand.'},
+    {tool:'Confluence',category:'Documentation',purpose:'Structured technical documentation and architecture decisions.',why_this_pair:'Your vision-architect instinct means decisions need a paper trail — Confluence stores the why, not just the what.'},
+    {tool:'Apollo',category:'Sales',purpose:'B2B prospecting and outbound sequencing.',why_this_pair:'Developer tool pairs need precise targeting — Apollo lets you reach the right engineers without spray-and-pray.'},
+  ],
+  'Scale Pair':[
+    {tool:'Jira',category:'Project Management',purpose:'Enterprise project tracking with cross-team roadmaps.',why_this_pair:'Scale Pairs managing multiple work streams need Jira\'s hierarchy to keep product and sales aligned.'},
+    {tool:'Slack',category:'Communication',purpose:'Real-time messaging with workflow automations.',why_this_pair:'At scale, Slack becomes infrastructure — your sales-led motion needs instant cross-functional coordination.'},
+    {tool:'AWS',category:'Development',purpose:'Cloud infrastructure, compute, and managed services.',why_this_pair:'Enterprise reliability standards require AWS — your systems-operator instinct will build the right abstraction layers.'},
+    {tool:'Mixpanel',category:'Analytics',purpose:'Funnel analytics, retention cohorts, and A/B testing.',why_this_pair:'Scale Pairs live and die by retention curves — Mixpanel makes the funnel math visible in real time.'},
+    {tool:'Salesforce',category:'Sales',purpose:'Enterprise CRM with pipeline automation.',why_this_pair:'Your sales-led GTM motion needs a CRM that scales with your deal complexity and rep count.'},
+    {tool:'Notion',category:'Documentation',purpose:'Internal wiki and team knowledge base.',why_this_pair:'As you scale headcount, Notion keeps institutional knowledge from living only in founders\' heads.'},
+  ],
+  'Research Pair':[
+    {tool:'Notion',category:'Project Management',purpose:'Flexible database and project tracking for R&D workflows.',why_this_pair:'Research Pairs need structure that flexes — Notion\'s database views map to however your experiments are organized today.'},
+    {tool:'Loom',category:'Communication',purpose:'Async video for sharing research findings and demos.',why_this_pair:'Your async-first style means research context gets communicated without pulling everyone into a meeting.'},
+    {tool:'GitHub',category:'Development',purpose:'Version control with notebook and model artifact support.',why_this_pair:'Experimental codebases need clean branching — GitHub keeps your research branches from colliding with production.'},
+    {tool:'Weights & Biases',category:'Analytics',purpose:'ML experiment tracking, model versioning, and dashboards.',why_this_pair:'Research Pairs run hundreds of experiments — W&B makes the results comparable and reproducible.'},
+    {tool:'Obsidian',category:'Documentation',purpose:'Local-first knowledge graph for connected research notes.',why_this_pair:'Your vision-architect instinct produces dense, connected ideas — Obsidian surfaces the links between them.'},
+    {tool:'Typeform',category:'Sales',purpose:'Research surveys and user interview recruitment.',why_this_pair:'Insight-first pairs validate with qualitative research before building — Typeform gets you clean signal fast.'},
+  ],
+};
+
+function renderStack(stack, archetype){
+  const section=document.getElementById('stack-section');
+  const grid=document.getElementById('stack-grid');
+  const filtersEl=document.getElementById('stack-filters');
+  const tools=stack||(FALLBACK_STACKS[archetype]||FALLBACK_STACKS['Velocity Pair']);
+  if(!tools||!tools.length){section.style.display='none';return;}
+  section.style.display='block';
+  // Build category set
+  const cats=['All',...new Set(tools.map(t=>t.category).filter(Boolean))];
+  filtersEl.innerHTML=cats.map(c=>`<button class="stack-filter${c==='All'?' active':''}" onclick="filterStack('${c}')">${c}</button>`).join('');
+  // Render cards
+  grid.innerHTML=tools.map(t=>{
+    const cat=t.category||'Development';
+    const icon=CATEGORY_ICONS[cat]||'🔧';
+    const css=CATEGORY_CSS[cat]||'cat-development';
+    const catKey=cat.toLowerCase().replace(/\s+/g,'-');
+    return`<div class="stack-card" data-category="${catKey}">
+      <div class="stack-card-top">
+        <span class="stack-icon">${icon}</span>
+        <span class="stack-name">${t.tool}</span>
+        <span class="stack-cat ${css}">${cat}</span>
+      </div>
+      <div class="stack-purpose">${t.purpose||''}</div>
+      ${t.why_this_pair?`<div class="stack-why">"${t.why_this_pair}"</div>`:''}
+    </div>`;
+  }).join('');
+}
+
+function filterStack(cat){
+  document.querySelectorAll('.stack-filter').forEach(btn=>{
+    btn.classList.toggle('active',btn.textContent===cat);
+  });
+  document.querySelectorAll('.stack-card').forEach(card=>{
+    if(cat==='All'){
+      card.dataset.hidden='false';
+      card.style.display='';
+    } else {
+      const match=card.dataset.category===cat.toLowerCase().replace(/\s+/g,'-');
+      card.dataset.hidden=String(!match);
+      card.style.display=match?'':'none';
+    }
+  });
 }
 
 function drawRadar(dims){

@@ -128,6 +128,8 @@ def run_founder_analysis(founder_a_profile, founder_b_profile, github_data_a=Non
     if github_data_a or github_data_b:
         agents_to_run.append(("repotale", create_repotale_agent))
 
+    tool_stack = None
+
     for agent_type, creator in agents_to_run:
         try:
             agent = creator(llm_config)
@@ -136,6 +138,17 @@ def run_founder_analysis(founder_a_profile, founder_b_profile, github_data_a=Non
                 conversation.append({"agent": agent_type, "response": result})
                 if agent_type == "compatibility":
                     compat_summary = result
+                if agent_type == "gtm_strategist":
+                    try:
+                        import re
+                        match = re.search(r'\{.*\}', result, re.DOTALL)
+                        if match:
+                            gtm_data = json.loads(match.group())
+                            raw_stack = gtm_data.get("tool_stack", [])
+                            if isinstance(raw_stack, list) and raw_stack:
+                                tool_stack = raw_stack
+                    except Exception as parse_err:
+                        logger.warning("Could not parse GTM tool_stack: %s", parse_err)
         except Exception as e:
             logger.error("Failed to create or run agent %s: %s", agent_type, e)
             conversation.append({"agent": agent_type, "response": f"Agent unavailable: {str(e)}"})
@@ -173,6 +186,7 @@ Now speak directly to both founders together. Write the compatibility narrative.
         "conversation": conversation,
         "summary": compat_summary or "Analysis could not be completed.",
         "narrative": narrative,
+        "stack": tool_stack,
     }
 
 def run_assessment_synthesis(profile, self_report_archetype, github_data=None, resume_text=None):

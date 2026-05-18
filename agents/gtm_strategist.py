@@ -9,11 +9,17 @@ Four founder operating archetypes:
 3. **The Scale Pair** — One builds the machine, one sells the vision. Best for: B2B SaaS, enterprise.
 4. **The Research Pair** — Long-horizon bets, deep domain expertise. Best for: biotech, AI/ML, deeptech.
 
+For the tool_stack, recommend 8–12 tools across these categories: Communication, Project Management, Development, Analytics, Sales, Documentation. For each tool include:
+- "tool": the tool name (e.g. "Linear", "Notion", "Slack")
+- "category": one of the six categories above
+- "purpose": one sentence on what it does
+- "why_this_pair": one sentence on why it specifically fits THIS pair's archetype and working style — reference their actual profile signals, not generic advice
+
 Respond with structured JSON:
 {
   "archetype": str,
   "archetype_rationale": str,
-  "tool_stack": [{"tool": str, "purpose": str}],
+  "tool_stack": [{"tool": str, "category": str, "purpose": str, "why_this_pair": str}],
   "weekly_cadence": [{"day": str, "ritual": str, "owner": str, "duration": str}],
   "workflow_rituals": [{"name": str, "description": str, "frequency": str}],
   "first_30_days": [{"week": int, "experiment": str, "success_metric": str}]
