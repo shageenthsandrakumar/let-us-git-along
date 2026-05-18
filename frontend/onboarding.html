@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>FounderFit — Build Your Profile</title>
+<title>FounderFit â€” Build Your Profile</title>
 <style>
   :root{--bg:#08080f;--surface:#0f0f1a;--card:#13131f;--border:#1e1e30;--primary:#6366f1;--purple:#a855f7;--text:#e2e8f0;--muted:#64748b;--success:#22c55e;--error:#ef4444}
   *{margin:0;padding:0;box-sizing:border-box}
@@ -70,22 +70,24 @@
   .btn-next:hover{background:#4f46e5}
   .btn-back-step{padding:.875rem 1.5rem;border:1px solid var(--border);color:var(--muted);background:none;border-radius:.625rem;font-size:.95rem;cursor:pointer;transition:all .2s;font-family:inherit}
   .btn-back-step:hover{border-color:var(--primary);color:var(--text)}
+  .resume-drop{border:1px dashed var(--border);border-radius:.625rem;padding:.75rem 1rem;cursor:pointer;transition:border-color .2s;font-size:.8rem;color:var(--muted);display:flex;align-items:center;gap:.5rem;background:var(--surface)}
+  .resume-drop:hover{border-color:var(--primary)}
 </style>
 </head>
 <body>
 <nav>
   <div class="logo">FounderFit</div>
-  <a href="/" class="nav-back">← Back to home</a>
+  <a href="/" class="nav-back">â† Back to home</a>
 </nav>
 
 <div class="layout">
   <div class="side-panel">
     <h2>Build your founder <span>profile</span></h2>
-    <p>This takes 2 minutes. Your answers power the AI compatibility analysis — be honest, not aspirational.</p>
+    <p>This takes 2 minutes. Your answers power the AI compatibility analysis â€” be honest, not aspirational.</p>
     <div class="side-benefits">
-      <div class="benefit"><div class="benefit-icon">🧠</div><div><h4>Behavioral, not biographical</h4><p>We care how you work, not where you went to school.</p></div></div>
-      <div class="benefit"><div class="benefit-icon">🔒</div><div><h4>Private by default</h4><p>Your profile is only used when you initiate a compatibility analysis.</p></div></div>
-      <div class="benefit"><div class="benefit-icon">⚡</div><div><h4>Instant archetype</h4><p>Get your founder archetype the moment you finish.</p></div></div>
+      <div class="benefit"><div class="benefit-icon">ðŸ§ </div><div><h4>Behavioral, not biographical</h4><p>We care how you work, not where you went to school.</p></div></div>
+      <div class="benefit"><div class="benefit-icon">ðŸ”’</div><div><h4>Private by default</h4><p>Your profile is only used when you initiate a compatibility analysis.</p></div></div>
+      <div class="benefit"><div class="benefit-icon">âš¡</div><div><h4>Instant archetype</h4><p>Get your founder archetype the moment you finish.</p></div></div>
     </div>
   </div>
 
@@ -98,7 +100,7 @@
         <div class="prog-line" id="line2"></div>
         <div class="prog-step"><div class="prog-dot pending" id="dot3">3</div></div>
       </div>
-      <div class="prog-label" id="prog-label">Step 1 of 3 — Basic Info</div>
+      <div class="prog-label" id="prog-label">Step 1 of 3 â€” Basic Info</div>
     </div>
 
     <!-- STEP 1 -->
@@ -113,20 +115,20 @@
         <div class="field"><label>GitHub Username</label><input type="text" id="github" placeholder="username" /></div>
         <div class="field"><label>Ambition Level</label>
           <select id="ambition">
-            <option value="high">High — building something massive</option>
-            <option value="moderate">Moderate — solid outcome is fine</option>
-            <option value="lifestyle">Lifestyle — quality over scale</option>
+            <option value="high">High â€” building something massive</option>
+            <option value="moderate">Moderate â€” solid outcome is fine</option>
+            <option value="lifestyle">Lifestyle â€” quality over scale</option>
           </select>
         </div>
       </div>
       <div class="field"><label>Time Commitment</label>
         <select id="time_commitment">
-          <option value="full_time">Full-time — all in</option>
-          <option value="part_time">Part-time — side project for now</option>
-          <option value="transitioning">Transitioning — leaving job soon</option>
+          <option value="full_time">Full-time â€” all in</option>
+          <option value="part_time">Part-time â€” side project for now</option>
+          <option value="transitioning">Transitioning â€” leaving job soon</option>
         </select>
       </div>
-      <div class="actions"><button class="btn-next" onclick="goToStep(2)">Continue →</button></div>
+      <div class="actions"><button class="btn-next" onclick="goToStep(2)">Continue â†’</button></div>
     </div>
 
     <!-- STEP 2 -->
@@ -149,14 +151,14 @@
         </div>
       </div>
       <div class="actions">
-        <button class="btn-back-step" onclick="goToStep(1)">← Back</button>
-        <button class="btn-next" onclick="goToStep(3)">Continue →</button>
+        <button class="btn-back-step" onclick="goToStep(1)">â† Back</button>
+        <button class="btn-next" onclick="goToStep(3)">Continue â†’</button>
       </div>
     </div>
 
     <!-- STEP 3 -->
     <div class="step" id="step3">
-      <div class="step-header"><h2>How do you work?</h2><p>Day-to-day operating style — where most co-founder friction actually lives.</p></div>
+      <div class="step-header"><h2>How do you work?</h2><p>Day-to-day operating style â€” where most co-founder friction actually lives.</p></div>
       <div class="field">
         <label>Communication Style</label>
         <div class="choices">
@@ -174,14 +176,41 @@
         </div>
       </div>
       <div class="actions">
-        <button class="btn-back-step" onclick="goToStep(2)">← Back</button>
-        <button class="btn-next" onclick="submitProfile()">Go to Assessment →</button>
+        <button class="btn-back-step" onclick="goToStep(2)">â† Back</button>
+        <button class="btn-next" onclick="submitProfile()">Go to Assessment â†’</button>
       </div>
     </div>
   </div>
 </div>
 
 <script>
+  let resumeText = null;
+
+  async function handleResumeUpload(input){
+    const file = input.files[0];
+    if(!file) return;
+    const label = document.getElementById('resume_label');
+    const drop = document.getElementById('resume_drop');
+    label.textContent = 'Uploading...';
+    drop.style.borderColor = 'var(--primary)';
+    try{
+      const form = new FormData();
+      form.append('file', file);
+      const res = await fetch('/api/upload/resume', {method:'POST', body:form});
+      if(!res.ok) throw new Error((await res.json()).detail || 'Upload failed');
+      const data = await res.json();
+      resumeText = data.text;
+      label.textContent = '&#10003; ' + file.name;
+      drop.style.borderColor = 'var(--success)';
+      drop.style.color = 'var(--success)';
+    }catch(e){
+      label.textContent = '&#9888; ' + e.message;
+      drop.style.borderColor = 'var(--error)';
+      drop.style.color = 'var(--error)';
+      resumeText = null;
+    }
+  }
+
   const steps = ['Basic Info','Working Style','Execution'];
   function goToStep(n){
     if(n===2&&!document.getElementById('name').value.trim()){alert('Please enter your name.');return;}
@@ -191,7 +220,7 @@
       d.className='prog-dot '+(i<n-1?'done':i===n-1?'active':'pending');
     });
     ['line1','line2'].forEach((id,i)=>{document.getElementById(id).className='prog-line '+(i<n-1?'done':'');});
-    document.getElementById('prog-label').textContent=`Step ${n} of 3 — ${steps[n-1]}`;
+    document.getElementById('prog-label').textContent=`Step ${n} of 3 â€” ${steps[n-1]}`;
   }
   function selectChoice(el,name,val){
     document.querySelectorAll(`[name="${name}"]`).forEach(r=>r.closest('.choice').classList.remove('selected'));
@@ -211,10 +240,12 @@
       communication_style:document.querySelector('[name=communication_style]:checked')?.value||'balanced',
       execution_style:document.querySelector('[name=execution_style]:checked')?.value||'steady',
     };
+    if(resumeText) profile.resume_text = resumeText;
     localStorage.setItem('founderProfile',JSON.stringify(profile));
     window.location.href='/assessment.html';
   }
 </script>
-<script src="/static/mascot.js"></script>
+<script src="mascot.js"></script>
 </body>
 </html>
+
