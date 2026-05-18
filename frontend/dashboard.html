@@ -787,9 +787,20 @@ function drawRadar(dims){
   const ctx=canvas.getContext('2d');
   const W=canvas.width,H=canvas.height;
   const cx=W/2,cy=H/2,R=88;
-  const labels=['Decision\nVelocity','Risk\nTolerance','Communication','Execution\nPace','Vision\nAlignment','Conflict\nStyle'];
-  const keys=['decision_velocity','risk_tolerance','communication','execution_pace','vision_alignment','conflict_style'];
-  const raw=keys.map(k=>{const v=dims[k];return typeof v==='object'?v.score:v||60;});
+  // Short display labels for known dimension keys (both API and local-fallback formats)
+  const SHORT={
+    'Execution Style':'Execution','Communication Cadence':'Comms','Decision-Making':'Decisions',
+    'Risk Posture':'Risk','Conflict Resolution':'Conflict','Tooling Affinity':'Tooling',
+    'Domain Coverage':'Domain','Time & Energy':'Time','Ownership Philosophy':'Ownership',
+    'GTM Orientation':'GTM','Network Proximity':'Network',
+    'decision_velocity':'Decision','risk_tolerance':'Risk','communication':'Comms',
+    'execution_pace':'Execution','vision_alignment':'Vision','conflict_style':'Conflict',
+    'network_proximity':'Network',
+  };
+  // Dynamic: take all dimension entries (up to 11), derive labels and values
+  const entries=Object.entries(dims).slice(0,11);
+  const labels=entries.map(([k])=>{const s=SHORT[k]||k;return s.length>12?s.substring(0,10)+'…':s;});
+  const raw=entries.map(([,v])=>typeof v==='object'?v.score??60:v??60);
   const N=labels.length;
   const angle=i=>(-Math.PI/2)+(2*Math.PI/N)*i;
   let progress=0;

@@ -267,7 +267,7 @@
       <circle cx="13" cy="72" r="7" fill="#2a2a3e"/>
       <circle cx="13" cy="72" r="5.5" fill="#374151"/>
       <!-- left thumb up -->
-      <ellipse cx="10" cy="67" rx="3" ry="4.5" rx="3" fill="#374151" transform="rotate(-20 10 67)"/>
+      <ellipse cx="10" cy="67" rx="3" ry="4.5" fill="#374151" transform="rotate(-20 10 67)"/>
 
       <!-- right arm -->
       <rect x="70" y="67" width="16" height="10" rx="5" fill="#1a1a2e"/>

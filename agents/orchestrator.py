@@ -1,4 +1,5 @@
 import os
+import re
 import json
 import logging
 from autogen import ConversableAgent, LLMConfig
@@ -135,6 +136,7 @@ def run_founder_analysis(founder_a_profile, founder_b_profile, github_data_a=Non
         agents_to_run.append(("repotale", create_repotale_agent))
 
     tool_stack = None
+    parsed_compat = None
 
     for agent_type, creator in agents_to_run:
         try:
@@ -144,9 +146,15 @@ def run_founder_analysis(founder_a_profile, founder_b_profile, github_data_a=Non
                 conversation.append({"agent": agent_type, "response": result})
                 if agent_type == "compatibility":
                     compat_summary = result
+                    # Parse structured JSON from the compatibility agent response
+                    try:
+                        match = re.search(r'\{.*\}', result, re.DOTALL)
+                        if match:
+                            parsed_compat = json.loads(match.group())
+                    except Exception as parse_err:
+                        logger.warning("Could not parse compatibility JSON: %s", parse_err)
                 if agent_type == "gtm_strategist":
                     try:
-                        import re
                         match = re.search(r'\{.*\}', result, re.DOTALL)
                         if match:
                             gtm_data = json.loads(match.group())
@@ -187,12 +195,44 @@ Now speak directly to both founders together. Write the compatibility narrative.
     except Exception as e:
         logger.error("Communicator agent failed: %s", e)
 
+    # Add Network Proximity dimension to parsed_compat dimensions if not already present
+    if parsed_compat and "dimensions" in parsed_compat:
+        loc_a = founder_a_profile.get("location") or founder_a_profile.get("timezone")
+        loc_b = founder_b_profile.get("location") or founder_b_profile.get("timezone")
+        city_a = (founder_a_profile.get("location") or "").lower()
+        city_b = (founder_b_profile.get("location") or "").lower()
+        tz_a = (founder_a_profile.get("timezone") or "").upper()
+        tz_b = (founder_b_profile.get("timezone") or "").upper()
+        if city_a and city_b and city_a == city_b:
+            net_score = 92
+            net_analysis = "Same city — real-time collaboration is frictionless."
+        elif tz_a and tz_b and tz_a == tz_b:
+            net_score = 78
+            net_analysis = "Same timezone — strong async overlap with easy sync windows."
+        elif loc_a and loc_b:
+            net_score = 60
+            net_analysis = "Different locations — async-first workflow recommended."
+        else:
+            net_score = 55
+            net_analysis = "Location data unavailable; proximity unknown."
+        parsed_compat["dimensions"]["Network Proximity"] = {"score": net_score, "analysis": net_analysis}
+        # Recalculate overall score to include Network Proximity
+        all_scores = [v["score"] if isinstance(v, dict) else v for v in parsed_compat["dimensions"].values()]
+        parsed_compat["overall_score"] = round(sum(all_scores) / len(all_scores))
+
     return {
         "status": "complete",
         "conversation": conversation,
         "summary": compat_summary or "Analysis could not be completed.",
         "narrative": narrative,
         "stack": tool_stack,
+        # Structured fields parsed from compatibility agent (BUG-024 fix)
+        "overall_score": parsed_compat.get("overall_score") if parsed_compat else None,
+        "dimensions": parsed_compat.get("dimensions") if parsed_compat else None,
+        "archetype": parsed_compat.get("archetype") if parsed_compat else None,
+        "friction_predictions": parsed_compat.get("friction_predictions") if parsed_compat else None,
+        "strengths": parsed_compat.get("strengths") if parsed_compat else None,
+        "recommendations": parsed_compat.get("recommendations") if parsed_compat else None,
     }
 
 def run_assessment_synthesis(profile, self_report_archetype, github_data=None, resume_text=None, resume_pdf_text=None):
@@ -242,7 +282,6 @@ def run_assessment_synthesis(profile, self_report_archetype, github_data=None, r
     parsed_synthesis = None
     if synthesis_result:
         try:
-            import re
             match = re.search(r'\{.*\}', synthesis_result, re.DOTALL)
             if match:
                 parsed_synthesis = json.loads(match.group())

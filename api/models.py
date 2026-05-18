@@ -57,3 +57,10 @@ class CompatibilityResponse(BaseModel):
     conversation: list[Any] = []
     narrative: str | None = None
     stack: list[Any] | None = None
+    # Structured fields parsed from compatibility agent (BUG-024 fix)
+    overall_score: int | None = None
+    dimensions: dict | None = None
+    archetype: str | None = None
+    friction_predictions: list[Any] | None = None
+    strengths: list[str] | None = None
+    recommendations: list[str] | None = None

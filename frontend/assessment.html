@@ -145,7 +145,8 @@
 const DIM_COLORS={
   'Execution Style':'#4f7cff','Communication Cadence':'#06b6d4','Decision-Making':'#8b5cf6',
   'Risk Posture':'#f43f5e','Conflict Resolution':'#f59e0b','Tooling Affinity':'#a78bfa',
-  'Domain Coverage':'#10b981','Time & Energy':'#e879f9','Ownership Philosophy':'#34d399','GTM Orientation':'#fb923c'
+  'Domain Coverage':'#10b981','Time & Energy':'#e879f9','Ownership Philosophy':'#34d399','GTM Orientation':'#fb923c',
+  'Network Proximity':'#2dd4bf'
 };
 
 const questions=[
@@ -206,7 +207,7 @@ const answers={};
 
 const archetypes={
   rapid_builder:{name:'Rapid Builder',emoji:'🚀',desc:'You ship fast, iterate aggressively, and treat tech debt as fuel. Your superpower is momentum — getting something in users\' hands before others finish planning. You thrive in ambiguity and find slow decision-making physically painful.'},
-  systems_operator:{name:'Systems Operator',emoji:'ðŸ—️',desc:'You build infrastructure others stand on. Methodical, scalability-focused, reliability-obsessed — you think about 10M users before you have 100. Your superpower is designing machines that outlast you.'},
+  systems_operator:{name:'Systems Operator',emoji:'🏗️',desc:'You build infrastructure others stand on. Methodical, scalability-focused, reliability-obsessed — you think about 10M users before you have 100. Your superpower is designing machines that outlast you.'},
   experimental_hacker:{name:'Experimental Hacker',emoji:'🔬',desc:'You explore widely, prototype fast, hold low attachment to any single approach. Your superpower is killing ideas quickly and finding signal in noise. You thrive in research-heavy, uncertainty-rich environments.'},
   vision_architect:{name:'Vision Architect',emoji:'🗺️',desc:'You see ten moves ahead and design backward. Documentation-heavy, strategic, long-horizon — your superpower is building shared understanding across a team. You\'re at your best in platform companies where architecture is the moat.'},
   product_strategist:{name:'Product Strategist',emoji:'📦',desc:'You\'re obsessed with the customer and make pragmatic trade-offs to deliver value fast. Feature-driven and outcome-focused, your superpower is knowing which 20% of features drive 80% of adoption.'},
@@ -331,7 +332,7 @@ function renderResults(archetype,dims,name,synthesis=null){
   const narrative = synthesis&&synthesis.narrative ? synthesis.narrative : null;
   const arch=archetypes[archetype]||{name:archetype,emoji:'🧠',desc:''};
   const dimEntries=typeof dims==='object'&&dims!==null?Object.entries(dims):Object.entries(scoreDims(answers));
-  const overallScore=Math.round(dimEntries.reduce((s,[,v])=>s+(typeof v==='object'?v.score||v:v),0)/dimEntries.length);
+  const overallScore=Math.round(dimEntries.reduce((s,[,v])=>s+(typeof v==='object'?v.score??v:v),0)/dimEntries.length);
   const circ=2*Math.PI*54;
   const offset=circ-(overallScore/100)*circ;
   const signals=['Decision-making pattern clearly identified','Communication preference well-defined','Risk posture signal captured','Tooling philosophy assessed','GTM orientation established','Ownership philosophy documented'];
@@ -350,7 +351,7 @@ function renderResults(archetype,dims,name,synthesis=null){
     <div class="r-grid">
       <div class="r-card">
         <div class="r-card-title">10-Dimension Profile</div>
-        ${dimEntries.map(([k,v])=>{const score=typeof v==='object'?v.score||v:v;const color=DIM_COLORS[k]||'#4f7cff';return`<div class="dim-row"><span class="dim-row-label">${k}</span><div class="dim-track"><div class="dim-fill" style="width:${score}%;background:${color}"></div></div><span class="dim-val">${score}</span></div>`;}).join('')}
+        ${dimEntries.map(([k,v])=>{const score=typeof v==='object'?v.score??v:v;const color=DIM_COLORS[k]||'#4f7cff';return`<div class="dim-row"><span class="dim-row-label">${k}</span><div class="dim-track"><div class="dim-fill" style="width:${score}%;background:${color}"></div></div><span class="dim-val">${score}</span></div>`;}).join('')}
       </div>
       <div class="r-card">
         <div class="r-card-title">Profile Signals</div>

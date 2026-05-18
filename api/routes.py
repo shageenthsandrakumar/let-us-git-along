@@ -74,6 +74,12 @@ async def analyze_compatibility(request: CompatibilityRequest):
             conversation=result.get("conversation", []),
             narrative=result.get("narrative"),
             stack=result.get("stack"),
+            overall_score=result.get("overall_score"),
+            dimensions=result.get("dimensions"),
+            archetype=result.get("archetype"),
+            friction_predictions=result.get("friction_predictions"),
+            strengths=result.get("strengths"),
+            recommendations=result.get("recommendations"),
         )
     except Exception as e:
         logger.error("Compatibility analysis failed: %s", e)
