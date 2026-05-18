@@ -49,3 +49,4 @@ class CompatibilityResponse(BaseModel):
     status: str
     summary: str
     conversation: list[Any] = []
+    narrative: str | None = None

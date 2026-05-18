@@ -10,6 +10,7 @@ from agents.executor import create_executor_agent
 from agents.github_storyteller import create_github_storyteller_agent
 from agents.resume_agent import create_resume_agent
 from agents.synthesis_agent import create_synthesis_agent
+from agents.communicator_agent import create_communicator_agent
 
 logger = logging.getLogger(__name__)
 
@@ -142,10 +143,36 @@ def run_founder_analysis(founder_a_profile, founder_b_profile, github_data_a=Non
     if not compat_summary and conversation:
         compat_summary = conversation[0]["response"]
 
+    # Communicator runs last — reads everything all other agents produced
+    narrative = None
+    try:
+        communicator = create_communicator_agent(llm_config)
+        agent_outputs = "\n\n".join(
+            f"[{entry['agent'].upper()}]\n{entry['response']}"
+            for entry in conversation
+            if entry.get("response") and not entry["response"].startswith("Agent unavailable")
+        )
+        communicator_prompt = f"""Write a compatibility narrative for these two founders.
+
+Founder A: {founder_a_profile.get('name', 'Founder A')}
+Founder B: {founder_b_profile.get('name', 'Founder B')}
+
+Here is everything the other agents found:
+
+{agent_outputs}
+
+Now speak directly to both founders together. Write the compatibility narrative."""
+        narrative = _run_agent(communicator, communicator_prompt)
+        if narrative:
+            conversation.append({"agent": "communicator", "response": narrative})
+    except Exception as e:
+        logger.error("Communicator agent failed: %s", e)
+
     return {
         "status": "complete",
         "conversation": conversation,
         "summary": compat_summary or "Analysis could not be completed.",
+        "narrative": narrative,
     }
 
 def run_assessment_synthesis(profile, self_report_archetype, github_data=None, resume_text=None):
@@ -187,19 +214,43 @@ def run_assessment_synthesis(profile, self_report_archetype, github_data=None, r
         synthesis_prompt += "\n**Note:** Only questionnaire data is available. No GitHub or LinkedIn data was provided.\n"
 
     synthesizer = create_synthesis_agent(llm_config)
-    result = _run_agent(synthesizer, synthesis_prompt)
+    synthesis_result = _run_agent(synthesizer, synthesis_prompt)
 
-    if result:
+    parsed_synthesis = None
+    if synthesis_result:
         try:
             import re
-            match = re.search(r'\{.*\}', result, re.DOTALL)
+            match = re.search(r'\{.*\}', synthesis_result, re.DOTALL)
             if match:
-                return json.loads(match.group())
+                parsed_synthesis = json.loads(match.group())
         except Exception:
             pass
-        return {"alignment_note": result, "final_archetype": self_report_archetype, "confidence": "low", "alignment": "unknown", "key_insight": "", "data_sources_used": [], "partnership_note": ""}
+        if not parsed_synthesis:
+            parsed_synthesis = {"alignment_note": synthesis_result, "final_archetype": self_report_archetype, "confidence": "low", "alignment": "unknown", "key_insight": "", "data_sources_used": [], "partnership_note": ""}
 
-    return None
+    # Communicator runs last — reads all signals and speaks directly to the founder
+    logger.info("Assessment: running Communicator Agent")
+    communicator_context = f"Write an individual founder narrative for {profile.get('name', 'this founder')}.\n\n"
+    communicator_context += f"[QUESTIONNAIRE — self-reported archetype: {self_report_archetype}]\n"
+    communicator_context += json.dumps({k: v for k, v in profile.items() if k not in ('name', 'email', 'github_username', 'linkedin_url', 'resume_text', 'domain_expertise_list', 'tool_preferences')}, indent=2) + "\n\n"
+    if github_story:
+        communicator_context += f"[GITHUB BUILDER STORY]\n{github_story}\n\n"
+    if resume_story:
+        communicator_context += f"[LINKEDIN / RESUME STORY]\n{resume_story}\n\n"
+    if parsed_synthesis:
+        communicator_context += f"[SYNTHESIS AGENT — final archetype: {parsed_synthesis.get('final_archetype', self_report_archetype)}]\n"
+        communicator_context += f"Reasoning: {parsed_synthesis.get('reasoning', '')}\n"
+        communicator_context += f"Key insight: {parsed_synthesis.get('key_insight', '')}\n\n"
+    communicator_context += "Now speak directly to this founder. Write their individual assessment narrative."
+
+    communicator = create_communicator_agent(llm_config)
+    narrative = _run_agent(communicator, communicator_context)
+
+    if parsed_synthesis:
+        parsed_synthesis["narrative"] = narrative
+        return parsed_synthesis
+
+    return {"narrative": narrative, "final_archetype": self_report_archetype, "confidence": "low", "alignment": "unknown", "key_insight": "", "data_sources_used": [], "partnership_note": ""} if narrative else None
 
 
 def run_single_agent_analysis(agent_type, input_data):

@@ -80,6 +80,13 @@
   .btn-dash{flex:1;padding:.875rem;background:linear-gradient(135deg,var(--blue),var(--purple));color:#fff;border:none;border-radius:.625rem;font-size:.9rem;font-weight:600;cursor:pointer;font-family:inherit}
   .btn-retry{padding:.875rem 1.5rem;border:1px solid var(--border);color:var(--muted);background:none;border-radius:.625rem;font-size:.875rem;cursor:pointer;font-family:inherit;transition:all .2s}
   .btn-retry:hover{border-color:var(--blue);color:var(--text)}
+  /* NARRATIVE */
+  .narrative-card{background:var(--elevated);border:1px solid var(--border);border-radius:1rem;padding:1.75rem;margin-bottom:1.25rem}
+  .narrative-label{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:1rem;display:flex;align-items:center;gap:.4rem}
+  .narrative-label::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--purple);display:inline-block}
+  .narrative-text{font-size:.875rem;color:var(--text);line-height:1.85}
+  .narrative-text p{margin-bottom:.875rem}
+  .narrative-text p:last-child{margin-bottom:0;color:#a5b4fc;font-style:italic}
   /* STEP 0 — enrichment */
   #step0{background:var(--card);border:1px solid var(--border);border-radius:1.25rem;padding:2.25rem;margin-bottom:1.25rem}
   #step0 h2{font-size:1.25rem;font-weight:700;margin-bottom:.5rem}
@@ -344,13 +351,16 @@ function showResults(){
 }
 
 function renderResults(archetype,dims,name,synthesis=null){
+  const narrative = synthesis&&synthesis.narrative ? synthesis.narrative : null;
   const arch=archetypes[archetype]||{name:archetype,emoji:'ðŸ§ ',desc:''};
   const dimEntries=typeof dims==='object'&&dims!==null?Object.entries(dims):Object.entries(scoreDims(answers));
   const overallScore=Math.round(dimEntries.reduce((s,[,v])=>s+(typeof v==='object'?v.score||v:v),0)/dimEntries.length);
   const circ=2*Math.PI*54;
   const offset=circ-(overallScore/100)*circ;
   const signals=['Decision-making pattern clearly identified','Communication preference well-defined','Risk posture signal captured','Tooling philosophy assessed','GTM orientation established','Ownership philosophy documented'];
+  const narrativeHtml = narrative ? `<div class="narrative-card"><div class="narrative-label">FounderFit reads you</div><div class="narrative-text">${narrative.split('\n\n').map(p=>p.trim()).filter(Boolean).map(p=>'<p>'+p+'</p>').join('')}</div></div>` : '';
   document.getElementById('results').innerHTML=`
+    ${narrativeHtml}
     <div class="results-hero">
       <div class="score-ring">
         <svg width="140" height="140" viewBox="0 0 140 140"><circle cx="70" cy="70" r="54" fill="none" stroke="#1e1e2a" stroke-width="8"/><circle cx="70" cy="70" r="54" fill="none" stroke="url(#rg)" stroke-width="8" stroke-linecap="round" stroke-dasharray="${circ}" stroke-dashoffset="${offset}" transform="rotate(-90 70 70)"/><defs><linearGradient id="rg" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#4f7cff"/><stop offset="100%" stop-color="#8b5cf6"/></linearGradient></defs></svg>

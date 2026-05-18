@@ -57,6 +57,14 @@
   @keyframes spin{to{transform:rotate(360deg)}}
   .loading-section h3{font-size:1.1rem;font-weight:700;margin-bottom:.5rem}
   .loading-section p{color:var(--muted);font-size:.875rem}
+  /* NARRATIVE */
+  .narrative-card{background:var(--card);border:1px solid var(--border);border-radius:1.25rem;padding:2rem;margin-bottom:1.25rem;position:relative;overflow:hidden}
+  .narrative-card::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(99,102,241,.05),transparent);pointer-events:none}
+  .narrative-label{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:1rem;display:flex;align-items:center;gap:.5rem}
+  .narrative-label::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--purple);display:inline-block}
+  .narrative-text{font-size:.9rem;color:var(--text);line-height:1.85;white-space:pre-line}
+  .narrative-text p{margin-bottom:1rem}
+  .narrative-text p:last-child{margin-bottom:0}
   /* RESULTS */
   #results-section{display:none}
   .results-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem}
@@ -408,7 +416,7 @@ async function runAnalysis(){
     const res=await fetch('/api/analyze/compatibility',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({founder_a:a,founder_b:b,resume_text_a:resumeTexts.a||null,resume_text_b:resumeTexts.b||null})});
     if(!res.ok)throw new Error();
     const data=await res.json();
-    result=data;
+    result=data; result.narrative=data.narrative||null;
   }catch{
     await new Promise(r=>setTimeout(r,agentOrder.length*900+500));
     result=localAnalysis(a,b);
@@ -421,6 +429,13 @@ async function runAnalysis(){
 }
 
 function renderResults(r,a,b){
+  // Show narrative if communicator produced one
+  if(r.narrative){
+    const nc=document.createElement('div');
+    nc.className='narrative-card';
+    nc.innerHTML='<div class="narrative-label">FounderFit Analysis</div><div class="narrative-text">'+(r.narrative.split('\n\n').map(p=>p.trim()).filter(Boolean).map(p=>'<p>'+p+'</p>').join(''))+'</div>';
+    document.getElementById('results-section').insertBefore(nc,document.getElementById('results-section').querySelector('.results-header').nextSibling);
+  }
   try{localStorage.setItem('fitzLastResult',JSON.stringify({score:r.overall_score,archetype:r.archetype,nameA:a.name,nameB:b.name}));}catch(e){}
   document.getElementById('results-section').style.display='block';
   document.getElementById('results-title').textContent=`${a.name} Ã— ${b.name}`;
