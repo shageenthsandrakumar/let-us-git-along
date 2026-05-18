@@ -425,6 +425,8 @@ async function handleCvUpload(prefix, input){
 const loadingMessages=['Resume Analyst reading LinkedIn PDF…','GitHub Storyteller building narrative…','Synthesis Agent reasoning across all signals…','Compatibility Agent scoring ten dimensions…','GTM Strategist mapping archetype…','Matchmaker evaluating the pairing…','RepoTale analyzing GitHub compatibility…','Communicator writing your narrative…','Assembling final report…'];
 
 function buildProfile(prefix){
+  // For Founder A, merge extra dimensions from their stored assessment profile
+  const stored=prefix==='a'?JSON.parse(localStorage.getItem('founderProfile')||'{}'):{};
   return{
     name:document.getElementById(prefix+'_name').value.trim()||`Founder ${prefix.toUpperCase()}`,
     role:document.getElementById(prefix+'_role').value,
@@ -434,6 +436,13 @@ function buildProfile(prefix){
     execution_style:document.getElementById(prefix+'_exec').value,
     conflict_approach:document.getElementById(prefix+'_conflict').value,
     github_username:document.getElementById(prefix+'_github').value,
+    // Extra dimensions from assessment — defaults used for Founder B (not collected on this form)
+    tooling_affinity:stored.tooling_affinity||'pragmatic',
+    domain_expertise:stored.domain_expertise||'generalist',
+    ownership_philosophy:stored.ownership_philosophy||'flexible',
+    gtm_orientation:stored.gtm_orientation||'product_led',
+    time_commitment:stored.time_commitment||'full_time',
+    ambition_level:stored.ambition_level||'high',
   };
 }
 
@@ -494,7 +503,8 @@ async function runAnalysis(){
     if(!res.ok)throw new Error();
     const data=await res.json();
     result=data; result.narrative=data.narrative||null;
-  }catch{
+  }catch(e){
+    console.error('Compatibility API failed, using local fallback:', e);
     await new Promise(r=>setTimeout(r,agentOrder.length*900+500));
     result=localAnalysis(a,b);
   }
@@ -519,7 +529,18 @@ function renderResults(r,a,b){
   document.getElementById('results-title').textContent=`${a.name} × ${b.name}`;
   document.getElementById('overall-score').textContent=r.overall_score||'—';
   document.getElementById('archetype-label').textContent=r.archetype||'Analysis Complete';
-  const dimLabels={decision_velocity:'Decision Velocity',risk_tolerance:'Risk Tolerance',communication:'Communication',execution_pace:'Execution Pace',vision_alignment:'Vision Alignment',conflict_style:'Conflict Style'};
+  const dimLabels={
+    // Local fallback keys
+    decision_velocity:'Decision Velocity',risk_tolerance:'Risk Tolerance',
+    communication:'Communication',execution_pace:'Execution Pace',
+    vision_alignment:'Vision Alignment',conflict_style:'Conflict Style',
+    // API response keys from _score_dimensions (Title Case)
+    'Execution Style':'Execution Style','Communication Cadence':'Communication Cadence',
+    'Decision-Making':'Decision-Making','Risk Posture':'Risk Posture',
+    'Conflict Resolution':'Conflict Resolution','Tooling Affinity':'Tooling Affinity',
+    'Domain Coverage':'Domain Coverage','Time & Energy':'Time & Energy',
+    'Ownership Philosophy':'Ownership Philosophy','GTM Orientation':'GTM Orientation',
+  };
   const dims=r.dimensions||{};
   document.getElementById('dim-breakdown').innerHTML=Object.entries(dims).map(([k,v])=>{
     const score=typeof v==='object'?v.score:v;

@@ -244,7 +244,7 @@ function scoreDims(ans){
     'Conflict Resolution':ans.conflict_approach==='collaborative'?82+Math.floor(Math.random()*10):ans.conflict_approach==='compromising'?65+Math.floor(Math.random()*10):50+Math.floor(Math.random()*15),
     'Tooling Affinity':ans.tooling_affinity==='pragmatic'?75+Math.floor(Math.random()*15):ans.tooling_affinity==='heavy'?60+Math.floor(Math.random()*15):70+Math.floor(Math.random()*15),
     'Domain Coverage':ans.domain_expertise==='specialist'?80+Math.floor(Math.random()*15):65+Math.floor(Math.random()*20),
-    'Time & Energy':ans.time_commitment==='steady'?78+Math.floor(Math.random()*12):65+Math.floor(Math.random()*20),
+    'Time & Energy':ans.time_commitment==='sprint'?85+Math.floor(Math.random()*10):ans.time_commitment==='flexible'?45+Math.floor(Math.random()*15):72+Math.floor(Math.random()*12),
     'Ownership Philosophy':ans.ownership_philosophy==='flexible'?80+Math.floor(Math.random()*12):70+Math.floor(Math.random()*15),
     'GTM Orientation':ans.gtm_orientation==='product_led'?78+Math.floor(Math.random()*12):70+Math.floor(Math.random()*15),
   };
@@ -314,7 +314,8 @@ function showResults(){
       archetype=data.archetype;
       dims=data.dimensions;
       synthesis=data.synthesis||null;
-    }catch{
+    }catch(e){
+      console.error('Assessment API failed, falling back to local scoring:', e);
       archetype=classify(answers);
       dims=scoreDims(answers);
     }

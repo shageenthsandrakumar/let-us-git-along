@@ -215,6 +215,9 @@
       if(!res.ok) throw new Error((await res.json()).detail || 'Upload failed');
       const data = await res.json();
       resumeText = data.text;
+      const profileSnap = JSON.parse(localStorage.getItem('founderProfile') || '{}');
+      profileSnap.resume_text = data.text;
+      localStorage.setItem('founderProfile', JSON.stringify(profileSnap));
       label.textContent = '✓ ' + file.name;
       drop.style.borderColor = 'var(--success)';
       drop.style.color = 'var(--success)';
