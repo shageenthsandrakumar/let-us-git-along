@@ -207,11 +207,11 @@
       if(!res.ok) throw new Error((await res.json()).detail || 'Upload failed');
       const data = await res.json();
       resumeText = data.text;
-      label.textContent = '&#10003; ' + file.name;
+      label.textContent = '✓ ' + file.name;
       drop.style.borderColor = 'var(--success)';
       drop.style.color = 'var(--success)';
     }catch(e){
-      label.textContent = '&#9888; ' + e.message;
+      label.textContent = '⚠ ' + e.message;
       drop.style.borderColor = 'var(--error)';
       drop.style.color = 'var(--error)';
       resumeText = null;

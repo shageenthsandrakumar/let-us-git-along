@@ -292,12 +292,12 @@ function prevQ(){if(current>0){current--;render();}}
 function showResults(){
   document.getElementById('quiz-section').style.display='none';
   document.getElementById('loading').style.display='block';
+  const profile=JSON.parse(localStorage.getItem('founderProfile')||'{}');
+  const merged={...profile,...answers};
   const loadingP = document.querySelector('.loading p');
   if(loadingP && (merged.github_username || merged.resume_text)){
     loadingP.textContent='Running GitHub and LinkedIn analysis...';
   }
-  const profile=JSON.parse(localStorage.getItem('founderProfile')||'{}');
-  const merged={...profile,...answers};
   localStorage.setItem('founderProfile',JSON.stringify(merged));
   const github_username = merged.github_username || null;
   const payload = {name:merged.name||'Founder',...merged};
@@ -354,11 +354,43 @@ function renderResults(archetype,dims,name,synthesis=null){
         <ul class="signals">${signals.map(s=>`<li>${s}</li>`).join('')}</ul>
       </div>
     </div>
+    ${synthesis ? `<div style="margin-top:-.25rem;margin-bottom:1rem">
+      <button class="why-toggle" id="why-btn" onclick="toggleWhy()">
+        <span class="toggle-arrow">&#9654;</span> Why this archetype?
+      </button>
+      <div class="why-breakdown" id="why-breakdown">
+        <div class="signal-grid">
+          <div class="signal-cell${synthesis.questionnaire_signal?’’:’ signal-na’}">
+            <div class="signal-cell-label">Questionnaire</div>
+            <div class="signal-cell-text">${synthesis.questionnaire_signal||’Assessed’}</div>
+          </div>
+          <div class="signal-cell${synthesis.github_signal?’’:’ signal-na’}">
+            <div class="signal-cell-label">GitHub Signal</div>
+            <div class="signal-cell-text">${synthesis.github_signal||’Not provided’}</div>
+          </div>
+          <div class="signal-cell${synthesis.linkedin_signal?’’:’ signal-na’}">
+            <div class="signal-cell-label">LinkedIn Signal</div>
+            <div class="signal-cell-text">${synthesis.linkedin_signal||’Not provided’}</div>
+          </div>
+        </div>
+        ${synthesis.emergent_insight?`<div class="breakdown-section"><div class="breakdown-label">Emergent Insight</div><div class="breakdown-text">${synthesis.emergent_insight}</div></div>`:’’}
+        ${synthesis.reasoning?`<div class="breakdown-section"><div class="breakdown-label">Reasoning</div><div class="breakdown-text">${synthesis.reasoning}</div></div>`:’’}
+        ${synthesis.partnership_note?`<div class="breakdown-section"><div class="breakdown-label">Partnership Note</div><div class="breakdown-text">${synthesis.partnership_note}</div></div>`:’’}
+      </div>
+    </div>` : ‘’}
     <div class="result-actions">
       <button class="btn-retry" onclick="location.reload()">Retake</button>
-      <button class="btn-dash" onclick="window.location.href='/dashboard.html'">Run Compatibility Analysis â†’</button>
+      <button class="btn-dash" onclick="window.location.href=’/dashboard.html’">Run Compatibility Analysis &#8594;</button>
     </div>`;
   document.getElementById('results').style.display='block';
+}
+
+function toggleWhy(){
+  const btn=document.getElementById('why-btn');
+  const bd=document.getElementById('why-breakdown');
+  if(!btn||!bd)return;
+  btn.classList.toggle('open');
+  bd.classList.toggle('visible');
 }
 
 render();

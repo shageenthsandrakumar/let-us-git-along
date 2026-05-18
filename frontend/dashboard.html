@@ -426,9 +426,9 @@ function localAnalysis(a,b){
     dimensions:Object.fromEntries(Object.entries(dims).map(([k,v])=>[k,{score:v,analysis:''}])),
     archetype:overall>=75?'Velocity Pair':overall>=60?'Scale Pair':'Craft Pair',
     friction_predictions:[
-      {issue:'Decision cadence mismatch',timeline:'Months 2â€“4',risk_level:a.decision_speed!==b.decision_speed?'high':'low',mitigation:'Establish a weekly decision log with 48h default timers.'},
+      {issue:'Decision cadence mismatch',timeline:'Months 2–4',risk_level:a.decision_speed!==b.decision_speed?'high':'low',mitigation:'Establish a weekly decision log with 48h default timers.'},
       {issue:'Communication rhythm divergence',timeline:'Month 1',risk_level:a.communication_style!==b.communication_style?'medium':'low',mitigation:'Agree on async-first with one weekly sync call.'},
-      {issue:'Conflict escalation risk',timeline:'Months 3â€“6',risk_level:'medium',mitigation:'Pre-commit to a structured disagreement protocol.'},
+      {issue:'Conflict escalation risk',timeline:'Months 3–6',risk_level:'medium',mitigation:'Pre-commit to a structured disagreement protocol.'},
     ],
     strengths:['Complementary execution styles create natural coverage','Risk profiles balance the partnership','Shared ambition horizon reduces exit tension'],
     recommendations:['Define a co-founder agreement before month 2','Set quarterly vision reviews to catch alignment drift early','Use a shared decision log for all major calls'],
@@ -475,7 +475,8 @@ async function runAnalysis(){
 }
 
 function renderResults(r,a,b){
-  // Show narrative if communicator produced one
+  // Clear any previous narrative card before inserting a fresh one
+  document.querySelectorAll('#results-section .narrative-card').forEach(el=>el.remove());
   if(r.narrative){
     const nc=document.createElement('div');
     nc.className='narrative-card';
@@ -484,7 +485,7 @@ function renderResults(r,a,b){
   }
   try{localStorage.setItem('fitzLastResult',JSON.stringify({score:r.overall_score,archetype:r.archetype,nameA:a.name,nameB:b.name}));}catch(e){}
   document.getElementById('results-section').style.display='block';
-  document.getElementById('results-title').textContent=`${a.name} Ã— ${b.name}`;
+  document.getElementById('results-title').textContent=`${a.name} × ${b.name}`;
   document.getElementById('overall-score').textContent=r.overall_score||'â€”';
   document.getElementById('archetype-label').textContent=r.archetype||'Analysis Complete';
   const dimLabels={decision_velocity:'Decision Velocity',risk_tolerance:'Risk Tolerance',communication:'Communication',execution_pace:'Execution Pace',vision_alignment:'Vision Alignment',conflict_style:'Conflict Style'};

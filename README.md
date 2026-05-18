@@ -111,6 +111,8 @@ All routes are prefixed with `/api`.
 | `POST` | `/api/analyze/single` | Run a single agent by name for testing. Accepts `agent_type` (one of: `compatibility`, `gtm`, `repotale`, `matchmaker`, `executor`, `github_storyteller`, `resume_analyst`) and `input_data` |
 | `GET` | `/api/archetypes` | Returns the list of six founder archetypes with descriptions |
 
+> **Note:** The `stack` field in `CompatibilityResponse` is populated from the GTM Strategist agent's JSON output. Each tool includes `tool`, `category`, `purpose`, and `why_this_pair` — a pair-specific rationale referencing the founders' actual profile signals. If the agent doesn't return parseable JSON, the dashboard falls back to a curated stack per GTM archetype.
+
 ### Founder profile schema
 
 ```json
@@ -183,6 +185,14 @@ let-us-git-along/
 ├── requirements.txt
 └── .env.example
 ```
+
+---
+
+## Recommended Stack feature
+
+The Compatibility Dashboard includes a **Recommended Stack** section that appears after every analysis. Tools are displayed as cards grouped by category (Communication, Project Management, Development, Analytics, Sales, Documentation) with category filter pills. Each card shows the tool name, what it does, and a pair-specific rationale that references the founders' actual profile signals.
+
+The GTM Strategist agent produces the stack as part of its JSON output. The orchestrator parses it and passes it through `CompatibilityResponse.stack`. If the agent response can't be parsed, the dashboard falls back to a curated hardcoded stack per GTM archetype so the section always renders.
 
 ---
 
