@@ -24,6 +24,7 @@ class FounderProfile(BaseModel):
     tool_preferences: list[str] = []
     github_username: str | None = None
     linkedin_url: str | None = None
+    resume_text: str | None = None
 
 class CompatibilityRequest(BaseModel):
     founder_a: FounderProfile
@@ -40,8 +41,9 @@ class SingleAgentRequest(BaseModel):
 class AssessmentResponse(BaseModel):
     founder_name: str
     archetype: str
-    dimensions: dict[str, int]
+    dimensions: dict
     status: str
+    synthesis: dict | None = None  # enriched output from Synthesis Agent
 
 class CompatibilityResponse(BaseModel):
     status: str

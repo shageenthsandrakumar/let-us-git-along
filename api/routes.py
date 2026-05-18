@@ -6,7 +6,7 @@ from api.models import (
     FounderProfile, CompatibilityRequest, SingleAgentRequest,
     AssessmentResponse, CompatibilityResponse,
 )
-from agents.orchestrator import run_founder_analysis, run_single_agent_analysis
+from agents.orchestrator import run_founder_analysis, run_single_agent_analysis, run_assessment_synthesis
 from tools.github_analyzer import fetch_github_profile
 from tools.resume_parser import extract_text_from_pdf
 
@@ -90,11 +90,35 @@ async def analyze_single_agent(request: SingleAgentRequest):
 
 @router.post("/assessment/submit")
 async def submit_assessment(profile: FounderProfile):
+    archetype = _classify_archetype(profile)
+    dimensions = _score_dimensions(profile)
+
+    # Run synthesis if any enrichment data is available
+    synthesis = None
+    github_data = None
+    resume_text = getattr(profile, "resume_text", None)
+
+    if profile.github_username:
+        github_data = await _safe_github_fetch(profile.github_username)
+
+    if github_data or resume_text:
+        try:
+            synthesis = await asyncio.to_thread(
+                run_assessment_synthesis,
+                profile=profile.model_dump(),
+                self_report_archetype=archetype,
+                github_data=github_data,
+                resume_text=resume_text,
+            )
+        except Exception as e:
+            logger.warning("Assessment synthesis failed: %s", e)
+
     return AssessmentResponse(
         founder_name=profile.name,
-        archetype=_classify_archetype(profile),
-        dimensions=_score_dimensions(profile),
+        archetype=synthesis.get("final_archetype", archetype).lower().replace(" ", "_") if synthesis else archetype,
+        dimensions=dimensions,
         status="profile_created",
+        synthesis=synthesis,
     )
 
 @router.get("/archetypes")

@@ -9,6 +9,7 @@ from agents.matchmaker import create_matchmaker_agent
 from agents.executor import create_executor_agent
 from agents.github_storyteller import create_github_storyteller_agent
 from agents.resume_agent import create_resume_agent
+from agents.synthesis_agent import create_synthesis_agent
 
 logger = logging.getLogger(__name__)
 
@@ -146,6 +147,60 @@ def run_founder_analysis(founder_a_profile, founder_b_profile, github_data_a=Non
         "conversation": conversation,
         "summary": compat_summary or "Analysis could not be completed.",
     }
+
+def run_assessment_synthesis(profile, self_report_archetype, github_data=None, resume_text=None):
+    """Run GitHub Storyteller + Resume Analyst + Synthesis Agent for the assessment flow."""
+    llm_config = get_llm_config()
+    github_story = None
+    resume_story = None
+
+    if github_data:
+        logger.info("Assessment: running GitHub Storyteller")
+        storyteller = create_github_storyteller_agent(llm_config)
+        github_story = _run_agent(
+            storyteller,
+            f"Analyze this GitHub profile for {profile.get('name', 'this founder')}:\n{json.dumps(github_data, indent=2)}"
+        )
+
+    if resume_text:
+        logger.info("Assessment: running Resume Analyst")
+        resume_analyst = create_resume_agent(llm_config)
+        resume_story = _run_agent(
+            resume_analyst,
+            f"Analyze this LinkedIn/resume profile for {profile.get('name', 'this founder')}:\n{resume_text}"
+        )
+
+    logger.info("Assessment: running Synthesis Agent")
+    synthesis_prompt = f"""Synthesize the founder profile for {profile.get('name', 'this founder')}.
+
+**Self-reported archetype from questionnaire:** {self_report_archetype}
+
+**Questionnaire answers:**
+{json.dumps({k: v for k, v in profile.items() if k not in ('name', 'email', 'github_username', 'linkedin_url', 'resume_text', 'domain_expertise_list', 'tool_preferences')}, indent=2)}
+"""
+    if github_story:
+        synthesis_prompt += f"\n**GitHub Builder Story:**\n{github_story}\n"
+    if resume_story:
+        synthesis_prompt += f"\n**LinkedIn / Resume Story:**\n{resume_story}\n"
+
+    if not github_story and not resume_story:
+        synthesis_prompt += "\n**Note:** Only questionnaire data is available. No GitHub or LinkedIn data was provided.\n"
+
+    synthesizer = create_synthesis_agent(llm_config)
+    result = _run_agent(synthesizer, synthesis_prompt)
+
+    if result:
+        try:
+            import re
+            match = re.search(r'\{.*\}', result, re.DOTALL)
+            if match:
+                return json.loads(match.group())
+        except Exception:
+            pass
+        return {"alignment_note": result, "final_archetype": self_report_archetype, "confidence": "low", "alignment": "unknown", "key_insight": "", "data_sources_used": [], "partnership_note": ""}
+
+    return None
+
 
 def run_single_agent_analysis(agent_type, input_data):
     llm_config = get_llm_config()

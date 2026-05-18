@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -80,7 +80,29 @@
   .btn-dash{flex:1;padding:.875rem;background:linear-gradient(135deg,var(--blue),var(--purple));color:#fff;border:none;border-radius:.625rem;font-size:.9rem;font-weight:600;cursor:pointer;font-family:inherit}
   .btn-retry{padding:.875rem 1.5rem;border:1px solid var(--border);color:var(--muted);background:none;border-radius:.625rem;font-size:.875rem;cursor:pointer;font-family:inherit;transition:all .2s}
   .btn-retry:hover{border-color:var(--blue);color:var(--text)}
-</style>
+  /* STEP 0 — enrichment */
+  #step0{background:var(--card);border:1px solid var(--border);border-radius:1.25rem;padding:2.25rem;margin-bottom:1.25rem}
+  #step0 h2{font-size:1.25rem;font-weight:700;margin-bottom:.5rem}
+  #step0 .sub{color:var(--muted);font-size:.875rem;line-height:1.6;margin-bottom:1.75rem}
+  .step0-label{display:block;font-size:.75rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.45rem}
+  .step0-input{width:100%;padding:.75rem 1rem;background:var(--surface);border:1px solid var(--border);border-radius:.5rem;color:var(--text);font-size:.875rem;outline:none;transition:border-color .2s;font-family:inherit;margin-bottom:1.25rem}
+  .step0-input:focus{border-color:var(--blue)}
+  .step0-input::placeholder{color:var(--muted)}
+  .step0-drop{border:1px dashed var(--border);border-radius:.5rem;padding:.75rem 1rem;cursor:pointer;transition:border-color .2s;margin-bottom:1.5rem;font-size:.8rem;color:var(--muted);display:flex;align-items:center;gap:.5rem}
+  .step0-drop:hover{border-color:var(--blue)}
+  .step0-actions{display:flex;gap:.75rem;align-items:center}
+  .btn-skip{background:none;border:none;color:var(--muted);font-size:.8rem;cursor:pointer;font-family:inherit;text-decoration:underline;padding:.25rem}
+  .btn-start{flex:1;padding:.875rem;background:linear-gradient(135deg,var(--blue),var(--purple));color:#fff;border:none;border-radius:.625rem;font-size:.95rem;font-weight:600;cursor:pointer;font-family:inherit}
+  /* SYNTHESIS */
+  .synthesis-card{background:var(--elevated);border:1px solid var(--border);border-radius:1rem;padding:1.5rem;margin-bottom:1rem}
+  .synthesis-card .s-title{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:1rem}
+  .alignment-chip{display:inline-flex;align-items:center;gap:.4rem;padding:.3rem .8rem;border-radius:9999px;font-size:.72rem;font-weight:600;margin-bottom:1rem}
+  .align-confirmed{background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.3);color:#34d399}
+  .align-partial{background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.3);color:#fbbf24}
+  .align-conflicted{background:rgba(244,63,94,.12);border:1px solid rgba(244,63,94,.3);color:#fb7185}
+  .align-unknown{background:rgba(139,92,246,.12);border:1px solid rgba(139,92,246,.3);color:#a78bfa}
+  .synthesis-note{font-size:.875rem;color:var(--text);line-height:1.7;margin-bottom:1rem}
+  .key-insight{font-size:.85rem;color:#a5b4fc;font-style:italic;padding:.75rem 1rem;background:rgba(79,124,255,.06);border-left:3px solid var(--blue);border-radius:0 .5rem .5rem 0;line-height:1.6}</style>
 </head>
 <body>
 <nav>
@@ -89,7 +111,22 @@
 </nav>
 
 <div class="main">
-  <div id="quiz-section">
+  <div id="step0">
+    <h2>Before we start</h2>
+    <p class="sub">Drop your GitHub username and LinkedIn PDF for a deeper read. The assessment works without them, but with them we can tell you what the data confirms and what it challenges about your self-assessment. Both are optional.</p>
+    <label class="step0-label">GitHub Username</label>
+    <input id="s0_github" class="step0-input" placeholder="e.g. torvalds"/>
+    <label class="step0-label">LinkedIn PDF <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:.75rem"> — <a href="https://www.youtube.com/watch?v=YrplE62daWQ" target="_blank" style="color:#a5b4fc">how to export</a></span></label>
+    <div class="step0-drop" id="s0_drop" onclick="document.getElementById('s0_file').click()">
+      <span>&#128206;</span><span id="s0_label">Click to upload PDF</span>
+    </div>
+    <input id="s0_file" type="file" accept=".pdf" style="display:none" onchange="handleS0Upload(this)"/>
+    <div class="step0-actions">
+      <button class="btn-start" onclick="startAssessment()">Start Assessment &#8594;</button>
+      <button class="btn-skip" onclick="startAssessment()">Skip and just answer questions</button>
+    </div>
+  </div>
+  <div id="quiz-section" style="display:none">
     <div class="prog-wrap">
       <div class="prog-info"><span id="q-counter">Question 1 of 10</span><span id="q-pct">10%</span></div>
       <div class="prog-track"><div class="prog-fill" id="prog-fill" style="width:10%"></div></div>
@@ -268,31 +305,39 @@ function prevQ(){if(current>0){current--;render();}}
 function showResults(){
   document.getElementById('quiz-section').style.display='none';
   document.getElementById('loading').style.display='block';
+  const loadingP = document.querySelector('.loading p');
+  if(loadingP && (document.getElementById('s0_github').value.trim() || s0ResumeText)){
+    loadingP.textContent='Running GitHub and LinkedIn analysis...';
+  }
   const profile=JSON.parse(localStorage.getItem('founderProfile')||'{}');
   const merged={...profile,...answers};
   localStorage.setItem('founderProfile',JSON.stringify(merged));
+  const github_username = document.getElementById('s0_github').value.trim() || null;
+  const payload = {name:merged.name||'Founder',...merged};
+  if(github_username) payload.github_username = github_username;
+  if(s0ResumeText) payload.resume_text = s0ResumeText;
   setTimeout(async()=>{
-    let archetype,dims;
+    let archetype,dims,synthesis=null;
     try{
-      const res=await fetch('/api/assessment/submit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:merged.name||'Founder',...merged})});
+      const res=await fetch('/api/assessment/submit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
       if(!res.ok)throw new Error();
       const data=await res.json();
       archetype=data.archetype;
       dims=data.dimensions;
+      synthesis=data.synthesis||null;
     }catch{
       archetype=classify(answers);
       dims=scoreDims(answers);
     }
     document.getElementById('loading').style.display='none';
-    // Save archetype so Fitz can reference it on other pages
     const saved2=JSON.parse(localStorage.getItem('founderProfile')||'{}');
     saved2.archetype=archetype;
     localStorage.setItem('founderProfile',JSON.stringify(saved2));
-    renderResults(archetype,dims,merged.name||'Founder');
+    renderResults(archetype,dims,merged.name||'Founder',synthesis);
   },2000);
 }
 
-function renderResults(archetype,dims,name){
+function renderResults(archetype,dims,name,synthesis=null){
   const arch=archetypes[archetype]||{name:archetype,emoji:'ðŸ§ ',desc:''};
   const dimEntries=typeof dims==='object'&&dims!==null?Object.entries(dims):Object.entries(scoreDims(answers));
   const overallScore=Math.round(dimEntries.reduce((s,[,v])=>s+(typeof v==='object'?v.score||v:v),0)/dimEntries.length);
