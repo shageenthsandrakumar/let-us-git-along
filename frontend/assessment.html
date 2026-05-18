@@ -1,8 +1,8 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>FounderFit — Behavioral Assessment</title>
+<title>FounderFit â€” Behavioral Assessment</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{--bg:#08080c;--surface:#0f0f14;--card:#13131a;--elevated:#1a1a24;--border:#1e1e2a;--blue:#4f7cff;--purple:#8b5cf6;--cyan:#06b6d4;--emerald:#10b981;--amber:#f59e0b;--rose:#f43f5e;--text:#f0f0f4;--muted:#8a8a9a;--faint:#5a5a6a}
@@ -13,7 +13,7 @@
   .logo{font-weight:600;font-size:1.1rem;background:linear-gradient(135deg,var(--blue),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
   .nav-back{color:var(--muted);font-size:.875rem;transition:color .2s}
   .nav-back:hover{color:var(--text)}
-  .main{max-width:680px;margin:0 auto;padding:2.5rem 2rem 5rem}
+  .main{max-width:680px;margin:0 auto;padding:2.5rem 2rem 8rem}
   /* PROGRESS */
   .prog-wrap{margin-bottom:2.5rem}
   .prog-info{display:flex;justify-content:space-between;margin-bottom:.625rem;font-size:.8rem;color:var(--muted)}
@@ -27,7 +27,7 @@
   .q-text{font-size:1.1rem;font-weight:600;line-height:1.5;margin-bottom:1.75rem}
   .opts{display:flex;flex-direction:column;gap:.5rem}
   .opt{display:flex;align-items:flex-start;gap:.875rem;padding:.875rem 1.125rem;border:1.5px solid var(--border);border-radius:.75rem;cursor:pointer;transition:all .2s}
-  .opt:hover{border-color:rgba(79,124,255,.5);background:rgba(79,124,255,.04)}
+  .opt:hover,.opt:active{border-color:rgba(79,124,255,.5);background:rgba(79,124,255,.04)}
   .opt.selected{border-color:var(--blue);background:rgba(79,124,255,.09)}
   .opt-radio{width:18px;height:18px;border-radius:50%;border:2px solid var(--border);flex-shrink:0;margin-top:.15rem;transition:all .2s;display:flex;align-items:center;justify-content:center}
   .opt.selected .opt-radio{border-color:var(--blue);background:var(--blue)}
@@ -38,8 +38,14 @@
   .q-actions{display:flex;gap:.75rem}
   .btn-prev{padding:.875rem 1.5rem;border:1px solid var(--border);background:none;color:var(--muted);border-radius:.625rem;font-size:.875rem;cursor:pointer;transition:all .2s;font-family:inherit}
   .btn-prev:hover{border-color:var(--blue);color:var(--text)}
-  .btn-next{flex:1;padding:.875rem;background:linear-gradient(135deg,var(--blue),var(--purple));color:#fff;border:none;border-radius:.625rem;font-size:.95rem;font-weight:600;cursor:pointer;transition:opacity .2s;font-family:inherit}
-  .btn-next:disabled{opacity:.35;cursor:not-allowed}
+  .btn-next{flex:1;padding:.875rem;background:linear-gradient(135deg,var(--blue),var(--purple));color:#fff;border:none;border-radius:.625rem;font-size:.95rem;font-weight:600;cursor:pointer;transition:opacity .2s;font-family:inherit;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+  .btn-next:disabled{opacity:.4;cursor:not-allowed}
+  .btn-hint{font-size:.72rem;color:var(--faint);text-align:center;margin-top:.5rem;min-height:1rem;transition:opacity .2s}
+  @media(max-width:680px){
+    .main{padding:2rem 1.25rem 9rem}
+    .q-card{padding:1.5rem}
+    .q-actions{position:sticky;bottom:0;background:var(--bg);padding:.75rem 0;margin-bottom:0}
+  }
   /* LOADING */
   .loading{display:none;text-align:center;padding:4rem 2rem}
   .spinner{width:48px;height:48px;border:3px solid var(--border);border-top-color:var(--blue);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 1.5rem}
@@ -69,7 +75,7 @@
   .signals{list-style:none}
   .signals li{font-size:.82rem;color:var(--muted);padding:.5rem 0;border-bottom:1px solid var(--border);display:flex;gap:.5rem;line-height:1.5;align-items:flex-start}
   .signals li:last-child{border-bottom:none}
-  .signals li::before{content:'→';color:var(--blue);flex-shrink:0;font-weight:700}
+  .signals li::before{content:'â†’';color:var(--blue);flex-shrink:0;font-weight:700}
   .result-actions{display:flex;gap:.75rem;margin-top:1.25rem}
   .btn-dash{flex:1;padding:.875rem;background:linear-gradient(135deg,var(--blue),var(--purple));color:#fff;border:none;border-radius:.625rem;font-size:.9rem;font-weight:600;cursor:pointer;font-family:inherit}
   .btn-retry{padding:.875rem 1.5rem;border:1px solid var(--border);color:var(--muted);background:none;border-radius:.625rem;font-size:.875rem;cursor:pointer;font-family:inherit;transition:all .2s}
@@ -79,7 +85,7 @@
 <body>
 <nav>
   <div class="logo">FounderFit</div>
-  <a href="/onboarding.html" class="nav-back">← Back to profile</a>
+  <a href="/onboarding.html" class="nav-back">â† Back to profile</a>
 </nav>
 
 <div class="main">
@@ -95,14 +101,15 @@
       <div class="opts" id="q-opts"></div>
     </div>
     <div class="q-actions">
-      <button class="btn-prev" id="btn-prev" onclick="prevQ()" style="display:none">← Back</button>
-      <button class="btn-next" id="btn-next" onclick="nextQ()" disabled>Next →</button>
+      <button class="btn-prev" id="btn-prev" onclick="prevQ()" style="display:none">â† Back</button>
+      <button class="btn-next" id="btn-next" onclick="nextQ()" disabled>Next â†’</button>
     </div>
+    <div class="btn-hint" id="btn-hint">Select an answer to continue</div>
   </div>
 
   <div class="loading" id="loading">
     <div class="spinner"></div>
-    <h3>Analyzing your profile…</h3>
+    <h3>Analyzing your profileâ€¦</h3>
     <p>Classifying your founder archetype across 10 dimensions</p>
   </div>
 
@@ -173,12 +180,12 @@ let current=0;
 const answers={};
 
 const archetypes={
-  rapid_builder:{name:'Rapid Builder',emoji:'🚀',desc:'You ship fast, iterate aggressively, and treat tech debt as fuel. Your superpower is momentum — getting something in users\' hands before others finish planning. You thrive in ambiguity and find slow decision-making physically painful.'},
-  systems_operator:{name:'Systems Operator',emoji:'🏗️',desc:'You build infrastructure others stand on. Methodical, scalability-focused, reliability-obsessed — you think about 10M users before you have 100. Your superpower is designing machines that outlast you.'},
-  experimental_hacker:{name:'Experimental Hacker',emoji:'🔬',desc:'You explore widely, prototype fast, hold low attachment to any single approach. Your superpower is killing ideas quickly and finding signal in noise. You thrive in research-heavy, uncertainty-rich environments.'},
-  vision_architect:{name:'Vision Architect',emoji:'🗺️',desc:'You see ten moves ahead and design backward. Documentation-heavy, strategic, long-horizon — your superpower is building shared understanding across a team. You\'re at your best in platform companies where architecture is the moat.'},
-  product_strategist:{name:'Product Strategist',emoji:'📦',desc:'You\'re obsessed with the customer and make pragmatic trade-offs to deliver value fast. Feature-driven and outcome-focused, your superpower is knowing which 20% of features drive 80% of adoption.'},
-  growth_hunter:{name:'Growth Hunter',emoji:'📈',desc:'You run experiments on everything and double down on what moves the number. Metrics-obsessed and conversion-focused, your superpower is building compounding loops where each win makes the next win cheaper.'}
+  rapid_builder:{name:'Rapid Builder',emoji:'ðŸš€',desc:'You ship fast, iterate aggressively, and treat tech debt as fuel. Your superpower is momentum â€” getting something in users\' hands before others finish planning. You thrive in ambiguity and find slow decision-making physically painful.'},
+  systems_operator:{name:'Systems Operator',emoji:'ðŸ—ï¸',desc:'You build infrastructure others stand on. Methodical, scalability-focused, reliability-obsessed â€” you think about 10M users before you have 100. Your superpower is designing machines that outlast you.'},
+  experimental_hacker:{name:'Experimental Hacker',emoji:'ðŸ”¬',desc:'You explore widely, prototype fast, hold low attachment to any single approach. Your superpower is killing ideas quickly and finding signal in noise. You thrive in research-heavy, uncertainty-rich environments.'},
+  vision_architect:{name:'Vision Architect',emoji:'ðŸ—ºï¸',desc:'You see ten moves ahead and design backward. Documentation-heavy, strategic, long-horizon â€” your superpower is building shared understanding across a team. You\'re at your best in platform companies where architecture is the moat.'},
+  product_strategist:{name:'Product Strategist',emoji:'ðŸ“¦',desc:'You\'re obsessed with the customer and make pragmatic trade-offs to deliver value fast. Feature-driven and outcome-focused, your superpower is knowing which 20% of features drive 80% of adoption.'},
+  growth_hunter:{name:'Growth Hunter',emoji:'ðŸ“ˆ',desc:'You run experiments on everything and double down on what moves the number. Metrics-obsessed and conversion-focused, your superpower is building compounding loops where each win makes the next win cheaper.'}
 };
 
 function classify(ans){
@@ -226,7 +233,7 @@ function render(){
   document.getElementById('q-pct').textContent=pct+'%';
   document.getElementById('prog-fill').style.width=pct+'%';
   document.getElementById('btn-prev').style.display=current>0?'block':'none';
-  document.getElementById('btn-next').textContent=current===questions.length-1?'See My Results →':'Next →';
+  document.getElementById('btn-next').textContent=current===questions.length-1?'See My Results â†’':'Next â†’';
   const color=DIM_COLORS[q.dim]||'#4f7cff';
   document.getElementById('q-dim-label').innerHTML=`<span class="dim-label" style="color:${color};border-color:${color}30;background:${color}12">${q.dim}</span>`;
   document.getElementById('q-text').textContent=q.text;
@@ -235,7 +242,10 @@ function render(){
       <div class="opt-radio">${answers[q.id]===o.val?'<span style="width:6px;height:6px;border-radius:50%;background:#fff;display:block"></span>':''}</div>
       <div class="opt-body"><h4>${o.h}</h4><p>${o.p}</p></div>
     </label>`).join('');
-  document.getElementById('btn-next').disabled=!answers[q.id];
+  const hasAnswer = !!answers[q.id];
+  document.getElementById('btn-next').disabled = !hasAnswer;
+  const hint = document.getElementById('btn-hint');
+  if(hint) hint.style.opacity = hasAnswer ? '0' : '1';
 }
 
 function selectOpt(el,id,val){
@@ -244,6 +254,8 @@ function selectOpt(el,id,val){
   el.querySelector('.opt-radio').innerHTML='<span style="width:6px;height:6px;border-radius:50%;background:#fff;display:block"></span>';
   answers[id]=val;
   document.getElementById('btn-next').disabled=false;
+  const hint = document.getElementById('btn-hint');
+  if(hint) hint.style.opacity = '0';
 }
 
 function nextQ(){
@@ -277,7 +289,7 @@ function showResults(){
 }
 
 function renderResults(archetype,dims,name){
-  const arch=archetypes[archetype]||{name:archetype,emoji:'🧠',desc:''};
+  const arch=archetypes[archetype]||{name:archetype,emoji:'ðŸ§ ',desc:''};
   const dimEntries=typeof dims==='object'&&dims!==null?Object.entries(dims):Object.entries(scoreDims(answers));
   const overallScore=Math.round(dimEntries.reduce((s,[,v])=>s+(typeof v==='object'?v.score||v:v),0)/dimEntries.length);
   const circ=2*Math.PI*54;
@@ -305,13 +317,15 @@ function renderResults(archetype,dims,name){
     </div>
     <div class="result-actions">
       <button class="btn-retry" onclick="location.reload()">Retake</button>
-      <button class="btn-dash" onclick="window.location.href='/dashboard.html'">Run Compatibility Analysis →</button>
+      <button class="btn-dash" onclick="window.location.href='/dashboard.html'">Run Compatibility Analysis â†’</button>
     </div>`;
   document.getElementById('results').style.display='block';
 }
 
 render();
 </script>
-<script src="/static/mascot.js"></script>
+<script src="mascot.js"></script>
 </body>
 </html>
+
+
