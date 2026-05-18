@@ -72,11 +72,14 @@
   .btn-reset{padding:.5rem 1.25rem;border:1px solid var(--border);background:none;color:var(--muted);border-radius:.5rem;font-size:.8rem;cursor:pointer;font-family:inherit;transition:all .2s}
   .btn-reset:hover{border-color:var(--primary);color:var(--text)}
   /* SCORE HERO */
-  .score-hero{background:var(--card);border:1px solid var(--border);border-radius:1.25rem;padding:2.5rem;text-align:center;margin-bottom:1.5rem;position:relative;overflow:hidden}
+  .score-hero{background:var(--card);border:1px solid var(--border);border-radius:1.25rem;padding:2.5rem;margin-bottom:1.5rem;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:space-between;gap:2rem;flex-wrap:wrap}
   .score-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 60% at 50% 0%,rgba(99,102,241,.1),transparent);pointer-events:none}
+  .score-hero-left{text-align:center;flex:1;min-width:160px;position:relative;z-index:1}
   .score-big{font-size:5rem;font-weight:900;line-height:1;background:linear-gradient(135deg,var(--primary),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
   .score-label{color:var(--muted);font-size:.875rem;margin:.5rem 0 1.5rem}
   .archetype-pill{display:inline-block;padding:.5rem 1.25rem;background:rgba(99,102,241,.15);border:1px solid rgba(99,102,241,.3);border-radius:9999px;font-weight:700;font-size:.875rem;color:#a5b4fc}
+  .radar-wrap{position:relative;z-index:1;flex-shrink:0}
+  #radar-canvas{display:block}
   /* RESULTS GRID */
   .results-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem}
   @media(max-width:700px){.results-grid{grid-template-columns:1fr}}
@@ -254,17 +257,21 @@
 
     <!-- AGENT PIPELINE -->
     <div class="pipeline" id="pipeline">
-      <div class="agent-chip" id="chip-coordinator"><div class="chip-dot"></div>Coordinator</div>
-      <div class="chip-arrow">â†’</div>
-      <div class="agent-chip" id="chip-repotale"><div class="chip-dot"></div>RepoTale</div>
-      <div class="chip-arrow">â†’</div>
+      <div class="agent-chip" id="chip-resume"><div class="chip-dot"></div>Resume Analyst</div>
+      <div class="chip-arrow">&#8594;</div>
+      <div class="agent-chip" id="chip-storyteller"><div class="chip-dot"></div>GitHub Storyteller</div>
+      <div class="chip-arrow">&#8594;</div>
+      <div class="agent-chip" id="chip-synthesis"><div class="chip-dot"></div>Synthesis</div>
+      <div class="chip-arrow">&#8594;</div>
       <div class="agent-chip" id="chip-compatibility"><div class="chip-dot"></div>Compatibility</div>
-      <div class="chip-arrow">â†’</div>
-      <div class="agent-chip" id="chip-matchmaker"><div class="chip-dot"></div>Matchmaker</div>
-      <div class="chip-arrow">â†’</div>
+      <div class="chip-arrow">&#8594;</div>
       <div class="agent-chip" id="chip-gtm"><div class="chip-dot"></div>GTM Strategist</div>
-      <div class="chip-arrow">â†’</div>
-      <div class="agent-chip" id="chip-executor"><div class="chip-dot"></div>Executor</div>
+      <div class="chip-arrow">&#8594;</div>
+      <div class="agent-chip" id="chip-matchmaker"><div class="chip-dot"></div>Matchmaker</div>
+      <div class="chip-arrow">&#8594;</div>
+      <div class="agent-chip" id="chip-repotale"><div class="chip-dot"></div>RepoTale</div>
+      <div class="chip-arrow">&#8594;</div>
+      <div class="agent-chip" id="chip-communicator"><div class="chip-dot"></div>Communicator</div>
     </div>
 
     <div class="run-wrap">
@@ -284,15 +291,20 @@
       <button class="btn-reset" onclick="resetAnalysis()">â† New Analysis</button>
     </div>
 
-    <div class="score-hero">
-      <div class="score-big" id="overall-score">â€”</div>
-      <div class="score-label">Overall Compatibility Score</div>
-      <div class="archetype-pill" id="archetype-label">Analyzingâ€¦</div>
+    <div class=”score-hero”>
+      <div class=”score-hero-left”>
+        <div class=”score-big” id=”overall-score”>&ndash;</div>
+        <div class=”score-label”>Overall Compatibility Score</div>
+        <div class=”archetype-pill” id=”archetype-label”>Analyzing&hellip;</div>
+      </div>
+      <div class=”radar-wrap”>
+        <canvas id=”radar-canvas” width=”240” height=”240”></canvas>
+      </div>
     </div>
 
     <div class="results-grid">
       <div class="r-card">
-        <div class="r-card-title">Six-Dimension Breakdown</div>
+        <div class="r-card-title">Ten-Dimension Breakdown</div>
         <div id="dim-breakdown"></div>
       </div>
       <div class="r-card">
@@ -315,7 +327,7 @@
 </div>
 
 <script>
-const agentOrder=['resume','repotale','compatibility','matchmaker','gtm','executor'];
+const agentOrder=['resume','storyteller','synthesis','compatibility','gtm','matchmaker','repotale','communicator'];
 const resumeTexts={a:null,b:null};
 
 async function handleResumeUpload(prefix, input){
@@ -345,7 +357,7 @@ async function handleResumeUpload(prefix, input){
     resumeTexts[prefix]=null;
   }
 }
-const loadingMessages=['Initializing agent pipelineâ€¦','RepoTale analyzing GitHub signalsâ€¦','Compatibility agent scoring dimensionsâ€¦','Matchmaker evaluating the pairingâ€¦','GTM Strategist mapping archetypeâ€¦','Executor forecasting team velocityâ€¦','Synthesizing final reportâ€¦'];
+const loadingMessages=['Resume Analyst reading LinkedIn PDF…','GitHub Storyteller building narrative…','Synthesis Agent reasoning across all signals…','Compatibility Agent scoring ten dimensions…','GTM Strategist mapping archetype…','Matchmaker evaluating the pairing…','RepoTale analyzing GitHub compatibility…','Communicator writing your narrative…','Assembling final report…'];
 
 function buildProfile(prefix){
   return{
@@ -448,6 +460,7 @@ function renderResults(r,a,b){
     const cls=score>=75?'high':score>=55?'mid':'low';
     return`<div class="dim-row"><span class="dim-label">${dimLabels[k]||k}</span><div class="dim-track"><div class="dim-fill ${cls}" style="width:${score}%"></div></div><span class="dim-val">${score}</span></div>`;
   }).join('');
+  drawRadar(dims);
   const strengths=r.strengths||[];
   document.getElementById('strengths-list').innerHTML=strengths.map(s=>`<div class="strength-item">${s}</div>`).join('')||'<p style="color:var(--muted);font-size:.85rem">No strengths data returned.</p>';
   const frictions=r.friction_predictions||[];
@@ -464,6 +477,69 @@ function resetAnalysis(){
   document.getElementById('results-section').style.display='none';
   document.getElementById('input-section').style.display='block';
   document.querySelectorAll('.agent-chip').forEach(c=>c.className='agent-chip');
+}
+
+function drawRadar(dims){
+  const canvas=document.getElementById('radar-canvas');
+  if(!canvas)return;
+  const ctx=canvas.getContext('2d');
+  const W=canvas.width,H=canvas.height;
+  const cx=W/2,cy=H/2,R=88;
+  const labels=['Decision\nVelocity','Risk\nTolerance','Communication','Execution\nPace','Vision\nAlignment','Conflict\nStyle'];
+  const keys=['decision_velocity','risk_tolerance','communication','execution_pace','vision_alignment','conflict_style'];
+  const raw=keys.map(k=>{const v=dims[k];return typeof v==='object'?v.score:v||60;});
+  const N=labels.length;
+  const angle=i=>(-Math.PI/2)+(2*Math.PI/N)*i;
+  let progress=0;
+  function frame(){
+    ctx.clearRect(0,0,W,H);
+    progress=Math.min(progress+0.04,1);
+    const ease=1-Math.pow(1-progress,3);
+    // Grid rings
+    [0.25,0.5,0.75,1].forEach(r=>{
+      ctx.beginPath();
+      for(let i=0;i<N;i++){const a=angle(i);const d=R*r;ctx.lineTo(cx+d*Math.cos(a),cy+d*Math.sin(a));}
+      ctx.closePath();
+      ctx.strokeStyle=r===1?'rgba(99,102,241,.25)':'rgba(99,102,241,.1)';
+      ctx.lineWidth=1;
+      ctx.stroke();
+    });
+    // Spokes
+    for(let i=0;i<N;i++){
+      const a=angle(i);
+      ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+R*Math.cos(a),cy+R*Math.sin(a));
+      ctx.strokeStyle='rgba(99,102,241,.15)';ctx.lineWidth=1;ctx.stroke();
+    }
+    // Data area
+    ctx.beginPath();
+    raw.forEach((v,i)=>{
+      const a=angle(i);const d=R*(v/100)*ease;
+      i===0?ctx.moveTo(cx+d*Math.cos(a),cy+d*Math.sin(a)):ctx.lineTo(cx+d*Math.cos(a),cy+d*Math.sin(a));
+    });
+    ctx.closePath();
+    const grad=ctx.createRadialGradient(cx,cy,0,cx,cy,R);
+    grad.addColorStop(0,'rgba(99,102,241,.35)');
+    grad.addColorStop(1,'rgba(168,85,247,.15)');
+    ctx.fillStyle=grad;ctx.fill();
+    ctx.strokeStyle='rgba(99,102,241,.7)';ctx.lineWidth=2;ctx.stroke();
+    // Dots
+    raw.forEach((v,i)=>{
+      const a=angle(i);const d=R*(v/100)*ease;
+      ctx.beginPath();ctx.arc(cx+d*Math.cos(a),cy+d*Math.sin(a),4,0,Math.PI*2);
+      ctx.fillStyle='#818cf8';ctx.fill();
+    });
+    // Labels
+    ctx.font='10px system-ui,sans-serif';ctx.fillStyle='#64748b';ctx.textAlign='center';
+    labels.forEach((lbl,i)=>{
+      const a=angle(i);const d=R+22;
+      const lx=cx+d*Math.cos(a),ly=cy+d*Math.sin(a);
+      const lines=lbl.split('\n');
+      const lineH=13;
+      lines.forEach((ln,li)=>ctx.fillText(ln,lx,ly+(li-(lines.length-1)/2)*lineH));
+    });
+    if(progress<1)requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
 }
 
 // Pre-fill from localStorage if available
