@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -171,6 +171,11 @@
         </div>
         <label>GitHub Username</label>
         <input id="a_github" placeholder="optional"/>
+        <label>LinkedIn PDF <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--muted)">(optional — <a href="https://www.youtube.com/watch?v=YrplE62daWQ" target="_blank" style="color:#a5b4fc;text-decoration:underline">how to export</a>)</span></label>
+        <div id="a_resume_drop" style="border:1px dashed var(--border);border-radius:.5rem;padding:.75rem 1rem;cursor:pointer;transition:border-color .2s;margin-bottom:1rem;font-size:.8rem;color:var(--muted);display:flex;align-items:center;gap:.5rem" onclick="document.getElementById('a_resume_input').click()">
+          <span>&#128206;</span><span id="a_resume_label">Click to upload PDF</span>
+        </div>
+        <input id="a_resume_input" type="file" accept=".pdf" style="display:none" onchange="handleResumeUpload('a', this)"/>
       </div>
 
       <div class="vs-divider">
@@ -231,6 +236,11 @@
         </div>
         <label>GitHub Username</label>
         <input id="b_github" placeholder="optional"/>
+        <label>LinkedIn PDF <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--muted)">(optional — <a href="https://www.youtube.com/watch?v=YrplE62daWQ" target="_blank" style="color:#a5b4fc;text-decoration:underline">how to export</a>)</span></label>
+        <div id="b_resume_drop" style="border:1px dashed var(--border);border-radius:.5rem;padding:.75rem 1rem;cursor:pointer;transition:border-color .2s;margin-bottom:1rem;font-size:.8rem;color:var(--muted);display:flex;align-items:center;gap:.5rem" onclick="document.getElementById('b_resume_input').click()">
+          <span>&#128206;</span><span id="b_resume_label">Click to upload PDF</span>
+        </div>
+        <input id="b_resume_input" type="file" accept=".pdf" style="display:none" onchange="handleResumeUpload('b', this)"/>
       </div>
     </div>
 
@@ -297,7 +307,36 @@
 </div>
 
 <script>
-const agentOrder=['coordinator','repotale','compatibility','matchmaker','gtm','executor'];
+const agentOrder=['resume','repotale','compatibility','matchmaker','gtm','executor'];
+const resumeTexts={a:null,b:null};
+
+async function handleResumeUpload(prefix, input){
+  const file=input.files[0];
+  if(!file)return;
+  const labelEl=document.getElementById(prefix+'_resume_label');
+  const dropEl=document.getElementById(prefix+'_resume_drop');
+  labelEl.textContent='Uploading...';
+  dropEl.style.borderColor='var(--primary)';
+  try{
+    const form=new FormData();
+    form.append('file',file);
+    const res=await fetch('/api/upload/resume',{method:'POST',body:form});
+    if(!res.ok){
+      const err=await res.json();
+      throw new Error(err.detail||'Upload failed');
+    }
+    const data=await res.json();
+    resumeTexts[prefix]=data.text;
+    labelEl.textContent='✓ '+file.name+' ('+Math.round(data.char_count/100)/10+'k chars)';
+    dropEl.style.borderColor='var(--success)';
+    dropEl.style.color='var(--success)';
+  }catch(e){
+    labelEl.textContent='⚠ '+e.message;
+    dropEl.style.borderColor='var(--error)';
+    dropEl.style.color='var(--error)';
+    resumeTexts[prefix]=null;
+  }
+}
 const loadingMessages=['Initializing agent pipelineâ€¦','RepoTale analyzing GitHub signalsâ€¦','Compatibility agent scoring dimensionsâ€¦','Matchmaker evaluating the pairingâ€¦','GTM Strategist mapping archetypeâ€¦','Executor forecasting team velocityâ€¦','Synthesizing final reportâ€¦'];
 
 function buildProfile(prefix){
@@ -366,7 +405,7 @@ async function runAnalysis(){
   const a=buildProfile('a'),b=buildProfile('b');
   let result;
   try{
-    const res=await fetch('/api/analyze/compatibility',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({founder_a:a,founder_b:b})});
+    const res=await fetch('/api/analyze/compatibility',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({founder_a:a,founder_b:b,resume_text_a:resumeTexts.a||null,resume_text_b:resumeTexts.b||null})});
     if(!res.ok)throw new Error();
     const data=await res.json();
     result=data;

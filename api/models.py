@@ -30,6 +30,8 @@ class CompatibilityRequest(BaseModel):
     founder_b: FounderProfile
     github_data_a: dict | None = None
     github_data_b: dict | None = None
+    resume_text_a: str | None = None
+    resume_text_b: str | None = None
 
 class SingleAgentRequest(BaseModel):
     agent_type: str

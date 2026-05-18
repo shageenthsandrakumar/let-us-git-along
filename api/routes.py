@@ -1,6 +1,6 @@
 import asyncio
 import logging
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, UploadFile, File
 from pydantic import BaseModel
 from api.models import (
     FounderProfile, CompatibilityRequest, SingleAgentRequest,
@@ -8,6 +8,7 @@ from api.models import (
 )
 from agents.orchestrator import run_founder_analysis, run_single_agent_analysis
 from tools.github_analyzer import fetch_github_profile
+from tools.resume_parser import extract_text_from_pdf
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
@@ -30,6 +31,19 @@ async def _safe_github_fetch(username: str | None) -> dict | None:
         logger.warning("GitHub fetch error for %s: %s", username, e)
         return None
 
+@router.post("/upload/resume")
+async def upload_resume(file: UploadFile = File(...)):
+    """Accept a PDF (e.g. LinkedIn export) and return extracted text."""
+    if not file.filename or not file.filename.lower().endswith(".pdf"):
+        raise HTTPException(status_code=400, detail="Only PDF files are supported.")
+    contents = await file.read()
+    if len(contents) > 5 * 1024 * 1024:  # 5 MB cap
+        raise HTTPException(status_code=400, detail="File too large. Max 5 MB.")
+    text = extract_text_from_pdf(contents)
+    if not text:
+        raise HTTPException(status_code=422, detail="Could not extract text from PDF. Make sure it is a text-based PDF, not a scanned image.")
+    return {"text": text, "char_count": len(text)}
+
 @router.post("/analyze/compatibility", response_model=CompatibilityResponse)
 async def analyze_compatibility(request: CompatibilityRequest):
     try:
@@ -49,6 +63,8 @@ async def analyze_compatibility(request: CompatibilityRequest):
             founder_b_profile=request.founder_b.model_dump(),
             github_data_a=github_data_a,
             github_data_b=github_data_b,
+            resume_text_a=request.resume_text_a,
+            resume_text_b=request.resume_text_b,
         )
         return CompatibilityResponse(
             status=result["status"],
