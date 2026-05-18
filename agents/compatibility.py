@@ -51,5 +51,5 @@ def create_compatibility_agent(llm_config=None):
         name="compatibility_agent",
         system_message=SYSTEM_PROMPT,
         llm_config=llm_config,
-        description="Analyzes founder compatibility across six operational dimensions and predicts friction points.",
+        description="Analyzes founder compatibility across ten operational dimensions and predicts friction points.",
     )
