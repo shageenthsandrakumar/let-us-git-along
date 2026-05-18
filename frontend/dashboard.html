@@ -134,6 +134,22 @@
   .cat-documentation{background:rgba(14,165,233,.12);color:#7dd3fc}
   .stack-purpose{font-size:.78rem;color:var(--muted);line-height:1.5;margin-bottom:.5rem}
   .stack-why{font-size:.75rem;color:#818cf8;line-height:1.5;font-style:italic}
+  /* WEEKLY CADENCE */
+  .cadence-section{background:var(--card);border:1px solid var(--border);border-radius:1rem;padding:1.5rem;margin-bottom:1.25rem}
+  .cadence-header{margin-bottom:1.25rem}
+  .cadence-header h3{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:.375rem}
+  .cadence-subtitle{font-size:.8rem;color:var(--muted)}
+  .cadence-steps{display:flex;flex-direction:column;gap:.625rem}
+  .cadence-step{display:flex;align-items:flex-start;gap:1rem;padding:1rem 1.125rem;background:var(--surface);border:1px solid var(--border);border-radius:.75rem;transition:border-color .2s}
+  .cadence-step:hover{border-color:rgba(99,102,241,.35)}
+  .cadence-step-left{display:flex;flex-direction:column;align-items:center;gap:.25rem;flex-shrink:0;width:52px}
+  .cadence-day{font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--primary);background:rgba(99,102,241,.1);border:1px solid rgba(99,102,241,.2);border-radius:.375rem;padding:.2rem .4rem;text-align:center;white-space:nowrap}
+  .cadence-duration{font-size:.65rem;color:var(--muted);white-space:nowrap}
+  .cadence-step-body{flex:1;min-width:0}
+  .cadence-step-title{font-size:.875rem;font-weight:700;margin-bottom:.25rem}
+  .cadence-step-desc{font-size:.78rem;color:var(--muted);line-height:1.5}
+  .cadence-step-owner{display:flex;gap:.375rem;margin-top:.5rem;flex-wrap:wrap}
+  .cadence-owner-pill{font-size:.65rem;padding:.15rem .5rem;border-radius:9999px;border:1px solid var(--border);color:var(--muted)}
   /* PRE-COMMITMENT PLAYBOOK */
   .playbook-section{background:var(--card);border:1px solid var(--border);border-radius:1rem;padding:1.5rem;margin-bottom:1.25rem}
   .playbook-header{margin-bottom:1.5rem}
@@ -385,6 +401,14 @@
         </div>
       </div>
       <div class="stack-grid" id="stack-grid"></div>
+    </div>
+
+    <div class="cadence-section" id="cadence-section" style="display:none">
+      <div class="cadence-header">
+        <h3>Weekly Operating Rhythm</h3>
+        <div class="cadence-subtitle" id="cadence-subtitle">Your GTM operating system, tailored to your pairing.</div>
+      </div>
+      <div class="cadence-steps" id="cadence-steps"></div>
     </div>
 
     <div class="playbook-section" id="playbook-section" style="display:none">
@@ -676,11 +700,15 @@ function renderResults(r,a,b){
   const recs=r.recommendations||[];
   document.getElementById('recs-list').innerHTML=recs.map(rec=>`<div class="rec-item">${rec}</div>`).join('')||'<p style="color:var(--muted);font-size:.85rem">No recommendations returned.</p>';
   renderStack(r.stack||null, r.archetype||'Velocity Pair');
+  renderCadence(r,a,b);
   renderPlaybook(r,a,b);
 }
 
 function resetAnalysis(){
   document.getElementById('results-section').style.display='none';
+  document.getElementById('cadence-section').style.display='none';
+  document.getElementById('playbook-section').style.display='none';
+  document.getElementById('stack-section').style.display='none';
   document.getElementById('input-section').style.display='block';
   document.querySelectorAll('.agent-chip').forEach(c=>c.className='agent-chip');
 }
@@ -901,6 +929,64 @@ const DYNAMIC_DIM_MAP={
   risk_tolerance:'risk_tolerance','Risk Posture':'risk_tolerance',
   network_proximity:'network_proximity','Network Proximity':'network_proximity',
 };
+
+/* ── WEEKLY OPERATING CADENCE ────────────────────────────────────── */
+const CADENCE_BY_ARCHETYPE={
+  'Velocity Pair':[
+    {day:'Mon',duration:'30 min',title:'Sprint Kickoff',desc:'Align on the single most important thing to ship this week. One outcome, not a list. One person owns it.',owners:['Both founders']},
+    {day:'Daily',duration:'async',title:'Decision Log',desc:'Any decision made solo gets logged in a shared doc with one-line reasoning. Prevents silent divergence before it compounds.',owners:['Rotating lead']},
+    {day:'Wed',duration:'20 min',title:'User Signal Review',desc:'Surface the three most important signals from users this week. What changed? What surprised you? What kills a current assumption?',owners:['Product lead']},
+    {day:'Fri',duration:'15 min',title:'Friction Check-in',desc:'One structured question each: "What created unnecessary drag this week?" No problem-solving in the room — just surface it.',owners:['Both founders']},
+    {day:'Monthly',duration:'90 min',title:'GTM Retrospective',desc:'Review metrics vs. operating plan. Did your velocity produce the right outcomes? Recalibrate roles if execution drift is showing.',owners:['Both founders']},
+  ],
+  'Craft Pair':[
+    {day:'Mon',duration:'45 min',title:'Architecture Review',desc:'Walk through any technical decisions made last week. Is the system still coherent? Surface debt deliberately, not accidentally.',owners:['Technical lead']},
+    {day:'Daily',duration:'async',title:'Build Log',desc:'One entry per founder: what shipped, what\'s blocked, what needs a decision. Written, not a standup call.',owners:['Both founders']},
+    {day:'Wed',duration:'30 min',title:'Product Quality Bar',desc:'Review what\'s in progress against your stated quality standard. Are you holding the bar or rationalising exceptions?',owners:['Product lead']},
+    {day:'Fri',duration:'30 min',title:'Deliberate Decisions',desc:'Surface any decision deferred this week. Is it deferred for a good reason or avoidance? Timebox a resolution.',owners:['Both founders']},
+    {day:'Monthly',duration:'2 hrs',title:'Strategic Alignment',desc:'Step back from execution. Is what you\'re building still the right thing? Are your roles still the right shape?',owners:['Both founders']},
+  ],
+  'Scale Pair':[
+    {day:'Mon',duration:'30 min',title:'Revenue & Pipeline Review',desc:'Open with numbers. What moved? What stalled? One founder owns the metric narrative, the other challenges the interpretation.',owners:['Commercial lead']},
+    {day:'Daily',duration:'async',title:'Sales + Build Sync',desc:'One-line update from each domain: what closed or progressed, what shipped or broke. Keeps both founders in each other\'s reality.',owners:['Both founders']},
+    {day:'Wed',duration:'20 min',title:'Customer Signal Digest',desc:'Three customer conversations summarised. What are you hearing that the metrics aren\'t showing yet?',owners:['Commercial lead']},
+    {day:'Fri',duration:'20 min',title:'Bottleneck Audit',desc:'What is the single constraint on growth this week — product, sales, or process? Name it explicitly and assign an owner.',owners:['Both founders']},
+    {day:'Monthly',duration:'90 min',title:'Operating Plan Review',desc:'Metrics vs. plan, burn vs. milestone, headcount vs. output. Is the machine working or do we need to change something structural?',owners:['Both founders']},
+  ],
+  'Research Pair':[
+    {day:'Mon',duration:'60 min',title:'Hypothesis Review',desc:'What are you testing this week and what would falsify it? Be explicit about the signal you\'re looking for before you start.',owners:['Both founders']},
+    {day:'Daily',duration:'async',title:'Experiment Log',desc:'Capture what you tried, what you observed, and what you updated. The log is the product until there is a product.',owners:['Both founders']},
+    {day:'Wed',duration:'30 min',title:'Signal vs. Noise',desc:'What did you learn this week that you didn\'t already believe? Only new information counts. Confirming priors doesn\'t.',owners:['Research lead']},
+    {day:'Fri',duration:'30 min',title:'Commitment Calibration',desc:'Are you still exploring or should you be committing? Which open questions are genuinely blocking, and which are avoidance?',owners:['Both founders']},
+    {day:'Monthly',duration:'2 hrs',title:'Research Retrospective',desc:'Did this month\'s experiments produce a decision? If not, why? Is the pace of learning fast enough given your runway?',owners:['Both founders']},
+  ],
+};
+// Fallback cadence if archetype doesn't match exactly
+const CADENCE_DEFAULT=CADENCE_BY_ARCHETYPE['Velocity Pair'];
+
+function renderCadence(r,a,b){
+  const section=document.getElementById('cadence-section');
+  const stepsEl=document.getElementById('cadence-steps');
+  const archetype=r.archetype||'Velocity Pair';
+  // Match archetype string flexibly
+  const key=Object.keys(CADENCE_BY_ARCHETYPE).find(k=>archetype.toLowerCase().includes(k.split(' ')[0].toLowerCase()))||'Velocity Pair';
+  const steps=CADENCE_BY_ARCHETYPE[key]||CADENCE_DEFAULT;
+  document.getElementById('cadence-subtitle').textContent=
+    `${archetype} operating system for ${a.name} and ${b.name} — five rhythms that prevent the most common drift patterns.`;
+  stepsEl.innerHTML=steps.map(s=>`
+    <div class="cadence-step">
+      <div class="cadence-step-left">
+        <span class="cadence-day">${s.day}</span>
+        <span class="cadence-duration">${s.duration}</span>
+      </div>
+      <div class="cadence-step-body">
+        <div class="cadence-step-title">${s.title}</div>
+        <div class="cadence-step-desc">${s.desc}</div>
+        <div class="cadence-step-owner">${s.owners.map(o=>`<span class="cadence-owner-pill">${o}</span>`).join('')}</div>
+      </div>
+    </div>`).join('');
+  section.style.display='block';
+}
 
 function renderPlaybook(r,a,b){
   const section=document.getElementById('playbook-section');
