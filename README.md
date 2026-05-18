@@ -102,6 +102,22 @@ Every founder pair gets assigned to one of four go-to-market archetypes:
 
 ---
 
+## Weekly Operating Rhythm
+
+Every compatibility report includes a **Weekly Operating Rhythm** — five structured cadences tailored to the pair's GTM archetype. This is the operating system for how they actually run their week together, not just what tools to use.
+
+| Cadence | Velocity Pair | Craft Pair | Scale Pair | Research Pair |
+|---|---|---|---|---|
+| **Monday** | Sprint Kickoff | Architecture Review | Revenue & Pipeline Review | Hypothesis Review |
+| **Daily** | Decision Log | Build Log | Sales + Build Sync | Experiment Log |
+| **Wednesday** | User Signal Review | Product Quality Bar | Customer Signal Digest | Signal vs. Noise |
+| **Friday** | Friction Check-in | Deliberate Decisions | Bottleneck Audit | Commitment Calibration |
+| **Monthly** | GTM Retrospective | Strategic Alignment | Operating Plan Review | Research Retrospective |
+
+Each step shows the day/frequency, duration, who leads it, and a description of exactly what happens in the room — designed to prevent the most common drift patterns for that archetype.
+
+---
+
 ## Pre-Commitment Playbook
 
 Every compatibility report includes a **Pre-Commitment Playbook** — five conversation cards that every co-founder pair should work through before signing anything, plus one dynamic card auto-selected from the partnership's lowest-scoring dimension.
