@@ -94,7 +94,12 @@ Every founder pair gets assigned to one of four go-to-market archetypes:
 
 ### LinkedIn PDF upload
 
-LinkedIn exports your profile as a PDF from **Me → Settings & Privacy → Data privacy → Get a copy of your data → select "Profile" → Request archive**. A helper video link is shown inline on both the onboarding and dashboard pages. The PDF is sent to `/api/upload/resume`, parsed server-side with `pypdf`, and the extracted text is stored in localStorage alongside the rest of the profile.
+LinkedIn exports your profile as a PDF from **Me → Settings & Privacy → Data privacy → Get a copy of your data → select "Profile" → Request archive**. A helper video link is shown inline on the onboarding, assessment, and dashboard pages. The PDF is sent to `/api/upload/resume`, parsed server-side with `pypdf`, and the extracted text is stored in localStorage alongside the rest of the profile.
+
+Upload is available in three places:
+- **Onboarding** — Step 1 of the questionnaire, before you start
+- **Assessment** — a compact upload bar at the top of the quiz so you can add your PDF at any point during the questionnaire, even if you skipped onboarding
+- **Dashboard** — one upload field per founder, inside each founder card
 
 ---
 
@@ -249,9 +254,9 @@ If the API is unavailable (e.g. missing API key), the dashboard falls back to a 
 
 ## How the individual assessment works
 
-1. User completes the multi-step questionnaire in **onboarding.html** — Step 1 asks for name, role, and optionally GitHub username and LinkedIn PDF
+1. User completes the multi-step questionnaire in **onboarding.html** — Step 1 asks for name, role, and optionally GitHub username and LinkedIn PDF; or they can go directly to `assessment.html` and upload their PDF from the upload bar at the top of the quiz
 2. Questionnaire answers are saved to `localStorage` as `founderProfile`
-3. User lands on **assessment.html**, which reads the saved profile and POSTs to `/api/assessment/submit`
+3. On submit, **assessment.html** reads the saved profile and POSTs to `/api/assessment/submit`
 4. The API runs rule-based archetype classification and ten-dimension scoring immediately
 5. If GitHub or LinkedIn data is present, it runs the enrichment pipeline: GitHub Storyteller → Resume Analyst → Synthesis Agent → Communicator
 6. Results are displayed: archetype badge, score ring, dimension bars, and optionally:
