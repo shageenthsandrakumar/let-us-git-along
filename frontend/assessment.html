@@ -103,17 +103,41 @@
   .signal-na .signal-cell-text{opacity:.4;font-style:italic}
   .breakdown-section{margin-bottom:.875rem}
   .breakdown-label{font-size:.63rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:.375rem}
-  .breakdown-text{font-size:.82rem;color:var(--text);line-height:1.7}</style>
+  .breakdown-text{font-size:.82rem;color:var(--text);line-height:1.7}
+  /* RESUME UPLOAD ZONE */
+  .resume-upload-zone{display:flex;align-items:center;justify-content:space-between;gap:1rem;background:var(--card);border:1px solid var(--border);border-radius:1rem;padding:1rem 1.25rem;margin-bottom:1.5rem;flex-wrap:wrap}
+  .resume-upload-left{display:flex;align-items:center;gap:.75rem;flex:1;min-width:200px}
+  .resume-upload-icon{font-size:1.35rem;flex-shrink:0}
+  .resume-upload-title{font-size:.85rem;font-weight:600;margin-bottom:.1rem;display:flex;align-items:center;gap:.4rem}
+  .resume-optional{font-size:.62rem;font-weight:500;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);padding:.1rem .4rem;background:var(--surface);border:1px solid var(--border);border-radius:9999px}
+  .resume-upload-desc{font-size:.73rem;color:var(--muted)}
+  .resume-drop{padding:.45rem 1rem;border:1px dashed var(--border);border-radius:.5rem;cursor:pointer;font-size:.78rem;color:var(--muted);transition:all .2s;white-space:nowrap;flex-shrink:0}
+  .resume-drop:hover{border-color:var(--blue);color:var(--text)}</style>
 </head>
 <body>
 <nav>
   <div class="logo">FounderFit</div>
-  <a href="/onboarding.html" class="nav-back">â† Back to profile</a>
+  <a href="/onboarding.html" class="nav-back">← Back to profile</a>
 </nav>
 
 <div class="main">
 
   <div id="quiz-section">
+    <!-- RESUME UPLOAD (optional enrichment) -->
+    <div class="resume-upload-zone">
+      <div class="resume-upload-left">
+        <span class="resume-upload-icon">📄</span>
+        <div>
+          <div class="resume-upload-title">LinkedIn PDF <span class="resume-optional">optional</span></div>
+          <div class="resume-upload-desc">Upload your LinkedIn export for deeper AI analysis — <a href="https://www.youtube.com/watch?v=YrplE62daWQ" target="_blank" style="color:#a5b4fc;text-decoration:underline">how to export</a></div>
+        </div>
+      </div>
+      <div id="resume-drop" class="resume-drop" onclick="document.getElementById('resume-input').click()">
+        <span id="resume-label">Click to upload PDF</span>
+      </div>
+      <input id="resume-input" type="file" accept=".pdf" style="display:none" onchange="handleResumeUpload(this)"/>
+    </div>
+
     <div class="prog-wrap">
       <div class="prog-info"><span id="q-counter">Question 1 of 10</span><span id="q-pct">10%</span></div>
       <div class="prog-track"><div class="prog-fill" id="prog-fill" style="width:10%"></div></div>
@@ -125,7 +149,7 @@
       <div class="opts" id="q-opts"></div>
     </div>
     <div class="q-actions">
-      <button class="btn-prev" id="btn-prev" onclick="prevQ()" style="display:none">â† Back</button>
+      <button class="btn-prev" id="btn-prev" onclick="prevQ()" style="display:none">← Back</button>
       <button class="btn-next" id="btn-next" onclick="nextQ()" disabled>Next →</button>
     </div>
     <div class="btn-hint" id="btn-hint">Select an answer to continue</div>
@@ -141,6 +165,33 @@
 </div>
 
 <script>
+async function handleResumeUpload(input){
+  const file=input.files[0];
+  if(!file)return;
+  const label=document.getElementById('resume-label');
+  const drop=document.getElementById('resume-drop');
+  label.textContent='Uploading…';
+  drop.style.borderColor='var(--blue)';
+  try{
+    const form=new FormData();
+    form.append('file',file);
+    const res=await fetch('/api/upload/resume',{method:'POST',body:form});
+    if(!res.ok){const e=await res.json();throw new Error(e.detail||'Upload failed');}
+    const data=await res.json();
+    // Persist into founderProfile so showResults() picks it up
+    const profile=JSON.parse(localStorage.getItem('founderProfile')||'{}');
+    profile.resume_text=data.text;
+    localStorage.setItem('founderProfile',JSON.stringify(profile));
+    label.textContent='✓ '+file.name+' ('+Math.round(data.char_count/100)/10+'k chars)';
+    drop.style.borderColor='var(--emerald)';
+    drop.style.color='var(--emerald)';
+  }catch(e){
+    label.textContent='⚠ '+e.message;
+    drop.style.borderColor='var(--rose)';
+    drop.style.color='var(--rose)';
+  }
+}
+
 const DIM_COLORS={
   'Execution Style':'#4f7cff','Communication Cadence':'#06b6d4','Decision-Making':'#8b5cf6',
   'Risk Posture':'#f43f5e','Conflict Resolution':'#f59e0b','Tooling Affinity':'#a78bfa',
