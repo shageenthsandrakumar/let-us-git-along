@@ -1,8 +1,8 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>FounderFit — Compatibility Dashboard</title>
+<title>FounderFit â€” Compatibility Dashboard</title>
 <style>
   :root{--bg:#08080f;--surface:#0f0f1a;--card:#13131f;--border:#1e1e30;--primary:#6366f1;--purple:#a855f7;--text:#e2e8f0;--muted:#64748b;--success:#22c55e;--warning:#f59e0b;--error:#ef4444}
   *{margin:0;padding:0;box-sizing:border-box}
@@ -94,11 +94,11 @@
   .badge-low{background:rgba(34,197,94,.15);color:#4ade80;border:1px solid rgba(34,197,94,.2)}
   .strength-item{display:flex;align-items:flex-start;gap:.625rem;padding:.625rem 0;border-bottom:1px solid var(--border);font-size:.85rem;color:var(--muted);line-height:1.5}
   .strength-item:last-child{border-bottom:none}
-  .strength-item::before{content:'✓';color:var(--success);font-weight:700;flex-shrink:0}
+  .strength-item::before{content:'âœ“';color:var(--success);font-weight:700;flex-shrink:0}
   .full-card{background:var(--card);border:1px solid var(--border);border-radius:1rem;padding:1.5rem;margin-bottom:1.25rem}
   .rec-item{padding:.75rem 1rem;background:var(--surface);border-radius:.5rem;margin-bottom:.5rem;font-size:.85rem;color:var(--muted);line-height:1.6;display:flex;gap:.75rem;align-items:flex-start}
   .rec-item:last-child{margin-bottom:0}
-  .rec-item::before{content:'→';color:var(--primary);flex-shrink:0;font-weight:700}
+  .rec-item::before{content:'â†’';color:var(--primary);flex-shrink:0;font-weight:700}
 </style>
 </head>
 <body>
@@ -128,7 +128,7 @@
         <label>Full Name *</label>
         <input id="a_name" placeholder="e.g. Alex Johnson"/>
         <div class="field-row">
-          <div><label>Role</label><input id="a_role" placeholder="CTO, CEO…"/></div>
+          <div><label>Role</label><input id="a_role" placeholder="CTO, CEOâ€¦"/></div>
           <div><label>Decision Speed</label>
             <select id="a_decision">
               <option value="fast">Fast</option>
@@ -188,7 +188,7 @@
         <label>Full Name *</label>
         <input id="b_name" placeholder="e.g. Jordan Lee"/>
         <div class="field-row">
-          <div><label>Role</label><input id="b_role" placeholder="CTO, CEO…"/></div>
+          <div><label>Role</label><input id="b_role" placeholder="CTO, CEOâ€¦"/></div>
           <div><label>Decision Speed</label>
             <select id="b_decision">
               <option value="fast">Fast</option>
@@ -237,39 +237,39 @@
     <!-- AGENT PIPELINE -->
     <div class="pipeline" id="pipeline">
       <div class="agent-chip" id="chip-coordinator"><div class="chip-dot"></div>Coordinator</div>
-      <div class="chip-arrow">→</div>
+      <div class="chip-arrow">â†’</div>
       <div class="agent-chip" id="chip-repotale"><div class="chip-dot"></div>RepoTale</div>
-      <div class="chip-arrow">→</div>
+      <div class="chip-arrow">â†’</div>
       <div class="agent-chip" id="chip-compatibility"><div class="chip-dot"></div>Compatibility</div>
-      <div class="chip-arrow">→</div>
+      <div class="chip-arrow">â†’</div>
       <div class="agent-chip" id="chip-matchmaker"><div class="chip-dot"></div>Matchmaker</div>
-      <div class="chip-arrow">→</div>
+      <div class="chip-arrow">â†’</div>
       <div class="agent-chip" id="chip-gtm"><div class="chip-dot"></div>GTM Strategist</div>
-      <div class="chip-arrow">→</div>
+      <div class="chip-arrow">â†’</div>
       <div class="agent-chip" id="chip-executor"><div class="chip-dot"></div>Executor</div>
     </div>
 
     <div class="run-wrap">
-      <button class="btn-run" id="btn-run" onclick="runAnalysis()">⚡ Run Compatibility Analysis</button>
+      <button class="btn-run" id="btn-run" onclick="runAnalysis()">âš¡ Run Compatibility Analysis</button>
     </div>
   </div>
 
   <div class="loading-section" id="loading-section">
     <div class="spinner"></div>
-    <h3>Running multi-agent analysis…</h3>
+    <h3>Running multi-agent analysisâ€¦</h3>
     <p id="loading-status">Initializing agent pipeline</p>
   </div>
 
   <div id="results-section">
     <div class="results-header">
       <h2 id="results-title">Compatibility Report</h2>
-      <button class="btn-reset" onclick="resetAnalysis()">← New Analysis</button>
+      <button class="btn-reset" onclick="resetAnalysis()">â† New Analysis</button>
     </div>
 
     <div class="score-hero">
-      <div class="score-big" id="overall-score">—</div>
+      <div class="score-big" id="overall-score">â€”</div>
       <div class="score-label">Overall Compatibility Score</div>
-      <div class="archetype-pill" id="archetype-label">Analyzing…</div>
+      <div class="archetype-pill" id="archetype-label">Analyzingâ€¦</div>
     </div>
 
     <div class="results-grid">
@@ -298,7 +298,7 @@
 
 <script>
 const agentOrder=['coordinator','repotale','compatibility','matchmaker','gtm','executor'];
-const loadingMessages=['Initializing agent pipeline…','RepoTale analyzing GitHub signals…','Compatibility agent scoring dimensions…','Matchmaker evaluating the pairing…','GTM Strategist mapping archetype…','Executor forecasting team velocity…','Synthesizing final report…'];
+const loadingMessages=['Initializing agent pipelineâ€¦','RepoTale analyzing GitHub signalsâ€¦','Compatibility agent scoring dimensionsâ€¦','Matchmaker evaluating the pairingâ€¦','GTM Strategist mapping archetypeâ€¦','Executor forecasting team velocityâ€¦','Synthesizing final reportâ€¦'];
 
 function buildProfile(prefix){
   return{
@@ -333,9 +333,9 @@ function localAnalysis(a,b){
     dimensions:Object.fromEntries(Object.entries(dims).map(([k,v])=>[k,{score:v,analysis:''}])),
     archetype:overall>=75?'Velocity Pair':overall>=60?'Scale Pair':'Craft Pair',
     friction_predictions:[
-      {issue:'Decision cadence mismatch',timeline:'Months 2–4',risk_level:a.decision_speed!==b.decision_speed?'high':'low',mitigation:'Establish a weekly decision log with 48h default timers.'},
+      {issue:'Decision cadence mismatch',timeline:'Months 2â€“4',risk_level:a.decision_speed!==b.decision_speed?'high':'low',mitigation:'Establish a weekly decision log with 48h default timers.'},
       {issue:'Communication rhythm divergence',timeline:'Month 1',risk_level:a.communication_style!==b.communication_style?'medium':'low',mitigation:'Agree on async-first with one weekly sync call.'},
-      {issue:'Conflict escalation risk',timeline:'Months 3–6',risk_level:'medium',mitigation:'Pre-commit to a structured disagreement protocol.'},
+      {issue:'Conflict escalation risk',timeline:'Months 3â€“6',risk_level:'medium',mitigation:'Pre-commit to a structured disagreement protocol.'},
     ],
     strengths:['Complementary execution styles create natural coverage','Risk profiles balance the partnership','Shared ambition horizon reduces exit tension'],
     recommendations:['Define a co-founder agreement before month 2','Set quarterly vision reviews to catch alignment drift early','Use a shared decision log for all major calls'],
@@ -382,9 +382,10 @@ async function runAnalysis(){
 }
 
 function renderResults(r,a,b){
+  try{localStorage.setItem('fitzLastResult',JSON.stringify({score:r.overall_score,archetype:r.archetype,nameA:a.name,nameB:b.name}));}catch(e){}
   document.getElementById('results-section').style.display='block';
-  document.getElementById('results-title').textContent=`${a.name} × ${b.name}`;
-  document.getElementById('overall-score').textContent=r.overall_score||'—';
+  document.getElementById('results-title').textContent=`${a.name} Ã— ${b.name}`;
+  document.getElementById('overall-score').textContent=r.overall_score||'â€”';
   document.getElementById('archetype-label').textContent=r.archetype||'Analysis Complete';
   const dimLabels={decision_velocity:'Decision Velocity',risk_tolerance:'Risk Tolerance',communication:'Communication',execution_pace:'Execution Pace',vision_alignment:'Vision Alignment',conflict_style:'Conflict Style'};
   const dims=r.dimensions||{};
@@ -422,6 +423,8 @@ if(saved.execution_style)document.getElementById('a_exec').value=saved.execution
 if(saved.conflict_approach)document.getElementById('a_conflict').value=saved.conflict_approach;
 if(saved.github_username)document.getElementById('a_github').value=saved.github_username;
 </script>
-<script src="/static/mascot.js"></script>
+<script src="mascot.js"></script>
 </body>
 </html>
+
+

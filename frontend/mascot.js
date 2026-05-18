@@ -1,41 +1,104 @@
 /* FounderFit Mascot — Fitz the purple bot */
 (function () {
-  const PAGE_HINTS = {
+
+  const ARCHETYPE_TIPS = {
+    rapid_builder: [
+      "You're a Rapid Builder. You ship before others finish planning.",
+      "Your best co-founder match? A Systems Operator who brings rigor to your speed.",
+      "Watch out for burnout — your sprint pace is a strength and a risk.",
+    ],
+    systems_operator: [
+      "You're a Systems Operator. You build things that outlast you.",
+      "You work best with someone who can sell the vision while you build the machine.",
+      "Your risk: over-engineering before validating. Ship a rough version first.",
+    ],
+    experimental_hacker: [
+      "You're an Experimental Hacker. You find signal in noise faster than anyone.",
+      "Pair with someone who can commit to a direction and hold you accountable to it.",
+      "Your superpower is killing bad ideas quickly. Use it ruthlessly.",
+    ],
+    vision_architect: [
+      "You're a Vision Architect. You see ten moves ahead and design backward.",
+      "You need a co-founder who executes on the ground while you design the future.",
+      "Your risk: designing too far ahead of what users actually need right now.",
+    ],
+    product_strategist: [
+      "You're a Product Strategist. You know which 20% of features drive 80% of adoption.",
+      "Pair with someone strong in sales or deep technical depth.",
+      "Your edge is user obsession. Never let go of that, no matter how fast you grow.",
+    ],
+    growth_hunter: [
+      "You're a Growth Hunter. You build compounding loops where every win is cheaper.",
+      "You need a builder who can keep up with your experimentation pace.",
+      "Your risk: optimizing metrics at the expense of product quality. Balance it.",
+    ],
+  };
+
+  const DEFAULT_HINTS = {
     '/': [
-      "Hi! I'm Fitz 👋 I help you analyze co-founder compatibility before you commit.",
-      "FounderFit analyzes 10 dimensions of compatibility — from execution style to GTM orientation.",
-      "Click 'Start Free Assessment' to discover your founder archetype!",
+      "Hi! I'm Fitz. I help you stress-test your co-founder relationship before it matters.",
+      "FounderFit scores 10 dimensions of compatibility — from execution style to GTM orientation.",
+      "65% of startups fail because of co-founder conflict. Start here.",
     ],
     '/index.html': [
-      "Hi! I'm Fitz 👋 I help founders find their perfect co-founder match.",
-      "FounderFit analyzes 10 dimensions of compatibility — from execution style to GTM orientation.",
-      "Click 'Start Free Assessment' to discover your founder archetype!",
+      "Hi! I'm Fitz. I help you stress-test your co-founder relationship before it matters.",
+      "FounderFit scores 10 dimensions of compatibility — from execution style to GTM orientation.",
+      "65% of startups fail because of co-founder conflict. Start here.",
     ],
     '/onboarding.html': [
-      "Let's build your founder profile! Takes about 2 minutes.",
+      "Let's build your founder profile. Takes about 2 minutes.",
       "Be honest — FounderFit works best with authentic answers, not ideal ones.",
-      "After this, I'll take you to your full compatibility assessment.",
+      "After this, your full compatibility assessment is one click away.",
     ],
     '/assessment.html': [
       "10 questions, one per compatibility dimension.",
       "There are no wrong answers — only honest ones.",
-      "Your profile powers the AI compatibility engine. Make it real!",
+      "Your profile powers the AI compatibility engine. Make it real.",
     ],
     '/dashboard.html': [
-      "Enter both founders' profiles and I'll run a full multi-agent analysis.",
-      "The AI engine scores 10 dimensions and predicts friction points before they happen.",
+      "Enter both founder profiles and I'll run a full multi-agent analysis.",
+      "The AI scores 10 dimensions and predicts friction points before they happen.",
       "Results include GTM archetype, strengths, and preventive agreements.",
     ],
     '/portfolio.html': [
-      "Meet the 5 AI agents working behind the scenes.",
-      "Each agent has a specialized role — from compatibility scoring to GTM strategy.",
+      "Five AI agents work behind the scenes on every analysis.",
+      "Each agent has a specialised role — from compatibility scoring to GTM strategy.",
       "They coordinate to give you a complete founder intelligence report.",
     ],
   };
 
   function getHints() {
     const path = window.location.pathname;
-    return PAGE_HINTS[path] || PAGE_HINTS['/'];
+    try {
+      const profile = JSON.parse(localStorage.getItem('founderProfile') || '{}');
+      const lastResult = JSON.parse(localStorage.getItem('fitzLastResult') || '{}');
+
+      // Assessment page: if they already have an archetype, reference it
+      if (path === '/assessment.html' && profile.archetype && ARCHETYPE_TIPS[profile.archetype]) {
+        return ARCHETYPE_TIPS[profile.archetype];
+      }
+
+      // Dashboard: if there's a past result, reference the score and names
+      if (path === '/dashboard.html' && lastResult.score) {
+        return [
+          `Last analysis: ${lastResult.nameA} x ${lastResult.nameB} scored ${lastResult.score}/100.`,
+          `Their archetype: ${lastResult.archetype}. Run a new pair to compare.`,
+          "The AI scores 10 dimensions and predicts friction points before they happen.",
+        ];
+      }
+
+      // Landing/index: if they have an archetype, greet them personally
+      if ((path === '/' || path === '/index.html') && profile.archetype) {
+        const arch = profile.archetype.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+        return [
+          `Welcome back! You're a ${arch}.`,
+          "Head to the dashboard to run a compatibility analysis with your co-founder.",
+          "FounderFit scores 10 dimensions — from execution style to GTM orientation.",
+        ];
+      }
+    } catch(e) {}
+
+    return DEFAULT_HINTS[path] || DEFAULT_HINTS['/'];
   }
 
   function createMascot() {

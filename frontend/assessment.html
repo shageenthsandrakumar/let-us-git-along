@@ -284,6 +284,10 @@ function showResults(){
       dims=scoreDims(answers);
     }
     document.getElementById('loading').style.display='none';
+    // Save archetype so Fitz can reference it on other pages
+    const saved2=JSON.parse(localStorage.getItem('founderProfile')||'{}');
+    saved2.archetype=archetype;
+    localStorage.setItem('founderProfile',JSON.stringify(saved2));
     renderResults(archetype,dims,merged.name||'Founder');
   },2000);
 }
