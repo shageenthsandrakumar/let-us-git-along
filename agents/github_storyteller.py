@@ -1,4 +1,4 @@
-import os
+﻿import os
 from autogen import ConversableAgent, LLMConfig
 
 SYSTEM_PROMPT = """You are the FounderFit GitHub Storyteller. You take raw GitHub profile data and transform it into a vivid, behaviorally rich narrative about how this person actually builds software.
@@ -27,18 +27,18 @@ Your output must follow this exact structure:
   "compatibility_brief": str  // One sentence on what kind of co-founder would complement this person
 }
 
-Be concrete. Do not say "they seem to prefer async communication." Say "their commit messages average 4 words — this is someone who communicates in actions, not explanations."
-Do not say "they are productive." Say "34 commits in 30 days with no gaps longer than 3 days — this person does not lose momentum."
+Be concrete. Do not say "they seem to prefer async communication." Say "their commit messages average 4 words â€” this is someone who communicates in actions, not explanations."
+Do not say "they are productive." Say "34 commits in 30 days with no gaps longer than 3 days â€” this person does not lose momentum."
 
 If the data is sparse or the account is new, say so honestly and note what little you can infer."""
 
 
 def create_github_storyteller_agent(llm_config=None):
     if llm_config is None:
-        llm_config = LLMConfig({"api_type": "openai", "model": "openai/gpt-4o", "api_key": os.environ.get("OPENROUTER_API_KEY", ""), "base_url": "https://openrouter.ai/api/v1"}, timeout=60)
+        llm_config = LLMConfig({"api_type": "openai", "model": "google/gemini-2.0-flash-exp:free", "api_key": os.environ.get("OPENROUTER_API_KEY", ""), "base_url": "https://openrouter.ai/api/v1"}, timeout=60)
     return ConversableAgent(
         name="github_storyteller",
         system_message=SYSTEM_PROMPT,
         llm_config=llm_config,
-        description="Transforms raw GitHub data into a vivid narrative about how a founder actually builds — feeding richer signal into the compatibility analysis.",
+        description="Transforms raw GitHub data into a vivid narrative about how a founder actually builds â€” feeding richer signal into the compatibility analysis.",
     )

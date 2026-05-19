@@ -1,4 +1,4 @@
-import asyncio
+﻿import asyncio
 import os
 import logging
 from fastapi import APIRouter, HTTPException, UploadFile, File
@@ -38,7 +38,7 @@ async def health_check_llm():
             llm_config = LLMConfig(
                 {
                     "api_type": "openai",
-                    "model": "openai/gpt-4o",
+                    "model": "google/gemini-2.0-flash-exp:free",
                     "api_key": api_key,
                     "base_url": "https://openrouter.ai/api/v1",
                 },
@@ -141,7 +141,7 @@ async def analyze_compatibility(request: CompatibilityRequest):
 @router.post("/analyze/single")
 async def analyze_single_agent(request: SingleAgentRequest):
     try:
-        # Run in a thread — LLM calls block and would stall the event loop
+        # Run in a thread â€” LLM calls block and would stall the event loop
         result = await asyncio.to_thread(
             run_single_agent_analysis,
             agent_type=request.agent_type,

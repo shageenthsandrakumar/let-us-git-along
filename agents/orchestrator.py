@@ -1,4 +1,4 @@
-import os
+﻿import os
 import re
 import json
 import logging
@@ -49,7 +49,7 @@ from agents.communicator_agent import create_communicator_agent
 
 logger = logging.getLogger(__name__)
 
-# Warn loudly at import time if the API key is missing — surfaced in Railway logs
+# Warn loudly at import time if the API key is missing â€” surfaced in Railway logs
 _api_key = os.environ.get("OPENROUTER_API_KEY", "")
 if not _api_key:
     logger.critical(
@@ -65,7 +65,7 @@ def get_llm_config():
     return LLMConfig(
         {
             "api_type": "openai",
-            "model": "openai/gpt-4o",
+            "model": "google/gemini-2.0-flash-exp:free",
             "api_key": os.environ.get("OPENROUTER_API_KEY", ""),
             "base_url": "https://openrouter.ai/api/v1",
         },
@@ -100,7 +100,7 @@ def run_founder_analysis(founder_a_profile, founder_b_profile, github_data_a=Non
     conversation = []
     compat_summary = None
 
-    # Run Resume Analyst first — extracts professional background signals from LinkedIn PDF and/or resume/CV
+    # Run Resume Analyst first â€” extracts professional background signals from LinkedIn PDF and/or resume/CV
     resume_story_a = None
     resume_story_b = None
     if resume_text_a or resume_text_b or resume_pdf_text_a or resume_pdf_text_b:
@@ -130,7 +130,7 @@ def run_founder_analysis(founder_a_profile, founder_b_profile, github_data_a=Non
                 resume_story_b = raw
                 conversation.append({"agent": "resume_analyst_b", "response": raw})
 
-    # Run GitHub Storyteller next — converts raw JSON into vivid narrative
+    # Run GitHub Storyteller next â€” converts raw JSON into vivid narrative
     # so all downstream agents reason from story, not raw API data
     story_a = None
     story_b = None
@@ -155,7 +155,7 @@ def run_founder_analysis(founder_a_profile, founder_b_profile, github_data_a=Non
                 story_b = raw
                 conversation.append({"agent": "github_storyteller_b", "response": raw})
 
-    # Build the base prompt — inject narrative stories instead of raw JSON where available
+    # Build the base prompt â€” inject narrative stories instead of raw JSON where available
     base_prompt = f"""Analyze the compatibility between these two founders:
 
 **Founder A:**
@@ -165,18 +165,18 @@ def run_founder_analysis(founder_a_profile, founder_b_profile, github_data_a=Non
 {json.dumps(founder_b_profile, indent=2)}
 """
     if resume_story_a:
-        base_prompt += f"\n**Founder A — Professional Background Story:**\n{resume_story_a}\n"
+        base_prompt += f"\n**Founder A â€” Professional Background Story:**\n{resume_story_a}\n"
 
     if story_a:
-        base_prompt += f"\n**Founder A — GitHub Builder Story:**\n{story_a}\n"
+        base_prompt += f"\n**Founder A â€” GitHub Builder Story:**\n{story_a}\n"
     elif github_data_a:
         base_prompt += f"\n**Founder A GitHub Data:**\n{json.dumps(github_data_a, indent=2)}\n"
 
     if resume_story_b:
-        base_prompt += f"\n**Founder B — Professional Background Story:**\n{resume_story_b}\n"
+        base_prompt += f"\n**Founder B â€” Professional Background Story:**\n{resume_story_b}\n"
 
     if story_b:
-        base_prompt += f"\n**Founder B — GitHub Builder Story:**\n{story_b}\n"
+        base_prompt += f"\n**Founder B â€” GitHub Builder Story:**\n{story_b}\n"
     elif github_data_b:
         base_prompt += f"\n**Founder B GitHub Data:**\n{json.dumps(github_data_b, indent=2)}\n"
 
@@ -231,7 +231,7 @@ def run_founder_analysis(founder_a_profile, founder_b_profile, github_data_a=Non
         if not compat_summary:
             compat_summary = "Analysis could not be completed."
 
-    # Communicator runs last — reads everything all other agents produced
+    # Communicator runs last â€” reads everything all other agents produced
     narrative = None
     try:
         communicator = create_communicator_agent(llm_config)
@@ -266,13 +266,13 @@ Now speak directly to both founders together. Write the compatibility narrative.
         tz_b = (founder_b_profile.get("timezone") or "").upper()
         if city_a and city_b and city_a == city_b:
             net_score = 92
-            net_analysis = "Same city — real-time collaboration is frictionless."
+            net_analysis = "Same city â€” real-time collaboration is frictionless."
         elif tz_a and tz_b and tz_a == tz_b:
             net_score = 78
-            net_analysis = "Same timezone — strong async overlap with easy sync windows."
+            net_analysis = "Same timezone â€” strong async overlap with easy sync windows."
         elif loc_a and loc_b:
             net_score = 60
-            net_analysis = "Different locations — async-first workflow recommended."
+            net_analysis = "Different locations â€” async-first workflow recommended."
         else:
             net_score = 55
             net_analysis = "Location data unavailable; proximity unknown."
@@ -351,17 +351,17 @@ def run_assessment_synthesis(profile, self_report_archetype, github_data=None, r
         if not parsed_synthesis:
             parsed_synthesis = {"alignment_note": synthesis_result, "final_archetype": self_report_archetype, "confidence": "low", "alignment": "unknown", "key_insight": "", "data_sources_used": [], "partnership_note": ""}
 
-    # Communicator runs last — reads all signals and speaks directly to the founder
+    # Communicator runs last â€” reads all signals and speaks directly to the founder
     logger.info("Assessment: running Communicator Agent")
     communicator_context = f"Write an individual founder narrative for {profile.get('name', 'this founder')}.\n\n"
-    communicator_context += f"[QUESTIONNAIRE — self-reported archetype: {self_report_archetype}]\n"
+    communicator_context += f"[QUESTIONNAIRE â€” self-reported archetype: {self_report_archetype}]\n"
     communicator_context += json.dumps({k: v for k, v in profile.items() if k not in ('name', 'email', 'github_username', 'linkedin_url', 'resume_text', 'resume_pdf_text', 'domain_expertise_list', 'tool_preferences')}, indent=2) + "\n\n"
     if github_story:
         communicator_context += f"[GITHUB BUILDER STORY]\n{github_story}\n\n"
     if resume_story:
         communicator_context += f"[LINKEDIN / RESUME STORY]\n{resume_story}\n\n"
     if parsed_synthesis:
-        communicator_context += f"[SYNTHESIS AGENT — final archetype: {parsed_synthesis.get('final_archetype', self_report_archetype)}]\n"
+        communicator_context += f"[SYNTHESIS AGENT â€” final archetype: {parsed_synthesis.get('final_archetype', self_report_archetype)}]\n"
         communicator_context += f"Reasoning: {parsed_synthesis.get('reasoning', '')}\n"
         communicator_context += f"Key insight: {parsed_synthesis.get('key_insight', '')}\n\n"
     communicator_context += "Now speak directly to this founder. Write their individual assessment narrative."

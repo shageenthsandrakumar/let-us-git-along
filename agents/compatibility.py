@@ -1,18 +1,18 @@
-import os
+﻿import os
 from autogen import ConversableAgent, LLMConfig
 
 SYSTEM_PROMPT = """You are the FounderFit Compatibility Agent. Your role is to analyze founder profiles and predict compatibility across ten operational dimensions:
 
-1. **Execution Style** — Speed vs rigor. Ship-fast vs deliberate craftsmanship.
-2. **Communication Cadence** — Async vs sync preference. Written vs verbal. Frequency of alignment.
-3. **Decision-Making Pattern** — Consensus-seeking vs decisive. Data-driven vs instinct-driven.
-4. **Risk Posture** — Conservative vs aggressive. Comfort with ambiguity, technical debt, concentrated bets.
-5. **Conflict Resolution** — Avoidant, competing, compromising, or collaborating style under pressure.
-6. **Tooling Affinity** — Heavy tooling from day one vs minimal viable tools vs pragmatic middle ground.
-7. **Domain Coverage** — Generalist breadth vs specialist depth vs collaborative coverage gaps.
-8. **Time & Energy Profile** — Sprint bursts vs steady pace vs adaptive cadence. Burnout risk patterns.
-9. **Ownership Philosophy** — Equal split vs merit-based vs flexible recalibration. Equity alignment.
-10. **GTM Orientation** — Product-led vs sales-led vs community-led growth instincts.
+1. **Execution Style** â€” Speed vs rigor. Ship-fast vs deliberate craftsmanship.
+2. **Communication Cadence** â€” Async vs sync preference. Written vs verbal. Frequency of alignment.
+3. **Decision-Making Pattern** â€” Consensus-seeking vs decisive. Data-driven vs instinct-driven.
+4. **Risk Posture** â€” Conservative vs aggressive. Comfort with ambiguity, technical debt, concentrated bets.
+5. **Conflict Resolution** â€” Avoidant, competing, compromising, or collaborating style under pressure.
+6. **Tooling Affinity** â€” Heavy tooling from day one vs minimal viable tools vs pragmatic middle ground.
+7. **Domain Coverage** â€” Generalist breadth vs specialist depth vs collaborative coverage gaps.
+8. **Time & Energy Profile** â€” Sprint bursts vs steady pace vs adaptive cadence. Burnout risk patterns.
+9. **Ownership Philosophy** â€” Equal split vs merit-based vs flexible recalibration. Equity alignment.
+10. **GTM Orientation** â€” Product-led vs sales-led vs community-led growth instincts.
 
 For each founder pair, you must:
 - Score each dimension from 0-100 (where 100 = perfect alignment between the two founders)
@@ -46,7 +46,7 @@ Base your analysis on behavioral signals, not self-reported preferences. Priorit
 
 def create_compatibility_agent(llm_config=None):
     if llm_config is None:
-        llm_config = LLMConfig({"api_type": "openai", "model": "openai/gpt-4o", "api_key": os.environ.get("OPENROUTER_API_KEY", ""), "base_url": "https://openrouter.ai/api/v1"}, timeout=60)
+        llm_config = LLMConfig({"api_type": "openai", "model": "google/gemini-2.0-flash-exp:free", "api_key": os.environ.get("OPENROUTER_API_KEY", ""), "base_url": "https://openrouter.ai/api/v1"}, timeout=60)
     return ConversableAgent(
         name="compatibility_agent",
         system_message=SYSTEM_PROMPT,

@@ -1,7 +1,7 @@
-import os
+﻿import os
 from autogen import ConversableAgent, LLMConfig
 
-SYSTEM_PROMPT = """You are the FounderFit Resume Analyst. You analyze professional documents — a LinkedIn profile export, a resume/CV, or both — and extract sharp behavioral signals about how this person operates as a potential founder.
+SYSTEM_PROMPT = """You are the FounderFit Resume Analyst. You analyze professional documents â€” a LinkedIn profile export, a resume/CV, or both â€” and extract sharp behavioral signals about how this person operates as a potential founder.
 
 You may receive:
 - A LinkedIn PDF export only
@@ -37,18 +37,18 @@ Your output must follow this exact structure:
   "compatibility_note": str  // One sentence on what kind of co-founder would complement this background
 }
 
-Be concrete. Do not say "they have diverse experience." Say "three industries in six years — this person is still searching for their arena, or deliberately building breadth before going deep."
-Do not say "they seem entrepreneurial." Say "two side projects listed alongside a full-time role — they build when they are not building."
+Be concrete. Do not say "they have diverse experience." Say "three industries in six years â€” this person is still searching for their arena, or deliberately building breadth before going deep."
+Do not say "they seem entrepreneurial." Say "two side projects listed alongside a full-time role â€” they build when they are not building."
 
 If the text is sparse or unclear, say so honestly and note what little you can infer."""
 
 
 def create_resume_agent(llm_config=None):
     if llm_config is None:
-        llm_config = LLMConfig({"api_type": "openai", "model": "openai/gpt-4o", "api_key": os.environ.get("OPENROUTER_API_KEY", ""), "base_url": "https://openrouter.ai/api/v1"}, timeout=60)
+        llm_config = LLMConfig({"api_type": "openai", "model": "google/gemini-2.0-flash-exp:free", "api_key": os.environ.get("OPENROUTER_API_KEY", ""), "base_url": "https://openrouter.ai/api/v1"}, timeout=60)
     return ConversableAgent(
         name="resume_analyst",
         system_message=SYSTEM_PROMPT,
         llm_config=llm_config,
-        description="Transforms a LinkedIn PDF or resume into a vivid professional narrative — revealing domain depth, operator vs builder instincts, and founder trajectory.",
+        description="Transforms a LinkedIn PDF or resume into a vivid professional narrative â€” revealing domain depth, operator vs builder instincts, and founder trajectory.",
     )

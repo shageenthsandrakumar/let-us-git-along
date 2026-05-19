@@ -1,4 +1,4 @@
-import os
+﻿import os
 from autogen import ConversableAgent, LLMConfig
 
 SYSTEM_PROMPT = """You are the FounderFit Executor Agent. You monitor team execution patterns and detect operational bottlenecks.
@@ -18,7 +18,7 @@ Respond with structured JSON:
 
 def create_executor_agent(llm_config=None):
     if llm_config is None:
-        llm_config = LLMConfig({"api_type": "openai", "model": "openai/gpt-4o", "api_key": os.environ.get("OPENROUTER_API_KEY", ""), "base_url": "https://openrouter.ai/api/v1"}, timeout=60)
+        llm_config = LLMConfig({"api_type": "openai", "model": "google/gemini-2.0-flash-exp:free", "api_key": os.environ.get("OPENROUTER_API_KEY", ""), "base_url": "https://openrouter.ai/api/v1"}, timeout=60)
     return ConversableAgent(
         name="executor_agent",
         system_message=SYSTEM_PROMPT,
