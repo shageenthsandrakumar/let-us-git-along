@@ -355,6 +355,31 @@ If the API is unavailable (e.g. missing API key), the dashboard falls back to a 
 
 ---
 
+## Reliability & resilience
+
+The system is designed to degrade gracefully rather than break silently. Key behaviours:
+
+| Layer | What can go wrong | How it's handled |
+|---|---|---|
+| **Frontend fetch (dashboard)** | API times out or stalls | AbortController kills the request after 3 minutes; UI falls back to local scoring |
+| **Frontend fetch (assessment)** | API times out | Same AbortController pattern; falls back to local archetype classification |
+| **LLM JSON parsing** | Model wraps JSON in prose or adds trailing text | Bracket-counting extractor finds the first complete `{…}` regardless of surrounding text |
+| **LLM JSON parsing** | Model omits the `score` key inside a dimension | `v.get("score", 60)` default instead of a bare `v["score"]` KeyError |
+| **Upload error handling** | Server returns an HTML error page (not JSON) | `res.json()` wrapped in its own try/catch; user sees the real error, not "Unexpected token <" |
+| **localStorage** | Corrupted or malformed JSON | All `JSON.parse(localStorage.getItem(…))` calls wrapped in try/catch across every page |
+| **Dimensions rendering** | API returns an array or null for `dimensions` | Type guard (`typeof dims === 'object' && !Array.isArray(dims)`) before `Object.entries` |
+| **Narrative rendering** | LLM includes HTML tags in prose | `textContent` used to escape before `innerHTML` — prevents XSS on both dashboard and assessment |
+| **Friction card rendering** | LLM uses `title`/`description` instead of `issue`/`mitigation` | Alternative key fallbacks applied before rendering |
+| **Run button** | User can't re-run after analysis | Button re-enabled in both success and error paths |
+| **Radar chart** | Double-click triggers two concurrent rAF loops | Previous loop cancelled before starting a new one |
+| **Chip animation** | Off-by-one accesses `agentOrder[8]` (undefined) | Null check before `.className` assignment |
+| **Filter buttons** | Category name with `'` breaks inline `onclick` string | Switched to `data-cat` attribute + event delegation; no string interpolation into handlers |
+| **GitHub 403/429** | Rate limit returns empty repos, storyteller hallucinates | Explicit check returns an error dict instead of an empty list |
+| **Event loop (routes)** | `run_single_agent_analysis` blocked the FastAPI event loop | Wrapped in `asyncio.to_thread` |
+| **CORS** | `allow_credentials=True` with `allow_origins=["*"]` — browsers reject this | `allow_credentials` set to `False` |
+
+---
+
 ## How the individual assessment works
 
 1. User completes the multi-step questionnaire in **onboarding.html** — Step 1 asks for name, role, and optionally GitHub username and LinkedIn PDF; location is auto-extracted from the uploaded PDF
