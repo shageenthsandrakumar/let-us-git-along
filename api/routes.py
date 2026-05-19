@@ -1,4 +1,5 @@
 import asyncio
+import os
 import logging
 from fastapi import APIRouter, HTTPException, UploadFile, File
 from pydantic import BaseModel
@@ -16,6 +17,58 @@ router = APIRouter()
 @router.get("/health")
 async def health_check():
     return {"status": "healthy", "service": "founderfit-api", "version": "0.1.0"}
+
+@router.get("/health/llm")
+async def health_check_llm():
+    """Diagnostic endpoint: verifies the LLM pipeline can reach OpenRouter and get a response."""
+    import traceback
+    from autogen import ConversableAgent, LLMConfig
+
+    api_key = os.environ.get("OPENROUTER_API_KEY", "")
+    if not api_key:
+        return {
+            "status": "error",
+            "problem": "OPENROUTER_API_KEY environment variable is not set",
+            "fix": "Add OPENROUTER_API_KEY to your Railway environment variables",
+            "api_key_present": False,
+        }
+
+    def _test_llm():
+        try:
+            llm_config = LLMConfig(
+                {
+                    "api_type": "openai",
+                    "model": "openai/gpt-4o",
+                    "api_key": api_key,
+                    "base_url": "https://openrouter.ai/api/v1",
+                },
+                timeout=30,
+            )
+            agent = ConversableAgent(
+                name="health_probe",
+                system_message="You are a health check. Reply with exactly: OK",
+                llm_config=llm_config,
+            )
+            response = agent.run(message="Reply with OK", max_turns=1, silent=True)
+            response.process()
+            if hasattr(response, "summary") and response.summary:
+                return {"status": "ok", "response": response.summary[:100]}
+            if hasattr(response, "messages") and response.messages:
+                content = ""
+                for m in response.messages:
+                    if isinstance(m, dict):
+                        content = m.get("content", "")
+                    else:
+                        content = getattr(m, "content", str(m))
+                return {"status": "ok", "response": content[:100]}
+            return {"status": "ok", "response": str(response)[:100]}
+        except Exception as e:
+            return {"status": "error", "error": str(e), "traceback": traceback.format_exc()}
+
+    result = await asyncio.to_thread(_test_llm)
+    result["api_key_present"] = True
+    result["api_key_length"] = len(api_key)
+    return result
 
 async def _safe_github_fetch(username: str | None) -> dict | None:
     """Fetch GitHub profile, returning None silently on any failure."""

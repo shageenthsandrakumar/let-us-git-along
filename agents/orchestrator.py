@@ -2,6 +2,7 @@ import os
 import re
 import json
 import logging
+import traceback
 from autogen import ConversableAgent, LLMConfig
 
 
@@ -48,6 +49,16 @@ from agents.communicator_agent import create_communicator_agent
 
 logger = logging.getLogger(__name__)
 
+# Warn loudly at import time if the API key is missing — surfaced in Railway logs
+_api_key = os.environ.get("OPENROUTER_API_KEY", "")
+if not _api_key:
+    logger.critical(
+        "OPENROUTER_API_KEY is not set. All LLM agent calls will fail with 401. "
+        "Set this environment variable in your Railway project settings."
+    )
+else:
+    logger.info("OPENROUTER_API_KEY is present (length=%d).", len(_api_key))
+
 def get_llm_config():
     # ag2 >=0.12.3: LLMConfig takes config dicts as positional *configs args.
     # The old LLMConfig(config_list=[...]) keyword form was removed in 0.12.
@@ -72,7 +83,10 @@ def _run_agent(agent, message):
             return response.messages[-1].get("content", "")
         return str(response)
     except Exception as e:
-        logger.error("Agent %s failed: %s", agent.name, e)
+        logger.error(
+            "Agent %s failed: %s\n%s",
+            agent.name, e, traceback.format_exc()
+        )
         return None
 
 def run_founder_analysis(founder_a_profile, founder_b_profile, github_data_a=None, github_data_b=None, resume_text_a=None, resume_text_b=None, resume_pdf_text_a=None, resume_pdf_text_b=None):
