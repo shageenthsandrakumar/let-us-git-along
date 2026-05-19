@@ -1,34 +1,34 @@
-from pydantic import BaseModel
-from typing import Any
+from pydantic import BaseModel, Field, field_validator
+from typing import Any, Literal
 
 class FounderProfile(BaseModel):
-    name: str
-    email: str | None = None
-    role: str | None = None
-    # Core 6 dimensions
-    decision_speed: str = "moderate"
-    risk_tolerance: str = "moderate"
-    communication_style: str = "balanced"
-    execution_style: str = "steady"
-    conflict_approach: str = "collaborative"
-    leadership_style: str | None = None
-    ambition_level: str = "high"
-    time_commitment: str = "full_time"
+    name: str = Field(..., min_length=1, max_length=200)
+    email: str | None = Field(default=None, max_length=254)
+    role: str | None = Field(default=None, max_length=100)
+    # Core 6 dimensions — validated against known values, default applied for unknowns
+    decision_speed: Literal["fast", "moderate", "deliberate"] = "moderate"
+    risk_tolerance: Literal["high", "medium", "moderate", "low"] = "moderate"
+    communication_style: Literal["async", "sync", "balanced"] = "balanced"
+    execution_style: Literal["sprint", "fast", "steady", "moderate", "deliberate", "flexible"] = "steady"
+    conflict_approach: Literal["collaborative", "direct", "compromising", "avoidant"] = "collaborative"
+    leadership_style: str | None = Field(default=None, max_length=100)
+    ambition_level: Literal["high", "medium", "low"] = "high"
+    time_commitment: Literal["full_time", "part_time", "transitioning", "sprint", "flexible"] = "full_time"
     # 4 new dimensions (PRD spec)
-    tooling_affinity: str = "pragmatic"        # heavy | pragmatic | minimal
-    domain_expertise: str = "generalist"       # generalist | specialist | collaborative
-    ownership_philosophy: str = "flexible"     # equal | merit | flexible
-    gtm_orientation: str = "product_led"       # product_led | sales_led | community_led
+    tooling_affinity: Literal["heavy", "pragmatic", "minimal"] = "pragmatic"
+    domain_expertise: Literal["generalist", "specialist", "collaborative"] = "generalist"
+    ownership_philosophy: Literal["equal", "merit", "flexible"] = "flexible"
+    gtm_orientation: Literal["product_led", "sales_led", "community_led"] = "product_led"
     # Optional enrichment
     domain_expertise_list: list[str] = []
     tool_preferences: list[str] = []
-    github_username: str | None = None
-    linkedin_url: str | None = None
-    resume_text: str | None = None
-    resume_pdf_text: str | None = None
+    github_username: str | None = Field(default=None, max_length=100)
+    linkedin_url: str | None = Field(default=None, max_length=500)
+    resume_text: str | None = Field(default=None, max_length=100_000)
+    resume_pdf_text: str | None = Field(default=None, max_length=100_000)
     # Network Proximity signals
-    location: str | None = None      # e.g. "New York, NY"
-    timezone: str | None = None      # e.g. "EST", "PST", "GMT"
+    location: str | None = Field(default=None, max_length=200)
+    timezone: str | None = Field(default=None, max_length=50)
 
 class CompatibilityRequest(BaseModel):
     founder_a: FounderProfile

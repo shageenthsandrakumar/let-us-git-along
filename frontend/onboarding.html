@@ -106,7 +106,7 @@
     <!-- STEP 1 -->
     <div class="step active" id="step1">
       <div class="step-header"><h2>Who are you?</h2><p>Basic info so we can identify your profile in the analysis.</p></div>
-      <div class="field"><label>Full Name *</label><input type="text" id="name" placeholder="e.g. Alex Johnson" /></div>
+      <div class="field"><label>Full Name *</label><input type="text" id="name" placeholder="e.g. Alex Johnson" oninput="document.getElementById('name-error').style.display='none'" /><span id="name-error" style="display:none;color:#f43f5e;font-size:.8rem;margin-top:.25rem;display:none">Please enter your name to continue.</span></div>
       <div class="field-row">
         <div class="field"><label>Email</label><input type="email" id="email" placeholder="you@example.com" /></div>
         <div class="field"><label>Your Role</label><input type="text" id="role" placeholder="e.g. CTO, CEO" /></div>
@@ -326,7 +326,12 @@
 
   const steps = ['Basic Info','Working Style','Execution'];
   function goToStep(n){
-    if(n===2&&!document.getElementById('name').value.trim()){alert('Please enter your name.');return;}
+    if(n===2&&!document.getElementById('name').value.trim()){
+      const err=document.getElementById('name-error');
+      if(err){err.style.display='block';}
+      document.getElementById('name').focus();
+      return;
+    }
     document.querySelectorAll('.step').forEach((s,i)=>s.classList.toggle('active',i===n-1));
     ['dot1','dot2','dot3'].forEach((id,i)=>{
       const d=document.getElementById(id);
