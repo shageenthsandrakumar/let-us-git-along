@@ -80,7 +80,12 @@ def _run_agent(agent, message):
         if hasattr(response, "summary") and response.summary:
             return response.summary
         if hasattr(response, "messages") and response.messages:
-            return response.messages[-1].get("content", "")
+            msgs = list(response.messages)
+            if msgs:
+                last = msgs[-1]
+                if isinstance(last, dict):
+                    return last.get("content", "")
+                return getattr(last, "content", str(last))
         return str(response)
     except Exception as e:
         logger.error(
