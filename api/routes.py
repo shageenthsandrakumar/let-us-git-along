@@ -24,12 +24,12 @@ async def health_check_llm():
     import traceback
     from autogen import ConversableAgent, LLMConfig
 
-    api_key = os.environ.get("OPENROUTER_API_KEY", "")
+    api_key = os.environ.get("GROQ_API_KEY", "")
     if not api_key:
         return {
             "status": "error",
-            "problem": "OPENROUTER_API_KEY environment variable is not set",
-            "fix": "Add OPENROUTER_API_KEY to your Railway environment variables",
+            "problem": "GROQ_API_KEY environment variable is not set",
+            "fix": "Add GROQ_API_KEY to your Railway environment variables",
             "api_key_present": False,
         }
 
@@ -38,9 +38,9 @@ async def health_check_llm():
             llm_config = LLMConfig(
                 {
                     "api_type": "openai",
-                    "model": "deepseek/deepseek-v4-flash:free",
+                    "model": "llama-3.3-70b-versatile",
                     "api_key": api_key,
-                    "base_url": "https://openrouter.ai/api/v1",
+                    "base_url": "https://api.groq.com/openai/v1",
                 },
                 timeout=30,
             )

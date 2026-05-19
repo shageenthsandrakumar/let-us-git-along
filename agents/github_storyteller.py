@@ -35,7 +35,7 @@ If the data is sparse or the account is new, say so honestly and note what littl
 
 def create_github_storyteller_agent(llm_config=None):
     if llm_config is None:
-        llm_config = LLMConfig({"api_type": "openai", "model": "deepseek/deepseek-v4-flash:free", "api_key": os.environ.get("OPENROUTER_API_KEY", ""), "base_url": "https://openrouter.ai/api/v1"}, timeout=60)
+        llm_config = LLMConfig({"api_type": "openai", "model": "llama-3.3-70b-versatile", "api_key": os.environ.get("GROQ_API_KEY", ""), "base_url": "https://api.groq.com/openai/v1"}, timeout=60)
     return ConversableAgent(
         name="github_storyteller",
         system_message=SYSTEM_PROMPT,

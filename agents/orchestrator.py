@@ -50,14 +50,14 @@ from agents.communicator_agent import create_communicator_agent
 logger = logging.getLogger(__name__)
 
 # Warn loudly at import time if the API key is missing â€” surfaced in Railway logs
-_api_key = os.environ.get("OPENROUTER_API_KEY", "")
+_api_key = os.environ.get("GROQ_API_KEY", "")
 if not _api_key:
     logger.critical(
-        "OPENROUTER_API_KEY is not set. All LLM agent calls will fail with 401. "
+        "GROQ_API_KEY is not set. All LLM agent calls will fail with 401. "
         "Set this environment variable in your Railway project settings."
     )
 else:
-    logger.info("OPENROUTER_API_KEY is present (length=%d).", len(_api_key))
+    logger.info("GROQ_API_KEY is present (length=%d).", len(_api_key))
 
 def get_llm_config():
     # ag2 >=0.12.3: LLMConfig takes config dicts as positional *configs args.
@@ -65,9 +65,9 @@ def get_llm_config():
     return LLMConfig(
         {
             "api_type": "openai",
-            "model": "deepseek/deepseek-v4-flash:free",
-            "api_key": os.environ.get("OPENROUTER_API_KEY", ""),
-            "base_url": "https://openrouter.ai/api/v1",
+            "model": "llama-3.3-70b-versatile",
+            "api_key": os.environ.get("GROQ_API_KEY", ""),
+            "base_url": "https://api.groq.com/openai/v1",
         },
         timeout=60,
     )
