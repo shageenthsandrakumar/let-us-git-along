@@ -19,7 +19,7 @@ Respond with structured JSON:
 
 def create_matchmaker_agent(llm_config=None):
     if llm_config is None:
-        llm_config = LLMConfig({"api_type": "openai", "model": "google/gemini-2.0-flash-exp:free", "api_key": os.environ.get("OPENROUTER_API_KEY", ""), "base_url": "https://openrouter.ai/api/v1"}, timeout=60)
+        llm_config = LLMConfig({"api_type": "openai", "model": "deepseek/deepseek-v4-flash:free", "api_key": os.environ.get("OPENROUTER_API_KEY", ""), "base_url": "https://openrouter.ai/api/v1"}, timeout=60)
     return ConversableAgent(
         name="matchmaker_agent",
         system_message=SYSTEM_PROMPT,

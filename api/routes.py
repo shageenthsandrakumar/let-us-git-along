@@ -38,7 +38,7 @@ async def health_check_llm():
             llm_config = LLMConfig(
                 {
                     "api_type": "openai",
-                    "model": "google/gemini-2.0-flash-exp:free",
+                    "model": "deepseek/deepseek-v4-flash:free",
                     "api_key": api_key,
                     "base_url": "https://openrouter.ai/api/v1",
                 },
