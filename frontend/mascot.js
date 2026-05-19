@@ -37,12 +37,12 @@
   const DEFAULT_HINTS = {
     '/': [
       "Hi! I'm Fitz. I help you stress-test your co-founder relationship before it matters.",
-      "FounderFit scores 10 dimensions of compatibility — from execution style to GTM orientation.",
+      "FounderFit scores 11 dimensions of compatibility — from execution style to network proximity.",
       "65% of startups fail because of co-founder conflict. Start here.",
     ],
     '/index.html': [
       "Hi! I'm Fitz. I help you stress-test your co-founder relationship before it matters.",
-      "FounderFit scores 10 dimensions of compatibility — from execution style to GTM orientation.",
+      "FounderFit scores 11 dimensions of compatibility — from execution style to network proximity.",
       "65% of startups fail because of co-founder conflict. Start here.",
     ],
     '/onboarding.html': [
@@ -56,14 +56,14 @@
       "Your profile powers the AI compatibility engine. Make it real.",
     ],
     '/dashboard.html': [
-      "Enter both founder profiles and I'll run a full multi-agent analysis.",
-      "The AI scores 10 dimensions and predicts friction points before they happen.",
-      "Results include GTM archetype, strengths, and preventive agreements.",
+      "Enter both founder profiles and I'll run a full 8-agent analysis.",
+      "The AI scores 11 dimensions and predicts friction points before they happen.",
+      "Results include your weekly operating rhythm, GTM archetype, strengths, and more.",
     ],
     '/portfolio.html': [
-      "Five AI agents work behind the scenes on every analysis.",
-      "Each agent has a specialised role — from compatibility scoring to GTM strategy.",
-      "They coordinate to give you a complete founder intelligence report.",
+      "Eight AI agents work behind the scenes on every analysis.",
+      "Three layers: enrichment, compatibility scoring, then a final narrative voice.",
+      "Every agent builds on the one before it — raw data becomes a founder verdict.",
     ],
   };
 
@@ -83,7 +83,7 @@
         return [
           `Last analysis: ${lastResult.nameA} x ${lastResult.nameB} scored ${lastResult.score}/100.`,
           `Their archetype: ${lastResult.archetype}. Run a new pair to compare.`,
-          "The AI scores 10 dimensions and predicts friction points before they happen.",
+          "The AI scores 11 dimensions and predicts friction points before they happen.",
         ];
       }
 
@@ -93,7 +93,7 @@
         return [
           `Welcome back! You're a ${arch}.`,
           "Head to the dashboard to run a compatibility analysis with your co-founder.",
-          "FounderFit scores 10 dimensions — from execution style to GTM orientation.",
+          "FounderFit scores 11 dimensions — from execution style to network proximity.",
         ];
       }
     } catch(e) {}
