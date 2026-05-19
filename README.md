@@ -157,6 +157,16 @@ Proximity signals are used to score **Network Proximity** in both the compatibil
 | **Compatibility Dashboard** | `/dashboard.html` | Two-founder input form, animated 8-agent pipeline, radar chart (dynamic, all 11 dimensions), full compatibility report, Pre-Commitment Playbook |
 | **Agent Portfolio** | `/portfolio.html` | Explains all 8 agents, the 3-layer pipeline architecture, the 4 GTM archetypes, and how the system is built |
 
+### Fitz — the mascot
+
+Fitz is a small animated purple bot that lives in the bottom-right corner of every page. He shows contextual hints based on which page you're on and what's stored in localStorage:
+
+- **Landing page** — general intro, 11-dimension teaser, co-founder failure stat
+- **Onboarding** — encourages honest answers
+- **Assessment** — archetype-specific tips once your archetype is known
+- **Dashboard** — references your last analysis result (names, score, archetype) if one exists; otherwise gives general pipeline hints
+- **Portfolio** — explains the 8-agent, 3-layer pipeline structure
+
 ### LinkedIn PDF upload
 
 LinkedIn exports your profile as a PDF from **Me → Settings & Privacy → Data privacy → Get a copy of your data → select "Profile" → Request archive**. A helper video link is shown inline on the onboarding, assessment, and dashboard pages. The PDF is sent to `/api/upload/resume`, parsed server-side with `pypdf`, and the extracted text (including any detected location) is stored in localStorage alongside the rest of the profile.
@@ -276,7 +286,7 @@ let-us-git-along/
 │   ├── onboarding.html          # Multi-step founder questionnaire (location auto-extracted from PDF)
 │   ├── assessment.html          # Individual assessment results (eleven dimensions, archetype, narrative)
 │   ├── dashboard.html           # Two-founder compatibility dashboard with dynamic radar chart and Pre-Commitment Playbook
-│   ├── mascot.js                # Animated mascot SVG (used on loading screens)
+│   ├── mascot.js                # Fitz the mascot — animated SVG + page-aware contextual hints (11 dimensions, 8 agents)
 │   └── portfolio.html           # Agent portfolio and architecture explainer
 │
 ├── main.py                      # FastAPI app entry point
