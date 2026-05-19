@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -42,8 +42,8 @@
   .layer-title{font-size:1.2rem;font-weight:800}
   .layer-sub{color:var(--muted);font-size:.875rem;line-height:1.6}
   /* AGENT CARDS */
-  .agents-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:1.5rem}
-  .agent-card{background:var(--card);border:1px solid var(--border);border-radius:1.25rem;padding:2rem;transition:all .3s;position:relative;overflow:hidden}
+  .agents-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(360px,440px));gap:1.75rem;justify-content:center}
+  .agent-card{background:var(--card);border:1px solid var(--border);border-radius:1.25rem;padding:2.25rem;transition:all .3s;position:relative;overflow:hidden}
   .agent-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;opacity:0;transition:opacity .3s}
   .layer-1 .agent-card::before{background:linear-gradient(90deg,var(--primary),var(--purple))}
   .layer-2 .agent-card::before{background:linear-gradient(90deg,var(--purple),#ec4899)}
@@ -51,7 +51,7 @@
   .agent-card:hover{border-color:rgba(99,102,241,.4);transform:translateY(-3px);box-shadow:0 16px 40px rgba(0,0,0,.4)}
   .agent-card:hover::before{opacity:1}
   .agent-header{display:flex;align-items:flex-start;gap:1rem;margin-bottom:1.25rem}
-  .agent-icon{width:52px;height:52px;border-radius:.875rem;display:flex;align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0}
+  .agent-icon{width:58px;height:58px;border-radius:.875rem;display:flex;align-items:center;justify-content:center;font-size:1.65rem;flex-shrink:0}
   .icon-resume{background:rgba(14,165,233,.12);border:1px solid rgba(14,165,233,.2)}
   .icon-storyteller{background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.2)}
   .icon-synthesis{background:rgba(99,102,241,.15);border:1px solid rgba(99,102,241,.25)}
@@ -60,9 +60,9 @@
   .icon-repotale{background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.2)}
   .icon-matchmaker{background:rgba(236,72,153,.12);border:1px solid rgba(236,72,153,.2)}
   .icon-communicator{background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.2)}
-  .agent-meta h2{font-size:1.05rem;font-weight:800;margin-bottom:.25rem}
-  .agent-meta .agent-role{font-size:.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;font-weight:600}
-  .agent-desc{color:var(--muted);font-size:.875rem;line-height:1.7;margin-bottom:1.25rem}
+  .agent-meta h2{font-size:1.15rem;font-weight:800;margin-bottom:.25rem}
+  .agent-meta .agent-role{font-size:.76rem;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;font-weight:600}
+  .agent-desc{color:var(--muted);font-size:.9rem;line-height:1.75;margin-bottom:1.375rem}
   .capabilities{margin-bottom:1.25rem}
   .capabilities h4{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:.625rem}
   .cap-list{display:flex;flex-wrap:wrap;gap:.375rem}
@@ -241,9 +241,9 @@
         <div class="layer-sub">One agent reads everything every other agent produced and speaks directly to the founders as human beings.</div>
       </div>
     </div>
-    <div class="agents-grid" style="grid-template-columns:1fr">
+    <div class="agents-grid" style="grid-template-columns:minmax(360px,680px);justify-content:center">
 
-      <div class="agent-card" style="max-width:680px">
+      <div class="agent-card">
         <div class="agent-header">
           <div class="agent-icon icon-communicator">&#128172;</div>
           <div class="agent-meta"><h2>Communicator Agent</h2><div class="agent-role">Narrative Voice</div></div>
