@@ -18,7 +18,7 @@ Respond with structured JSON:
 
 def create_executor_agent(llm_config=None):
     if llm_config is None:
-        llm_config = LLMConfig({"api_type": "openai", "model": "llama-3.3-70b-versatile", "api_key": os.environ.get("GROQ_API_KEY", ""), "base_url": "https://api.groq.com/openai/v1"}, timeout=60)
+        llm_config = LLMConfig(*([{"api_type":"openai","model":"deepseek/deepseek-v4-flash:free","api_key":os.environ.get("OPENROUTER_API_KEY",""),"base_url":"https://openrouter.ai/api/v1"}] if os.environ.get("OPENROUTER_API_KEY") else []) + ([{"api_type":"openai","model":"llama-3.3-70b-versatile","api_key":os.environ.get("GROQ_API_KEY",""),"base_url":"https://api.groq.com/openai/v1"}] if os.environ.get("GROQ_API_KEY") else []) or [{"api_type":"openai","model":"llama-3.3-70b-versatile","api_key":"","base_url":"https://api.groq.com/openai/v1"}], timeout=60)
     return ConversableAgent(
         name="executor_agent",
         system_message=SYSTEM_PROMPT,

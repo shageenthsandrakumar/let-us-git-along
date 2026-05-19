@@ -60,17 +60,28 @@ else:
     logger.info("GROQ_API_KEY is present (length=%d).", len(_api_key))
 
 def get_llm_config():
-    # ag2 >=0.12.3: LLMConfig takes config dicts as positional *configs args.
-    # The old LLMConfig(config_list=[...]) keyword form was removed in 0.12.
-    return LLMConfig(
-        {
+    # ag2 tries each config in order — falls back to the next if one hits a
+    # rate limit or returns an error. DeepSeek free is primary (fast, capable);
+    # Groq llama-3.3-70b is the fallback (14,400 req/day, truly free).
+    configs = []
+    if os.environ.get("OPENROUTER_API_KEY"):
+        configs.append({
+            "api_type": "openai",
+            "model": "deepseek/deepseek-v4-flash:free",
+            "api_key": os.environ.get("OPENROUTER_API_KEY", ""),
+            "base_url": "https://openrouter.ai/api/v1",
+        })
+    if os.environ.get("GROQ_API_KEY"):
+        configs.append({
             "api_type": "openai",
             "model": "llama-3.3-70b-versatile",
             "api_key": os.environ.get("GROQ_API_KEY", ""),
             "base_url": "https://api.groq.com/openai/v1",
-        },
-        timeout=60,
-    )
+        })
+    if not configs:
+        logger.critical("Neither OPENROUTER_API_KEY nor GROQ_API_KEY is set.")
+        configs.append({"api_type": "openai", "model": "llama-3.3-70b-versatile", "api_key": "", "base_url": "https://api.groq.com/openai/v1"})
+    return LLMConfig(*configs, timeout=60)
 
 def _run_agent(agent, message):
     """Run a single agent and return its text response."""
