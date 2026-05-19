@@ -161,7 +161,8 @@ async def submit_assessment(profile: FounderProfile):
     archetype = _classify_archetype(profile)
     dimensions = _score_dimensions(profile)
 
-    # Run synthesis if any enrichment data is available
+    # Always run synthesis — the agent handles questionnaire-only gracefully,
+    # and produces richer output when GitHub / resume data is also available.
     synthesis = None
     github_data = None
     resume_text = getattr(profile, "resume_text", None)
@@ -169,19 +170,23 @@ async def submit_assessment(profile: FounderProfile):
 
     if profile.github_username:
         github_data = await _safe_github_fetch(profile.github_username)
-
-    if github_data or resume_text or resume_pdf_text:
-        try:
-            synthesis = await asyncio.to_thread(
-                run_assessment_synthesis,
-                profile=profile.model_dump(),
-                self_report_archetype=archetype,
-                github_data=github_data,
-                resume_text=resume_text,
-                resume_pdf_text=resume_pdf_text,
+        if not github_data:
+            logger.warning(
+                "GitHub fetch failed for %s — running synthesis on questionnaire only.",
+                profile.github_username,
             )
-        except Exception as e:
-            logger.warning("Assessment synthesis failed: %s", e)
+
+    try:
+        synthesis = await asyncio.to_thread(
+            run_assessment_synthesis,
+            profile=profile.model_dump(),
+            self_report_archetype=archetype,
+            github_data=github_data,
+            resume_text=resume_text,
+            resume_pdf_text=resume_pdf_text,
+        )
+    except Exception as e:
+        logger.warning("Assessment synthesis failed: %s", e)
 
     return AssessmentResponse(
         founder_name=profile.name,
