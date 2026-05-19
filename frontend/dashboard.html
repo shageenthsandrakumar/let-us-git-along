@@ -57,6 +57,11 @@
   @keyframes spin{to{transform:rotate(360deg)}}
   .loading-section h3{font-size:1.1rem;font-weight:700;margin-bottom:.5rem}
   .loading-section p{color:var(--muted);font-size:.875rem}
+  .loading-meta{display:flex;justify-content:center;align-items:center;gap:1.5rem;margin-top:.75rem;font-size:.8rem;color:var(--muted)}
+  .loading-timer{font-variant-numeric:tabular-nums;font-weight:600;color:var(--text)}
+  .progress-track{width:100%;max-width:360px;height:4px;background:var(--border);border-radius:2px;margin:1.25rem auto 0;overflow:hidden}
+  .progress-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--primary),var(--purple));border-radius:2px;transition:width .4s ease;animation:progress-pulse 2s ease-in-out infinite}
+  @keyframes progress-pulse{0%,100%{opacity:1}50%{opacity:.6}}
   /* NARRATIVE */
   .narrative-card{background:var(--card);border:1px solid var(--border);border-radius:1.25rem;padding:2rem;margin-bottom:1.25rem;position:relative;overflow:hidden}
   .narrative-card::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(99,102,241,.05),transparent);pointer-events:none}
@@ -352,6 +357,12 @@
     <div class="spinner"></div>
     <h3>Running multi-agent analysis…</h3>
     <p id="loading-status">Initializing agent pipeline</p>
+    <div class="loading-meta">
+      <span>⏱ <span id="loading-timer">0:00</span></span>
+      <span>·</span>
+      <span>Usually takes 3–5 minutes</span>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
   </div>
 
   <div id="results-section">
@@ -636,11 +647,24 @@ async function runAnalysis(){
       statusEl.textContent=loadingMessages[loadingMessages.length-1];
     }
   },900);
+  // Elapsed timer + animated progress bar
+  const timerEl=document.getElementById('loading-timer');
+  const progressEl=document.getElementById('progress-fill');
+  const startTime=Date.now();
+  const EXPECTED_MS=300000; // 5 min expected
+  const clockInterval=setInterval(()=>{
+    const elapsed=Date.now()-startTime;
+    const s=Math.floor(elapsed/1000);
+    timerEl.textContent=`${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`;
+    // Progress bar fills to 95% over expected duration, never hits 100% until done
+    const pct=Math.min(95,Math.round((elapsed/EXPECTED_MS)*95));
+    progressEl.style.width=pct+'%';
+  },1000);
   const a=buildProfile('a'),b=buildProfile('b');
   let result;
   try{
     const controller=new AbortController();
-    const timer=setTimeout(()=>controller.abort(),180000); // 3-minute hard timeout
+    const timer=setTimeout(()=>controller.abort(),360000); // 6-minute hard timeout
     const res=await fetch('/api/analyze/compatibility',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({founder_a:a,founder_b:b,resume_text_a:resumeTexts.a||null,resume_text_b:resumeTexts.b||null,resume_pdf_text_a:cvTexts.a||null,resume_pdf_text_b:cvTexts.b||null}),signal:controller.signal});
     clearTimeout(timer);
     if(!res.ok)throw new Error(`API error ${res.status}`);
@@ -664,6 +688,8 @@ async function runAnalysis(){
     result=localAnalysis(a,b);
   }
   clearInterval(interval);
+  clearInterval(clockInterval);
+  if(progressEl){progressEl.style.width='100%';progressEl.style.animation='none';}
   document.getElementById('btn-run').disabled=false;
   setTimeout(()=>{
     document.getElementById('loading-section').style.display='none';

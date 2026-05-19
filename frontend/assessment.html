@@ -52,6 +52,11 @@
   @keyframes spin{to{transform:rotate(360deg)}}
   .loading h3{font-size:1.1rem;font-weight:600;margin-bottom:.5rem}
   .loading p{color:var(--muted);font-size:.875rem}
+  .loading-meta{display:flex;justify-content:center;align-items:center;gap:1.5rem;margin-top:.75rem;font-size:.8rem;color:var(--muted)}
+  .loading-timer{font-variant-numeric:tabular-nums;font-weight:600;color:var(--text)}
+  .progress-track{width:100%;max-width:320px;height:4px;background:var(--border);border-radius:2px;margin:1.25rem auto 0;overflow:hidden}
+  .progress-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--blue),#818cf8);border-radius:2px;transition:width .4s ease;animation:progress-pulse 2s ease-in-out infinite}
+  @keyframes progress-pulse{0%,100%{opacity:1}50%{opacity:.6}}
   /* RESULTS */
   #results{display:none}
   .results-hero{text-align:center;padding:2rem 0 2.5rem}
@@ -135,7 +140,13 @@
   <div class="loading" id="loading">
     <div class="spinner"></div>
     <h3>Analyzing your profile…</h3>
-    <p>Classifying your founder archetype across 11 dimensions</p>
+    <p id="loading-status">Classifying your founder archetype across 11 dimensions</p>
+    <div class="loading-meta">
+      <span>⏱ <span id="loading-timer">0:00</span></span>
+      <span>·</span>
+      <span>Usually takes 1–3 minutes</span>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
   </div>
 
   <div id="results"></div>
@@ -296,10 +307,21 @@ function showResults(){
   document.getElementById('loading').style.display='block';
   let profile={};try{profile=JSON.parse(localStorage.getItem('founderProfile')||'{}');}catch(_){}
   const merged={...profile,...answers};
-  const loadingP = document.querySelector('.loading p');
-  if(loadingP && (merged.github_username || merged.resume_text || merged.resume_pdf_text)){
-    loadingP.textContent='Running GitHub and LinkedIn analysis...';
+  const loadingStatusEl=document.getElementById('loading-status');
+  if(loadingStatusEl && (merged.github_username || merged.resume_text || merged.resume_pdf_text)){
+    loadingStatusEl.textContent='Running GitHub and LinkedIn analysis…';
   }
+  // Start elapsed timer + progress bar
+  const timerEl=document.getElementById('loading-timer');
+  const progressEl=document.getElementById('progress-fill');
+  const startTime=Date.now();
+  const EXPECTED_MS=180000; // 3 min expected for assessment
+  const clockInterval=setInterval(()=>{
+    const elapsed=Date.now()-startTime;
+    const s=Math.floor(elapsed/1000);
+    if(timerEl) timerEl.textContent=`${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`;
+    if(progressEl) progressEl.style.width=Math.min(95,Math.round((elapsed/EXPECTED_MS)*95))+'%';
+  },1000);
   localStorage.setItem('founderProfile',JSON.stringify(merged));
   const github_username = merged.github_username || null;
   const payload = {name:merged.name||'Founder',...merged};
@@ -310,7 +332,7 @@ function showResults(){
     let archetype,dims,synthesis=null;
     try{
       const controller=new AbortController();
-      const timer=setTimeout(()=>controller.abort(),180000); // 3-minute hard timeout
+      const timer=setTimeout(()=>controller.abort(),360000); // 6-minute hard timeout
       const res=await fetch('/api/assessment/submit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload),signal:controller.signal});
       clearTimeout(timer);
       if(!res.ok)throw new Error(`API error ${res.status}`);
@@ -323,6 +345,8 @@ function showResults(){
       archetype=classify(answers);
       dims=scoreDims(answers);
     }
+    clearInterval(clockInterval);
+    if(progressEl){progressEl.style.width='100%';progressEl.style.animation='none';}
     document.getElementById('loading').style.display='none';
     let saved2={};try{saved2=JSON.parse(localStorage.getItem('founderProfile')||'{}');}catch(_){}
     saved2.archetype=archetype;
