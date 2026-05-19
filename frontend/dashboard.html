@@ -373,7 +373,7 @@
 
     <div class="results-grid">
       <div class="r-card">
-        <div class="r-card-title">Ten-Dimension Breakdown</div>
+        <div class="r-card-title">Eleven-Dimension Breakdown</div>
         <div id="dim-breakdown"></div>
       </div>
       <div class="r-card">
@@ -548,7 +548,7 @@ async function handleCvUpload(prefix, input){
     cvTexts[prefix]=null;
   }
 }
-const loadingMessages=['Resume Analyst reading LinkedIn PDF…','GitHub Storyteller building narrative…','Synthesis Agent reasoning across all signals…','Compatibility Agent scoring ten dimensions…','GTM Strategist mapping archetype…','Matchmaker evaluating the pairing…','RepoTale analyzing GitHub compatibility…','Communicator writing your narrative…','Assembling final report…'];
+const loadingMessages=['Resume Analyst reading LinkedIn PDF…','GitHub Storyteller building narrative…','Synthesis Agent reasoning across all signals…','Compatibility Agent scoring eleven dimensions…','GTM Strategist mapping archetype…','Matchmaker evaluating the pairing…','RepoTale analyzing GitHub compatibility…','Communicator writing your narrative…','Assembling final report…'];
 
 function buildProfile(prefix){
   // For Founder A, merge extra dimensions from their stored assessment profile
@@ -637,10 +637,25 @@ async function runAnalysis(){
   const a=buildProfile('a'),b=buildProfile('b');
   let result;
   try{
-    const res=await fetch('/api/analyze/compatibility',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({founder_a:a,founder_b:b,resume_text_a:resumeTexts.a||null,resume_text_b:resumeTexts.b||null,resume_pdf_text_a:cvTexts.a||null,resume_pdf_text_b:cvTexts.b||null})});
-    if(!res.ok)throw new Error();
+    const controller=new AbortController();
+    const timer=setTimeout(()=>controller.abort(),180000); // 3-minute hard timeout
+    const res=await fetch('/api/analyze/compatibility',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({founder_a:a,founder_b:b,resume_text_a:resumeTexts.a||null,resume_text_b:resumeTexts.b||null,resume_pdf_text_a:cvTexts.a||null,resume_pdf_text_b:cvTexts.b||null}),signal:controller.signal});
+    clearTimeout(timer);
+    if(!res.ok)throw new Error(`API error ${res.status}`);
     const data=await res.json();
-    result=data; result.narrative=data.narrative||null;
+    // If the API returned but structured fields are missing (agent JSON unparseable),
+    // merge with local fallback so the UI always has something to render
+    const local=localAnalysis(a,b);
+    result={
+      ...data,
+      overall_score:data.overall_score??local.overall_score,
+      dimensions:data.dimensions??local.dimensions,
+      archetype:data.archetype??local.archetype,
+      friction_predictions:data.friction_predictions??local.friction_predictions,
+      strengths:data.strengths??local.strengths,
+      recommendations:data.recommendations??local.recommendations,
+      narrative:data.narrative||null,
+    };
   }catch(e){
     console.error('Compatibility API failed, using local fallback:', e);
     await new Promise(r=>setTimeout(r,agentOrder.length*900+500));
