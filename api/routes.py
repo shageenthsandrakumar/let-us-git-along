@@ -68,6 +68,9 @@ async def health_check_llm():
     result = await asyncio.to_thread(_test_llm)
     result["api_key_present"] = True
     result["api_key_length"] = len(api_key)
+    # Show first 15 chars so we can confirm which key Railway is running with
+    # (safe to expose — the secret is in the remaining 58 chars)
+    result["api_key_prefix"] = api_key[:15]
     return result
 
 async def _safe_github_fetch(username: str | None) -> dict | None:
