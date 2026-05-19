@@ -397,7 +397,7 @@
       <div class="stack-header">
         <h3>Recommended Stack</h3>
         <div class="stack-filters" id="stack-filters">
-          <button class="stack-filter active" onclick="filterStack('All')">All</button>
+          <button class="stack-filter active" data-cat="All" onclick="filterStack('All')">All</button>
         </div>
       </div>
       <div class="stack-grid" id="stack-grid"></div>
@@ -503,8 +503,9 @@ async function handleResumeUpload(prefix, input){
     form.append('file',file);
     const res=await fetch('/api/upload/resume',{method:'POST',body:form});
     if(!res.ok){
-      const err=await res.json();
-      throw new Error(err.detail||'Upload failed');
+      let msg='Upload failed';
+      try{const err=await res.json();msg=err.detail||msg;}catch(_){}
+      throw new Error(msg);
     }
     const data=await res.json();
     resumeTexts[prefix]=data.text;
@@ -531,8 +532,9 @@ async function handleCvUpload(prefix, input){
     form.append('file',file);
     const res=await fetch('/api/upload/resume',{method:'POST',body:form});
     if(!res.ok){
-      const err=await res.json();
-      throw new Error(err.detail||'Upload failed');
+      let msg='Upload failed';
+      try{const err=await res.json();msg=err.detail||msg;}catch(_){}
+      throw new Error(msg);
     }
     const data=await res.json();
     cvTexts[prefix]=data.text;
@@ -552,7 +554,7 @@ const loadingMessages=['Resume Analyst reading LinkedIn PDF…','GitHub Storytel
 
 function buildProfile(prefix){
   // For Founder A, merge extra dimensions from their stored assessment profile
-  const stored=prefix==='a'?JSON.parse(localStorage.getItem('founderProfile')||'{}'):{};
+  let stored={};if(prefix==='a'){try{stored=JSON.parse(localStorage.getItem('founderProfile')||'{}');}catch(_){}}
   return{
     name:document.getElementById(prefix+'_name').value.trim()||`Founder ${prefix.toUpperCase()}`,
     role:document.getElementById(prefix+'_role').value,
@@ -625,9 +627,9 @@ async function runAnalysis(){
   const statusEl=document.getElementById('loading-status');
   const interval=setInterval(()=>{
     if(msgIdx<agentOrder.length){
-      if(msgIdx>0)document.getElementById('chip-'+agentOrder[msgIdx-1]).className='agent-chip done';
-      document.getElementById('chip-'+agentOrder[msgIdx]).className='agent-chip running';
-      statusEl.textContent=loadingMessages[msgIdx];
+      if(msgIdx>0){const prevChip=document.getElementById('chip-'+agentOrder[msgIdx-1]);if(prevChip)prevChip.className='agent-chip done';}
+      const curChip=document.getElementById('chip-'+agentOrder[msgIdx]);if(curChip)curChip.className='agent-chip running';
+      statusEl.textContent=loadingMessages[msgIdx]||loadingMessages[loadingMessages.length-1];
       msgIdx++;
     }else{
       chips.forEach(c=>c.className='agent-chip done');
@@ -662,6 +664,7 @@ async function runAnalysis(){
     result=localAnalysis(a,b);
   }
   clearInterval(interval);
+  document.getElementById('btn-run').disabled=false;
   setTimeout(()=>{
     document.getElementById('loading-section').style.display='none';
     renderResults(result,a,b);
@@ -674,7 +677,13 @@ function renderResults(r,a,b){
   if(r.narrative){
     const nc=document.createElement('div');
     nc.className='narrative-card';
-    nc.innerHTML='<div class="narrative-label">FounderFit Analysis</div><div class="narrative-text">'+(r.narrative.split('\n\n').map(p=>p.trim()).filter(Boolean).map(p=>'<p>'+p+'</p>').join(''))+'</div>';
+    // Sanitize: use textContent to escape, then build paragraphs safely
+    const safeParas=r.narrative.split('\n\n').map(p=>p.trim()).filter(Boolean).map(p=>{
+      const el=document.createElement('p');
+      el.textContent=p;
+      return el.outerHTML;
+    }).join('');
+    nc.innerHTML='<div class="narrative-label">FounderFit Analysis</div><div class="narrative-text">'+safeParas+'</div>';
     document.getElementById('results-section').insertBefore(nc,document.getElementById('results-section').querySelector('.results-header').nextSibling);
   }
   try{localStorage.setItem('fitzLastResult',JSON.stringify({score:r.overall_score,archetype:r.archetype,nameA:a.name,nameB:b.name}));}catch(e){}
@@ -697,7 +706,8 @@ function renderResults(r,a,b){
     // Local fallback key
     network_proximity:'Network Proximity',
   };
-  const dims=r.dimensions||{};
+  // Guard: dimensions must be a plain object (not array, not null)
+  const dims=(r.dimensions&&typeof r.dimensions==='object'&&!Array.isArray(r.dimensions))?r.dimensions:{};
   document.getElementById('dim-breakdown').innerHTML=Object.entries(dims).map(([k,v])=>{
     const score=typeof v==='object'?v.score:v;
     const cls=score>=75?'high':score>=55?'mid':'low';
@@ -708,9 +718,13 @@ function renderResults(r,a,b){
   document.getElementById('strengths-list').innerHTML=strengths.map(s=>`<div class="strength-item">${s}</div>`).join('')||'<p style="color:var(--muted);font-size:.85rem">No strengths data returned.</p>';
   const frictions=r.friction_predictions||[];
   document.getElementById('friction-list').innerHTML=frictions.map(f=>{
-    const risk=f.risk_level?.toLowerCase();
+    const issue=f.issue||f.title||'Potential friction point';
+    const mitigation=f.mitigation||f.description||f.recommendation||'';
+    const timeline=f.timeline||'';
+    const riskRaw=(f.risk_level||f.risk||'low');
+    const risk=riskRaw.toLowerCase();
     const badgeCls=risk==='high'?'badge-high':risk==='medium'||risk==='med'?'badge-med':'badge-low';
-    return`<div class="friction-item"><h4>${f.issue}</h4><p>${f.mitigation}</p><div class="friction-meta"><span class="badge-sm ${badgeCls}">${f.risk_level}</span><span class="badge-sm" style="background:rgba(99,102,241,.1);color:#a5b4fc;border:1px solid rgba(99,102,241,.2)">${f.timeline}</span></div></div>`;
+    return`<div class="friction-item"><h4>${issue}</h4>${mitigation?`<p>${mitigation}</p>`:''}<div class="friction-meta"><span class="badge-sm ${badgeCls}">${riskRaw}</span>${timeline?`<span class="badge-sm" style="background:rgba(99,102,241,.1);color:#a5b4fc;border:1px solid rgba(99,102,241,.2)">${timeline}</span>`:''}</div></div>`;
   }).join('')||'<p style="color:var(--muted);font-size:.85rem">No friction data returned.</p>';
   const recs=r.recommendations||[];
   document.getElementById('recs-list').innerHTML=recs.map(rec=>`<div class="rec-item">${rec}</div>`).join('')||'<p style="color:var(--muted);font-size:.85rem">No recommendations returned.</p>';
@@ -789,7 +803,11 @@ function renderStack(stack, archetype){
   section.style.display='block';
   // Build category set
   const cats=['All',...new Set(tools.map(t=>t.category).filter(Boolean))];
-  filtersEl.innerHTML=cats.map(c=>`<button class="stack-filter${c==='All'?' active':''}" onclick="filterStack('${c}')">${c}</button>`).join('');
+  filtersEl.innerHTML=cats.map(c=>{
+    const safe=c.replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
+    return`<button class="stack-filter${c==='All'?' active':''}" data-cat="${safe}">${safe}</button>`;
+  }).join('');
+  filtersEl.onclick=e=>{const btn=e.target.closest('.stack-filter');if(btn)filterStack(btn.dataset.cat);};
   // Render cards
   grid.innerHTML=tools.map(t=>{
     const cat=t.category||'Development';
@@ -810,7 +828,7 @@ function renderStack(stack, archetype){
 
 function filterStack(cat){
   document.querySelectorAll('.stack-filter').forEach(btn=>{
-    btn.classList.toggle('active',btn.textContent===cat);
+    btn.classList.toggle('active',btn.dataset.cat===cat);
   });
   document.querySelectorAll('.stack-card').forEach(card=>{
     if(cat==='All'){
@@ -824,9 +842,11 @@ function filterStack(cat){
   });
 }
 
+let _radarRaf=null;
 function drawRadar(dims){
   const canvas=document.getElementById('radar-canvas');
   if(!canvas)return;
+  if(_radarRaf){cancelAnimationFrame(_radarRaf);_radarRaf=null;}
   const ctx=canvas.getContext('2d');
   const W=canvas.width,H=canvas.height;
   const cx=W/2,cy=H/2,R=88;
@@ -893,9 +913,9 @@ function drawRadar(dims){
       const lineH=13;
       lines.forEach((ln,li)=>ctx.fillText(ln,lx,ly+(li-(lines.length-1)/2)*lineH));
     });
-    if(progress<1)requestAnimationFrame(frame);
+    if(progress<1)_radarRaf=requestAnimationFrame(frame);else _radarRaf=null;
   }
-  requestAnimationFrame(frame);
+  _radarRaf=requestAnimationFrame(frame);
 }
 
 /* ── PRE-COMMITMENT PLAYBOOK ─────────────────────────────────────── */
@@ -1040,7 +1060,7 @@ function togglePlaybook(id){
 }
 
 // Pre-fill from localStorage if available
-const saved=JSON.parse(localStorage.getItem('founderProfile')||'{}');
+let saved={};try{saved=JSON.parse(localStorage.getItem('founderProfile')||'{}');}catch(_){}
 if(saved.name)document.getElementById('a_name').value=saved.name;
 if(saved.role)document.getElementById('a_role').value=saved.role;
 if(saved.decision_speed)document.getElementById('a_decision').value=saved.decision_speed;

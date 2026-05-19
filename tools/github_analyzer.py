@@ -22,6 +22,9 @@ async def fetch_github_profile(username: str) -> dict:
             headers=headers,
             params={"sort": "updated", "per_page": 10, "type": "owner"},
         )
+        if repos_resp.status_code in (403, 429):
+            # Rate-limited — surface this clearly so it isn't mistaken for "no repos"
+            return {"error": f"GitHub rate limit hit for '{username}' (HTTP {repos_resp.status_code})", "username": username}
         repos = repos_resp.json() if repos_resp.status_code == 200 else []
 
         # Commit activity on most recently active repo

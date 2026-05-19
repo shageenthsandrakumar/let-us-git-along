@@ -88,7 +88,9 @@ async def analyze_compatibility(request: CompatibilityRequest):
 @router.post("/analyze/single")
 async def analyze_single_agent(request: SingleAgentRequest):
     try:
-        result = run_single_agent_analysis(
+        # Run in a thread — LLM calls block and would stall the event loop
+        result = await asyncio.to_thread(
+            run_single_agent_analysis,
             agent_type=request.agent_type,
             input_data=request.input_data,
         )

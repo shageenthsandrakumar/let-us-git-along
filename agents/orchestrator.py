@@ -3,6 +3,39 @@ import re
 import json
 import logging
 from autogen import ConversableAgent, LLMConfig
+
+
+def _extract_json(text: str) -> str | None:
+    """Extract the first complete JSON object using bracket counting.
+
+    Safer than a greedy regex: handles nested objects and ignores any
+    trailing prose the LLM appends after the closing brace.
+    """
+    start = text.find('{')
+    if start == -1:
+        return None
+    depth = 0
+    in_string = False
+    escape = False
+    for i, c in enumerate(text[start:], start):
+        if escape:
+            escape = False
+            continue
+        if c == '\\' and in_string:
+            escape = True
+            continue
+        if c == '"':
+            in_string = not in_string
+            continue
+        if in_string:
+            continue
+        if c == '{':
+            depth += 1
+        elif c == '}':
+            depth -= 1
+            if depth == 0:
+                return text[start:i + 1]
+    return None
 from agents.compatibility import create_compatibility_agent
 from agents.gtm_strategist import create_gtm_strategist_agent
 from agents.repotale import create_repotale_agent
@@ -148,16 +181,16 @@ def run_founder_analysis(founder_a_profile, founder_b_profile, github_data_a=Non
                     compat_summary = result
                     # Parse structured JSON from the compatibility agent response
                     try:
-                        match = re.search(r'\{.*\}', result, re.DOTALL)
-                        if match:
-                            parsed_compat = json.loads(match.group())
+                        raw_json = _extract_json(result)
+                        if raw_json:
+                            parsed_compat = json.loads(raw_json)
                     except Exception as parse_err:
                         logger.warning("Could not parse compatibility JSON: %s", parse_err)
                 if agent_type == "gtm_strategist":
                     try:
-                        match = re.search(r'\{.*\}', result, re.DOTALL)
-                        if match:
-                            gtm_data = json.loads(match.group())
+                        raw_json = _extract_json(result)
+                        if raw_json:
+                            gtm_data = json.loads(raw_json)
                             raw_stack = gtm_data.get("tool_stack", [])
                             if isinstance(raw_stack, list) and raw_stack:
                                 tool_stack = raw_stack
@@ -167,8 +200,15 @@ def run_founder_analysis(founder_a_profile, founder_b_profile, github_data_a=Non
             logger.error("Failed to create or run agent %s: %s", agent_type, e)
             conversation.append({"agent": agent_type, "response": f"Agent unavailable: {str(e)}"})
 
-    if not compat_summary and conversation:
-        compat_summary = conversation[0]["response"]
+    if not compat_summary:
+        # Look specifically for the compatibility agent's output; don't use
+        # storyteller or resume output as it would mislead the frontend.
+        for entry in conversation:
+            if entry.get("agent") == "compatibility" and entry.get("response"):
+                compat_summary = entry["response"]
+                break
+        if not compat_summary:
+            compat_summary = "Analysis could not be completed."
 
     # Communicator runs last — reads everything all other agents produced
     narrative = None
@@ -217,7 +257,7 @@ Now speak directly to both founders together. Write the compatibility narrative.
             net_analysis = "Location data unavailable; proximity unknown."
         parsed_compat["dimensions"]["Network Proximity"] = {"score": net_score, "analysis": net_analysis}
         # Recalculate overall score to include Network Proximity
-        all_scores = [v["score"] if isinstance(v, dict) else v for v in parsed_compat["dimensions"].values()]
+        all_scores = [v.get("score", 60) if isinstance(v, dict) else v for v in parsed_compat["dimensions"].values()]
         parsed_compat["overall_score"] = round(sum(all_scores) / len(all_scores))
 
     return {
@@ -282,9 +322,9 @@ def run_assessment_synthesis(profile, self_report_archetype, github_data=None, r
     parsed_synthesis = None
     if synthesis_result:
         try:
-            match = re.search(r'\{.*\}', synthesis_result, re.DOTALL)
-            if match:
-                parsed_synthesis = json.loads(match.group())
+            raw_json = _extract_json(synthesis_result)
+            if raw_json:
+                parsed_synthesis = json.loads(raw_json)
         except Exception:
             pass
         if not parsed_synthesis:
