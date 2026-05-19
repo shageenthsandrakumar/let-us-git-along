@@ -1,5 +1,5 @@
 import os
-from autogen import ConversableAgent, LLMConfig
+from autogen import ConversableAgent
 
 SYSTEM_PROMPT = """You are the FounderFit Communicator. You are the final voice of the system.
 
@@ -42,15 +42,7 @@ Always write to the person or people who will read this. They are smart founders
 
 def create_communicator_agent(llm_config=None):
     if llm_config is None:
-        llm_config = LLMConfig(
-            config_list=[{
-                "api_type": "openai",
-                "model": "openai/gpt-4o",
-                "api_key": os.environ.get("OPENROUTER_API_KEY", ""),
-                "base_url": "https://openrouter.ai/api/v1",
-            }],
-            timeout=60,
-        )
+        llm_config = {"config_list": [{"api_type": "openai", "model": "openai/gpt-4o", "api_key": os.environ.get("OPENROUTER_API_KEY", ""), "base_url": "https://openrouter.ai/api/v1"}], "timeout": 60}
     return ConversableAgent(
         name="communicator",
         system_message=SYSTEM_PROMPT,

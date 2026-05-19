@@ -2,7 +2,7 @@ import os
 import re
 import json
 import logging
-from autogen import ConversableAgent, LLMConfig
+from autogen import ConversableAgent
 
 
 def _extract_json(text: str) -> str | None:
@@ -49,15 +49,17 @@ from agents.communicator_agent import create_communicator_agent
 logger = logging.getLogger(__name__)
 
 def get_llm_config():
-    return LLMConfig(
-        config_list=[{
+    # Return a plain dict — LLMConfig(config_list=...) was removed in ag2 >=0.12.
+    # Plain dicts are accepted by ConversableAgent across all ag2/autogen versions.
+    return {
+        "config_list": [{
             "api_type": "openai",
             "model": "openai/gpt-4o",
             "api_key": os.environ.get("OPENROUTER_API_KEY", ""),
             "base_url": "https://openrouter.ai/api/v1",
         }],
-        timeout=60,
-    )
+        "timeout": 60,
+    }
 
 def _run_agent(agent, message):
     """Run a single agent and return its text response."""

@@ -1,5 +1,5 @@
 import os
-from autogen import ConversableAgent, LLMConfig
+from autogen import ConversableAgent
 
 SYSTEM_PROMPT = """You are the FounderFit Synthesis Agent. You are a reasoning engine, not a summarizer.
 
@@ -66,15 +66,7 @@ Do not invent signals that are not there. If GitHub shows nothing distinctive, s
 
 def create_synthesis_agent(llm_config=None):
     if llm_config is None:
-        llm_config = LLMConfig(
-            config_list=[{
-                "api_type": "openai",
-                "model": "openai/gpt-4o",
-                "api_key": os.environ.get("OPENROUTER_API_KEY", ""),
-                "base_url": "https://openrouter.ai/api/v1",
-            }],
-            timeout=60,
-        )
+        llm_config = {"config_list": [{"api_type": "openai", "model": "openai/gpt-4o", "api_key": os.environ.get("OPENROUTER_API_KEY", ""), "base_url": "https://openrouter.ai/api/v1"}], "timeout": 60}
     return ConversableAgent(
         name="synthesis_agent",
         system_message=SYSTEM_PROMPT,
