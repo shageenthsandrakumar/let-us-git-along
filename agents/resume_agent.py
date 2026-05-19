@@ -1,5 +1,5 @@
 import os
-from autogen import ConversableAgent
+from autogen import ConversableAgent, LLMConfig
 
 SYSTEM_PROMPT = """You are the FounderFit Resume Analyst. You analyze professional documents — a LinkedIn profile export, a resume/CV, or both — and extract sharp behavioral signals about how this person operates as a potential founder.
 
@@ -45,7 +45,7 @@ If the text is sparse or unclear, say so honestly and note what little you can i
 
 def create_resume_agent(llm_config=None):
     if llm_config is None:
-        llm_config = {"config_list": [{"api_type": "openai", "model": "openai/gpt-4o", "api_key": os.environ.get("OPENROUTER_API_KEY", ""), "base_url": "https://openrouter.ai/api/v1"}], "timeout": 60}
+        llm_config = LLMConfig({"api_type": "openai", "model": "openai/gpt-4o", "api_key": os.environ.get("OPENROUTER_API_KEY", ""), "base_url": "https://openrouter.ai/api/v1"}, timeout=60)
     return ConversableAgent(
         name="resume_analyst",
         system_message=SYSTEM_PROMPT,

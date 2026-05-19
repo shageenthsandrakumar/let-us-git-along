@@ -1,5 +1,5 @@
 import os
-from autogen import ConversableAgent
+from autogen import ConversableAgent, LLMConfig
 
 SYSTEM_PROMPT = """You are the FounderFit Compatibility Agent. Your role is to analyze founder profiles and predict compatibility across ten operational dimensions:
 
@@ -46,7 +46,7 @@ Base your analysis on behavioral signals, not self-reported preferences. Priorit
 
 def create_compatibility_agent(llm_config=None):
     if llm_config is None:
-        llm_config = {"config_list": [{"api_type": "openai", "model": "openai/gpt-4o", "api_key": os.environ.get("OPENROUTER_API_KEY", ""), "base_url": "https://openrouter.ai/api/v1"}], "timeout": 60}
+        llm_config = LLMConfig({"api_type": "openai", "model": "openai/gpt-4o", "api_key": os.environ.get("OPENROUTER_API_KEY", ""), "base_url": "https://openrouter.ai/api/v1"}, timeout=60)
     return ConversableAgent(
         name="compatibility_agent",
         system_message=SYSTEM_PROMPT,
